@@ -1,0 +1,20 @@
+package com.springboot.rest.config.security.algo;
+
+public enum Secrets {
+
+    SECRET_KEY("amigos"),
+    PUBLIC_KEY("MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCBBGjkVASG6QvNE5yoCo08LIPCNuW2PTAOTMpAin33uwE6iduX566DYJLDozXrysHXFy0YsX1pOw86F9cNvjA2CojGvA+ZFGihi49DOIiN8ulbfEiXrqXukrCjjLF28V2OANYK/PuOZhWdyajcitfaNJmd5NlAVSMiMlb/LNZvLwIDAQAB"),
+    PRIVATE_KEY(
+            "MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBAIEEaORUBIbpC80TnKgKjTwsg8I25bY9MA5MykCKffe7ATqJ25fnroNgksOjNevKwdcXLRixfWk7DzoX1w2+MDYKiMa8D5kUaKGLj0M4iI3y6Vt8SJeupe6SsKOMsXbxXY4A1gr8+45mFZ3JqNyK19o0mZ3k2UBVIyIyVv8s1m8vAgMBAAECgYBQ7gk2IRXt4sYKUGEWb/gEZRAJhhI2bM92SOkd70HxYhb1N4DOGwC3XJ7zpa+vRzKsz9b0BHJczjVRBZ9a+ZCXkWfTx+J5WxPv6G9DijF0V4QEmO84D70TNCHn5KCt+7q2+gZGIB6ZFtl+D+I/M6U+YYEniD8Cy0uf0G2o9ZUEIQJBAL5oDF8ODkBi4D/L4rGwyxvDLWEuzs1YnejpBuvYrXOYnHPUS1n3gLiQwh2zwGmh8GYj/nZwkbjiTZepS8yUmzcCQQCtdnG0yHGS0NFY65FJ/zaZEv/oFrPGwS9T5llfC/VXNMeTLSnlK0b4sKeN0N+QkAIZr9cxfbk4N4uIspldDnfJAkEAtrXRaUVrl41J8u4K0sf7nuBjo2XvPE1U+jLiWV7K0qoXN273/5TpCDKgky/x62th7CGOBMlwjCFco7Po8J+JcQJBAIOHkoTAkM4ApR1F0m9HpADCVWWJAVyuU9LMkevuR2SO0t4YmvH4tOISIZr5TOxzJgSQPx559J5aD+Xhd0UGmXECQGNgF9DfHIVczMmTiyoKKSiCVqtw6IBH2GTyWpYiRLUaB2VwSAnTo2r8b9Han3qyvflvDrBCgd96d7pr63cUIQs="
+    );
+
+    private final String secret;
+
+    Secrets(String secret) {
+        this.secret = secret;
+    }
+
+    public String getSecret() {
+        return secret;
+    }
+}
