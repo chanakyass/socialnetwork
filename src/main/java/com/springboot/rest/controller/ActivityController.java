@@ -2,7 +2,7 @@ package com.springboot.rest.controller;
 
 import com.springboot.rest.model.dto.ApiMessageResponse;
 import com.springboot.rest.model.dto.CommentEdit;
-import com.springboot.rest.model.dto.PostEdit;
+import com.springboot.rest.model.dto.PostDto;
 import com.springboot.rest.model.entities.Comment;
 import com.springboot.rest.model.entities.LikeComment;
 import com.springboot.rest.model.entities.LikePost;
@@ -73,9 +73,9 @@ public class ActivityController {
     }
 
     @PutMapping("post")
-    @PreAuthorize(value = "hasPermission(#postEdit, null)")
-    public ResponseEntity<ApiMessageResponse> updatePostOfUser(@RequestBody PostEdit postEdit) {
-        return postService.updatePost(postEdit);
+    @PreAuthorize(value = "hasPermission(#postDto, null)")
+    public ResponseEntity<ApiMessageResponse> updatePostOfUser(@RequestBody PostDto postDto) {
+        return postService.updatePost(postDto);
     }
 
     @DeleteMapping("post")

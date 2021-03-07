@@ -22,7 +22,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include;
 @Table(name = "posts")
 @OnDelete(action = OnDeleteAction.CASCADE)
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@postId")
-public class Post implements ApiResource{
+public class Post implements ApiResourceMarker {
 
     @Id
     @SequenceGenerator(name = "resource_sequence", sequenceName = "resource_sequence", allocationSize = 1)
@@ -69,6 +69,10 @@ public class Post implements ApiResource{
     }
 
     @Override
+    public Long getOwnerId() {
+        return owner.getId();
+    }
+
     public User getOwner() {
         return owner;
     }

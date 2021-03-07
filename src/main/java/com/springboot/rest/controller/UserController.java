@@ -1,7 +1,7 @@
 package com.springboot.rest.controller;
 
 import com.springboot.rest.model.dto.ApiMessageResponse;
-import com.springboot.rest.model.dto.UserEdit;
+import com.springboot.rest.model.dto.UserDto;
 import com.springboot.rest.model.entities.User;
 import com.springboot.rest.model.projections.UserView;
 import com.springboot.rest.service.UserService;
@@ -40,8 +40,8 @@ public class UserController {
 
     @RolesAllowed("ROLE_USER")
     @PutMapping(path = "api/v1/profile/{profileName}")
-    public ResponseEntity<ApiMessageResponse> updateUser(@RequestBody UserEdit userEdit) {
-        return userService.updateUser(userEdit);
+    public ResponseEntity<ApiMessageResponse> updateUser(@RequestBody UserDto userDto) {
+        return userService.updateUser(userDto);
     }
 
 }

@@ -1,8 +1,10 @@
 package com.springboot.rest.model.entities;
 
-public interface ApiResource {
+
+public interface ApiResourceMarker {
 
     Long getId();
-    User getOwner();
+
+    Long getOwnerId();
 
 }

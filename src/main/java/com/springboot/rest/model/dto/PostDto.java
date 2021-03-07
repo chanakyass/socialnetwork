@@ -1,16 +1,16 @@
 package com.springboot.rest.model.dto;
 
-import com.springboot.rest.model.entities.ApiResource;
+import com.springboot.rest.model.entities.ApiResourceMarker;
 import com.springboot.rest.model.entities.User;
 
 import java.time.LocalDate;
 import java.util.Objects;
 
-public class PostEdit implements ApiResource {
+public class PostDto implements ApiResourceMarker {
 
     Long id;
 
-    User owner;
+    UserDto owner;
 
     String postHeading;
 
@@ -22,7 +22,7 @@ public class PostEdit implements ApiResource {
 
     LocalDate modifiedOnDate;
 
-    public PostEdit(Long id, User owner, String postHeading, String postBody, Long noOfLikes, LocalDate postedOnDate, LocalDate modifiedOnDate) {
+    public PostDto(Long id, UserDto owner, String postHeading, String postBody, Long noOfLikes, LocalDate postedOnDate, LocalDate modifiedOnDate) {
         this.id = id;
         this.owner = owner;
         this.postHeading = postHeading;
@@ -32,7 +32,7 @@ public class PostEdit implements ApiResource {
         this.modifiedOnDate = modifiedOnDate;
     }
 
-    public PostEdit() {
+    public PostDto() {
     }
 
     public Long getId() {
@@ -43,20 +43,20 @@ public class PostEdit implements ApiResource {
         this.id = id;
     }
 
-    public User getOwner() {
+    public UserDto getOwner() {
         return owner;
     }
 
-    public void setOwner(User owner) {
+    public void setOwner(UserDto owner) {
         this.owner = owner;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof PostEdit)) return false;
-        PostEdit postEdit = (PostEdit) o;
-        return getId().equals(postEdit.getId()) && getOwner().equals(postEdit.getOwner());
+        if (!(o instanceof PostDto)) return false;
+        PostDto postDto = (PostDto) o;
+        return getId().equals(postDto.getId()) && getOwner().equals(postDto.getOwner());
     }
 
     @Override
@@ -106,5 +106,8 @@ public class PostEdit implements ApiResource {
         this.modifiedOnDate = modifiedOnDate;
     }
 
-
+    @Override
+    public Long getOwnerId() {
+        return owner.getId();
+    }
 }

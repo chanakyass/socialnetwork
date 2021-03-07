@@ -1,12 +1,14 @@
 package com.springboot.rest.model.dto;
 
+import com.springboot.rest.model.entities.ApiResourceMarker;
 import com.springboot.rest.model.entities.Role;
+import com.springboot.rest.model.entities.User;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 
-public class UserEdit {
+public class UserDto {
 
     Long id;
 
@@ -22,7 +24,7 @@ public class UserEdit {
 
     List<Role> grantedAuthoritiesList;
 
-    public UserEdit(Long id, String name, String email, Long age, LocalDate DOB, String userSummary, List<Role> grantedAuthoritiesList) {
+    public UserDto(Long id, String name, String email, Long age, LocalDate DOB, String userSummary, List<Role> grantedAuthoritiesList) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -32,15 +34,15 @@ public class UserEdit {
         this.grantedAuthoritiesList = grantedAuthoritiesList;
     }
 
-    public UserEdit() {
+    public UserDto() {
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof UserEdit)) return false;
-        UserEdit userEdit = (UserEdit) o;
-        return getId().equals(userEdit.getId());
+        if (!(o instanceof UserDto)) return false;
+        UserDto userDto = (UserDto) o;
+        return getId().equals(userDto.getId());
     }
 
     @Override
@@ -103,4 +105,5 @@ public class UserEdit {
     public void setGrantedAuthoritiesList(List<Role> grantedAuthoritiesList) {
         this.grantedAuthoritiesList = grantedAuthoritiesList;
     }
+
 }

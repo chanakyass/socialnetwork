@@ -2,7 +2,7 @@ package com.springboot.rest.service;
 
 import com.springboot.rest.config.exceptions.ApiSpecificException;
 import com.springboot.rest.model.dto.ApiMessageResponse;
-import com.springboot.rest.model.dto.PostEdit;
+import com.springboot.rest.model.dto.PostDto;
 import com.springboot.rest.model.entities.Post;
 import com.springboot.rest.model.mapper.PostMapper;
 import com.springboot.rest.model.projections.PostView;
@@ -70,12 +70,12 @@ public class PostService {
     }
 
     @Transactional
-    public ResponseEntity<ApiMessageResponse> updatePost(PostEdit postEdit) {
-        Post postToUpdate = postRepos.findById(postEdit.getId()).orElseThrow(() -> new ApiSpecificException("Post is not present"));
+    public ResponseEntity<ApiMessageResponse> updatePost(PostDto postDto) {
+        Post postToUpdate = postRepos.findById(postDto.getId()).orElseThrow(() -> new ApiSpecificException("Post is not present"));
 
-        postEdit.setModifiedOnDate(LocalDate.now());
-        postMapper.update(postEdit, postToUpdate);
-        return ResponseEntity.ok().body(new ApiMessageResponse(postEdit.getId()));
+        postDto.setModifiedOnDate(LocalDate.now());
+        postMapper.update(postDto, postToUpdate);
+        return ResponseEntity.ok().body(new ApiMessageResponse(postDto.getId()));
 
     }
 

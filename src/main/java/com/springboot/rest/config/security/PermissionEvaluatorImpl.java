@@ -1,6 +1,6 @@
 package com.springboot.rest.config.security;
 
-import com.springboot.rest.model.entities.ApiResource;
+import com.springboot.rest.model.entities.ApiResourceMarker;
 import com.springboot.rest.model.entities.SecureResource;
 import com.springboot.rest.model.entities.User;
 import com.springboot.rest.repository.SecureResourceRepos;
@@ -51,9 +51,9 @@ public class PermissionEvaluatorImpl implements PermissionEvaluator {
 
             //Check which class resource belongs to
 
-            if (targetDomainObject instanceof ApiResource) {
-                ApiResource resource = (ApiResource) targetDomainObject;
-                Optional<User> optionalUser = userRepos.findById(resource.getOwner().getId());
+            if (targetDomainObject instanceof ApiResourceMarker) {
+                ApiResourceMarker resource = (ApiResourceMarker) targetDomainObject;
+                Optional<User> optionalUser = userRepos.findById(resource.getOwnerId());
 
                 if (optionalUser.isEmpty() || loggedInUserId.compareTo(optionalUser.get().getId()) != 0) {
                     return false;

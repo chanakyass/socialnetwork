@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "likes_on_comments")
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@likeCommentId")
-public class LikeComment implements ApiResource{
+public class LikeComment implements ApiResourceMarker {
 
     @Id
     @SequenceGenerator(name = "resource_sequence", sequenceName = "resource_sequence", allocationSize = 1)
@@ -44,6 +44,9 @@ public class LikeComment implements ApiResource{
     public LikeComment() {
     }
 
+    public User getOwner() {
+        return owner;
+    }
 
     public LocalDate getLikedOnDate() {
         return likedOnDate;
@@ -70,8 +73,8 @@ public class LikeComment implements ApiResource{
     }
 
     @Override
-    public User getOwner() {
-        return owner;
+    public Long getOwnerId() {
+        return owner.getId();
     }
 
     public void setOwner(User owner) {

@@ -2,7 +2,7 @@ package com.springboot.rest.service;
 
 import com.springboot.rest.config.exceptions.ApiSpecificException;
 import com.springboot.rest.model.dto.ApiMessageResponse;
-import com.springboot.rest.model.dto.UserEdit;
+import com.springboot.rest.model.dto.UserDto;
 import com.springboot.rest.model.entities.User;
 import com.springboot.rest.model.mapper.UserMapper;
 import com.springboot.rest.model.projections.UserView;
@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import javax.transaction.Transactional;
 
 @Service
@@ -58,10 +57,10 @@ public class UserService {
     }
 
     @Transactional
-    public ResponseEntity<ApiMessageResponse> updateUser(UserEdit userEdit) {
-        User user = userRepos.findById(userEdit.getId()).orElseThrow(() -> new ApiSpecificException("User is not present"));
-        userMapper.update(userEdit, user);
-        return ResponseEntity.ok().body(new ApiMessageResponse(userEdit.getId()));
+    public ResponseEntity<ApiMessageResponse> updateUser(UserDto userDto) {
+        User user = userRepos.findById(userDto.getId()).orElseThrow(() -> new ApiSpecificException("User is not present"));
+        userMapper.update(userDto, user);
+        return ResponseEntity.ok().body(new ApiMessageResponse(userDto.getId()));
     }
 
     @Transactional

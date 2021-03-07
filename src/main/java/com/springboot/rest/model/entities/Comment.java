@@ -12,7 +12,7 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "comments")
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@commentId")
-public class Comment implements ApiResource{
+public class Comment implements ApiResourceMarker {
 
     @Id
     @SequenceGenerator(name = "resource_sequence", sequenceName = "resource_sequence", allocationSize = 1)
@@ -63,6 +63,10 @@ public class Comment implements ApiResource{
     }
 
     @Override
+    public Long getOwnerId() {
+        return owner.getId();
+    }
+
     public User getOwner() {
         return owner;
     }
