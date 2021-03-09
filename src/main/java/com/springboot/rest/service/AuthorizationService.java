@@ -1,14 +1,13 @@
 package com.springboot.rest.service;
 
 import com.springboot.rest.config.exceptions.ApiAccessException;
+import com.springboot.rest.config.exceptions.ApiSpecificException;
 import com.springboot.rest.config.security.SecurityUtils;
 import com.springboot.rest.config.security.jwt.JwtTokenUtil;
 import com.springboot.rest.model.dto.ApiMessageResponse;
 import com.springboot.rest.model.dto.AuthRequest;
 import com.springboot.rest.model.dto.AuthResponse;
-import com.springboot.rest.model.entities.SecureResource;
-import com.springboot.rest.model.entities.User;
-import com.springboot.rest.model.entities.UserAdapter;
+import com.springboot.rest.model.entities.*;
 import com.springboot.rest.repository.SecureResourceRepos;
 import com.springboot.rest.repository.UserRepos;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,18 +97,43 @@ public class AuthorizationService implements UserDetailsService {
         return ResponseEntity.ok().body(new ApiMessageResponse("Thank you for using our services. Visit again!"));
     }
 
-    public boolean saveSecureResource(Long id)
+    public boolean saveSecureResource(Long id, char type)
     {
         User user = securityUtils.getUserFromSubject();
-        SecureResource secureResource = new SecureResource(id, user);
-        secureResourceRepos.save(secureResource);
-        return true;
-    }
+        SecureResource.SecureResourceBuilder secureResourceBuilder = SecureResource.builder().id(null).owner(user);
+        switch (type)
+        {
+            case 'P': {
+                Post post = new Post();
+                post.setId(id);
+                secureResourceBuilder.post(post).build();
+                break;
+            }
+            case 'C': {
+                Comment comment = new Comment();
+                comment.setId(id);
+                secureResourceBuilder.comment(comment).build();
+                break;
+            }
+            case 'L':{
+                LikePost likePost = new LikePost();
+                likePost.setId(id);
+                secureResourceBuilder.likePost(likePost).build();
+                break;
+            }
+            case 'Q': {
+                LikeComment likeComment = new LikeComment();
+                likeComment.setId(id);
+                secureResourceBuilder.likeComment(likeComment).build();
+                break;
+            }
+            default: {
+                return false;
+            }
 
-    public boolean deleteSecureResource(Long id)
-    {
-        User user = securityUtils.getUserFromSubject();
-        secureResourceRepos.deleteById(id);
+        }
+
+        secureResourceRepos.save(secureResourceBuilder.build());
         return true;
     }
 

@@ -13,7 +13,7 @@ import java.util.List;
 @Entity
 @Table(name = "[users]", uniqueConstraints = @UniqueConstraint(columnNames = {"email"}))
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@userId")
-public class User implements Serializable{
+public class User implements Serializable, UserPersonalMarker{
     @Id
     @SequenceGenerator(name = "user_sequence",
             sequenceName = "user_sequence",
@@ -22,21 +22,20 @@ public class User implements Serializable{
             generator = "user_sequence")
     private Long id;
     private String name;
-    @NotNull
     private String profileName;
+    @Column(nullable = false)
     private String email;
-    @NotNull
+    @Column(nullable = false)
     private String password;
-    private int age;
+    private Integer age;
     private LocalDate DOB;
     private String userSummary;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @NotNull
-    @JoinTable(name = "user_role", joinColumns = {@JoinColumn(name = "role_id")}, inverseJoinColumns = {@JoinColumn(name = "user_id")})
+    @JoinTable(name = "user_role", joinColumns = {@JoinColumn(name = "role_id", nullable = false)}, inverseJoinColumns = {@JoinColumn(name = "user_id", nullable = false)})
     private List<Role> grantedAuthoritiesList;
 
-    public User(Long id, String name, String profileName, String email, String password, int age,
+    public User(Long id, String name, String profileName, String email, String password, Integer age,
                 LocalDate DOB, String userSummary, List<Role> grantedAuthoritiesList) {
         this.id = id;
         this.name = name;
@@ -88,11 +87,11 @@ public class User implements Serializable{
         this.password = password;
     }
 
-    public int getAge() {
+    public Integer getAge() {
         return age;
     }
 
-    public void setAge(int age) {
+    public void setAge(Integer age) {
         this.age = age;
     }
 

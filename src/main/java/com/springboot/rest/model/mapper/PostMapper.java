@@ -16,5 +16,5 @@ public abstract class PostMapper {
     public abstract void update(PostDto request, @MappingTarget Post post);
 
     @BeanMapping(nullValueCheckStrategy = ALWAYS, nullValuePropertyMappingStrategy = IGNORE)
-    public abstract void toPostEdit(Post request, @MappingTarget PostDto postDto);
+    public abstract void toPostDto(Post request, @MappingTarget PostDto postDto);
 }

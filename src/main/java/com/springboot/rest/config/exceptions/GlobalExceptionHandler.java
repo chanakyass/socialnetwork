@@ -4,8 +4,15 @@ import com.springboot.rest.config.error.ApiCallError;
 import javassist.NotFoundException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.PermissionEvaluator;
+import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
+import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.GlobalMethodSecurityConfiguration;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -15,9 +22,17 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @ControllerAdvice
-public class GlobalExceptionHandler {
+//@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
+public class GlobalExceptionHandler{
 
     private final Logger logger = LogManager.getLogger();
+    private final PermissionEvaluator permissionEvaluator;
+    private final ApplicationContext applicationContext;
+
+    public GlobalExceptionHandler(PermissionEvaluator permissionEvaluator, ApplicationContext applicationContext) {
+        this.permissionEvaluator = permissionEvaluator;
+        this.applicationContext = applicationContext;
+    }
 
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ApiCallError<String>> handleNotFoundException(HttpServletRequest request, NotFoundException ex) {
@@ -66,4 +81,5 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ApiCallError<>(request.getRequestURI(), "Internal server error", LocalDateTime.now(), List.of(ex.getMessage())));
     }
+
 }

@@ -1,6 +1,7 @@
 package com.springboot.rest.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -20,25 +21,24 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include;
 @Entity
 @JsonInclude(value = Include.NON_EMPTY)
 @Table(name = "posts")
-@OnDelete(action = OnDeleteAction.CASCADE)
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@postId")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Post implements ApiResourceMarker {
 
     @Id
-    @SequenceGenerator(name = "resource_sequence", sequenceName = "resource_sequence", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "resource_sequence")
+    @SequenceGenerator(name = "post_sequence", sequenceName = "post_sequence", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "post_sequence")
     private Long id;
 
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @NotNull
-    @JoinColumn(name = "owned_by_user", foreignKey = @ForeignKey(name = "fk_owner_user_id"))
+    @JoinColumn(name = "owned_by_user", foreignKey = @ForeignKey(name = "fk_owner_user_id"), nullable = false)
     private User owner;
 
-    @NotNull
+    @Column(nullable = false)
     private String postHeading;
 
-    @NotNull
+    @Column(nullable = false)
     private String postBody;
 
     private LocalDate postedOnDate;

@@ -1,0 +1,19 @@
+{
+
+    "POST_SUCCESS":{
+    "postedOnDate" : "2020-02-05",
+    "postHeading": "my post is a good post 1",
+    "postBody" : "my post is a bad post 1",
+    "noOfLikes" : 0
+    },
+  "UPDATE_SUCCESS": {
+    "id": 1,
+    "owner" : {
+      "id" : 1
+    },
+    "postedOnDate" : "2020-02-05",
+    "postHeading": "my post is a good post 1",
+    "postBody" : "my post is a bad post 1",
+    "noOfLikes" : 0
+  }
+}

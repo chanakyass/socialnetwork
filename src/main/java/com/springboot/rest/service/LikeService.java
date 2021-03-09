@@ -14,6 +14,8 @@ import com.springboot.rest.repository.LikePostRepos;
 import com.springboot.rest.repository.PostRepos;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -38,6 +40,8 @@ public class LikeService {
     }
 
     @Transactional
+    @PreAuthorize(value = "hasPermission(#like, null)")
+    @PostAuthorize(value = "@authorizationService.saveSecureResource(returnObject.body.resourceId, 'L')")
     public ResponseEntity<ApiMessageResponse> likeAPost(LikePost like) {
         Optional.ofNullable(like).orElseThrow(() -> new ApiSpecificException("Something is wrong"));
         Post post = postRepos.findById(like.getLikedPost().getId()).orElseThrow(() -> new ApiSpecificException("Post is not present"));
@@ -47,6 +51,8 @@ public class LikeService {
     }
 
     @Transactional
+    @PreAuthorize(value = "hasPermission(#like, null)")
+    @PostAuthorize(value = "@authorizationService.saveSecureResource(returnObject.body.resourceId, 'Q')")
     public ResponseEntity<ApiMessageResponse> likeComment(LikeComment like) {
         Optional.ofNullable(like).orElseThrow(() -> new ApiSpecificException("Something is wrong"));
         Comment comment = commentRepos.findById(like.getLikedComment().getId()).orElseThrow(() -> new ApiSpecificException("Comment is not present"));
@@ -56,6 +62,7 @@ public class LikeService {
     }
 
     @Transactional
+    @PreAuthorize(value = "hasPermission(#like, null)")
     public ResponseEntity<ApiMessageResponse> unlikePost(LikePost like) {
         Optional.ofNullable(like).orElseThrow(() -> new ApiSpecificException("Something is wrong"));
         Post post = postRepos.findById(like.getLikedPost().getId()).orElseThrow(() -> new ApiSpecificException("Post is not present"));
@@ -68,6 +75,7 @@ public class LikeService {
     }
 
     @Transactional
+    @PreAuthorize(value = "hasPermission(#like, null)")
     public ResponseEntity<ApiMessageResponse> unlikeComment(LikeComment like) {
         Optional.ofNullable(like).orElseThrow(() -> new ApiSpecificException("Something is wrong"));
 

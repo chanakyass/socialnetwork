@@ -7,6 +7,7 @@ import com.springboot.rest.model.projections.UserView;
 import com.springboot.rest.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.RolesAllowed;
@@ -21,8 +22,6 @@ public class UserController {
         this.userService = userService;
     }
 
-    @RolesAllowed("ROLE_USER")
-    @GetMapping(path = "api/v1/profile/{profileName}")
     public UserView getUser(@RequestBody Long userId) {
         return userService.getUser(userId);
     }
@@ -32,13 +31,11 @@ public class UserController {
         return userService.createUser(user);
     }
 
-    @RolesAllowed("ROLE_USER")
     @DeleteMapping(path = "api/v1/profile/{profileName}")
     public ResponseEntity<ApiMessageResponse> deleteUser(@RequestBody User user) {
         return userService.delUser(user);
     }
 
-    @RolesAllowed("ROLE_USER")
     @PutMapping(path = "api/v1/profile/{profileName}")
     public ResponseEntity<ApiMessageResponse> updateUser(@RequestBody UserDto userDto) {
         return userService.updateUser(userDto);

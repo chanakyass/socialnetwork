@@ -66,21 +66,17 @@ public class ActivityController {
     }
 
     @PostMapping("post")
-    @PreAuthorize(value = "hasPermission(#post, null)")
-    @PostAuthorize(value = "@authorizationService.saveSecureResource(returnObject.body.resourceId)")
     public ResponseEntity<ApiMessageResponse> addPostOfUser(@RequestBody Post post) {
         return postService.addPost(post);
     }
 
     @PutMapping("post")
-    @PreAuthorize(value = "hasPermission(#postDto, null)")
     public ResponseEntity<ApiMessageResponse> updatePostOfUser(@RequestBody PostDto postDto) {
         return postService.updatePost(postDto);
     }
 
     @DeleteMapping("post")
-    @PreAuthorize(value = "hasPermission(#post, null)")
-    @PostAuthorize(value = "@authorizationService.saveSecureResource(returnObject.body.resourceId)")
+    //@PostAuthorize(value = "@authorizationService.deleteSecureResource(returnObject.body.resourceId)")
     public ResponseEntity<ApiMessageResponse> deletePostOfUser(@RequestBody Post post) {
         return postService.deletePost(post);
     }
@@ -96,20 +92,16 @@ public class ActivityController {
      */
 
     @PostMapping("comment")
-    @PreAuthorize(value = "hasPermission(#comment, null)")
-    @PostAuthorize(value = "@authorizationService.saveSecureResource(returnObject.body.resourceId)")
     public ResponseEntity<ApiMessageResponse> addComment(@RequestBody Comment comment) {
         return commentService.addCommentOnActivity(comment);
     }
 
     @PutMapping("comment")
-    @PreAuthorize(value = "hasPermission(#commentEdit, null)")
     public ResponseEntity<ApiMessageResponse> updateComment(@RequestBody CommentEdit commentEdit) {
         return commentService.changeCommentOnActivity(commentEdit);
     }
 
-    @PreAuthorize(value = "hasPermission(#comment, null)")
-    @PostAuthorize(value = "@authorizationService.saveSecureResource(returnObject.body.resourceId)")
+    //@PostAuthorize(value = "@authorizationService.deleteSecureResource(returnObject.body.resourceId)")
     @DeleteMapping("comment")
     public ResponseEntity<ApiMessageResponse> deleteComment(@RequestBody Comment comment) {
         return commentService.delCommentOnActivity(comment);
@@ -139,29 +131,23 @@ public class ActivityController {
      */
 
     @PostMapping("post/{postId}/like")
-    @PreAuthorize(value = "hasPermission(#like, null)")
-    @PostAuthorize(value = "@authorizationService.saveSecureResource(returnObject.body.resourceId)")
     public ResponseEntity<ApiMessageResponse> addLikeOnPost(@RequestBody LikePost like) {
         return likeService.likeAPost(like);
     }
 
     @PostMapping("comment/{commentId}/like")
-    @PreAuthorize(value = "hasPermission(#like, null)")
-    @PostAuthorize(value = "@authorizationService.saveSecureResource(returnObject.body.resourceId)")
     public ResponseEntity<ApiMessageResponse> addLikeOnComment(@RequestBody LikeComment like) {
         return likeService.likeComment(like);
     }
 
     @PostMapping("post/{postId}/unlike")
-    @PreAuthorize(value = "hasPermission(#like, null)")
-    @PostAuthorize(value = "@authorizationService.saveSecureResource(returnObject.body.resourceId)")
+    //@PostAuthorize(value = "@authorizationService.deleteSecureResource(returnObject.body.resourceId)")
     public ResponseEntity<ApiMessageResponse> removeLikeOnPost(@RequestBody LikePost like) {
         return likeService.unlikePost(like);
     }
 
     @PostMapping("comment/{commentId}/unlike")
-    @PreAuthorize(value = "hasPermission(#like, null)")
-    @PostAuthorize(value = "@authorizationService.saveSecureResource(returnObject.body.resourceId)")
+    //@PostAuthorize(value = "@authorizationService.deleteSecureResource(returnObject.body.resourceId)")
     public ResponseEntity<ApiMessageResponse> removeLikeOnComment(@RequestBody LikeComment like) {
         return likeService.unlikeComment(like);
     }

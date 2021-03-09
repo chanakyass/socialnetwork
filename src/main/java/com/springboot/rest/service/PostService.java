@@ -14,6 +14,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -38,6 +40,8 @@ public class PostService {
 
     }
 
+    @PreAuthorize(value = "hasPermission(#post, null)")
+    @PostAuthorize(value = "@authorizationService.saveSecureResource(returnObject.body.resourceId, 'P')")
     public ResponseEntity<ApiMessageResponse> addPost(Post post) {
         Optional.ofNullable(post).orElseThrow(() -> new ApiSpecificException("Some problem in your post"));
         Post responsePost = postRepos.save(post);
@@ -70,6 +74,7 @@ public class PostService {
     }
 
     @Transactional
+    @PreAuthorize(value = "hasPermission(#postDto, null)")
     public ResponseEntity<ApiMessageResponse> updatePost(PostDto postDto) {
         Post postToUpdate = postRepos.findById(postDto.getId()).orElseThrow(() -> new ApiSpecificException("Post is not present"));
 
@@ -80,11 +85,18 @@ public class PostService {
     }
 
     @Transactional
+    @PreAuthorize(value = "hasPermission(#post, null)")
     public ResponseEntity<ApiMessageResponse> deletePost(Post post) {
         postRepos.findById(post.getId()).orElseThrow(() -> new ApiSpecificException("Post is not present"));
 
 
         postRepos.deleteById(post.getId());
         return ResponseEntity.ok().body(new ApiMessageResponse(post.getId()));
+    }
+
+    @Transactional
+    public void deleteAllPosts()
+    {
+        postRepos.deleteAll();
     }
 }

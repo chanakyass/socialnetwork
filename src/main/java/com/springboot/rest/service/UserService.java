@@ -9,8 +9,12 @@ import com.springboot.rest.model.projections.UserView;
 import com.springboot.rest.repository.UserRepos;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
+
+import javax.annotation.security.RolesAllowed;
 import javax.transaction.Transactional;
 
 @Service
@@ -27,6 +31,8 @@ public class UserService {
         this.userMapper = userMapper;
     }
 
+    @RolesAllowed("ROLE_USER")
+    @GetMapping(path = "api/v1/profile/{profileName}")
     public UserView getUser(Long userId) {
         return userRepos.findUserById(userId).orElseThrow(() -> new ApiSpecificException("User is not present"));
     }
@@ -49,6 +55,8 @@ public class UserService {
     }
 
     @Transactional
+    @RolesAllowed("ROLE_USER")
+    @PreAuthorize(value = "hasPermission(#user, null)")
     public ResponseEntity<ApiMessageResponse> delUser(User user) {
         userRepos.findById(user.getId()).orElseThrow(() -> new ApiSpecificException("User is not present"));
         userRepos.deleteById(user.getId());
@@ -57,6 +65,8 @@ public class UserService {
     }
 
     @Transactional
+    @RolesAllowed("ROLE_USER")
+    @PreAuthorize(value = "hasPermission(#userDto, null)")
     public ResponseEntity<ApiMessageResponse> updateUser(UserDto userDto) {
         User user = userRepos.findById(userDto.getId()).orElseThrow(() -> new ApiSpecificException("User is not present"));
         userMapper.update(userDto, user);
@@ -64,13 +74,12 @@ public class UserService {
     }
 
     @Transactional
-    public ResponseEntity<ApiMessageResponse> delAllUsers()
+    public void delAllUsers()
     {
         if(!userRepos.findAll().isEmpty())
         {
             userRepos.deleteAll();
         }
-        return ResponseEntity.ok().body(new ApiMessageResponse());
     }
 
 }

@@ -1,14 +1,13 @@
 package com.springboot.rest.model.dto;
 
-import com.springboot.rest.model.entities.ApiResourceMarker;
 import com.springboot.rest.model.entities.Role;
-import com.springboot.rest.model.entities.User;
+import com.springboot.rest.model.entities.UserPersonalMarker;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 
-public class UserDto {
+public class UserDto implements UserPersonalMarker {
 
     Long id;
 
@@ -16,7 +15,7 @@ public class UserDto {
 
     String email;
 
-    Long age;
+    Integer age;
 
     LocalDate DOB;
 
@@ -24,7 +23,7 @@ public class UserDto {
 
     List<Role> grantedAuthoritiesList;
 
-    public UserDto(Long id, String name, String email, Long age, LocalDate DOB, String userSummary, List<Role> grantedAuthoritiesList) {
+    public UserDto(Long id, String name, String email, Integer age, LocalDate DOB, String userSummary, List<Role> grantedAuthoritiesList) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -74,11 +73,11 @@ public class UserDto {
         this.email = email;
     }
 
-    public Long getAge() {
+    public Integer getAge() {
         return age;
     }
 
-    public void setAge(Long age) {
+    public void setAge(Integer age) {
         this.age = age;
     }
 
@@ -105,5 +104,4 @@ public class UserDto {
     public void setGrantedAuthoritiesList(List<Role> grantedAuthoritiesList) {
         this.grantedAuthoritiesList = grantedAuthoritiesList;
     }
-
 }

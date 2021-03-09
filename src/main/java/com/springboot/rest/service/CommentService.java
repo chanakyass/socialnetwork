@@ -14,6 +14,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -36,7 +38,8 @@ public class CommentService {
 
 
     }
-
+    @PreAuthorize(value = "hasPermission(#comment, null)")
+    @PostAuthorize(value = "@authorizationService.saveSecureResource(returnObject.body.resourceId, 'C')")
     public ResponseEntity<ApiMessageResponse> addCommentOnActivity(Comment comment) {
         Optional.ofNullable(comment).orElseThrow(() -> new ApiSpecificException("Some issue with your comment. Please check again"));
         postRepos.findById(comment.getCommentedOn().getId()).orElseThrow(() -> new ApiSpecificException("Post is not present"));
@@ -67,16 +70,18 @@ public class CommentService {
     }
 
     @Transactional
-    public ResponseEntity<ApiMessageResponse> delCommentOnActivity(Comment reqComment) {
-        Comment comment = commentRepos.findById(reqComment.getId()).orElseThrow(() -> new ApiSpecificException("Comment is not present"));
+    @PreAuthorize(value = "hasPermission(#comment, null)")
+    public ResponseEntity<ApiMessageResponse> delCommentOnActivity(Comment comment) {
+        commentRepos.findById(comment.getId()).orElseThrow(() -> new ApiSpecificException("Comment is not present"));
 
-        commentRepos.delete(comment);
+        commentRepos.deleteById(comment.getId());
 
-        return ResponseEntity.ok().body(new ApiMessageResponse(reqComment.getId()));
+        return ResponseEntity.ok().body(new ApiMessageResponse(comment.getId()));
     }
 
 
     @Transactional
+    @PreAuthorize(value = "hasPermission(#commentEdit, null)")
     public ResponseEntity<ApiMessageResponse> changeCommentOnActivity(CommentEdit commentEdit) {
         if (commentEdit.getCommentContent().isEmpty()) {
             throw new ApiSpecificException("Please add some comment content");

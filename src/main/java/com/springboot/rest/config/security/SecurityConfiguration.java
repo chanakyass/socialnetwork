@@ -85,7 +85,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                         (request, response, ex) -> {
                             exceptionHandler.resolveException(request, response, null, ex);
                         }
-                ).and().anonymous().and();
+                )
+                .accessDeniedHandler((httpServletRequest, httpServletResponse, e) -> exceptionHandler.resolveException(httpServletRequest, httpServletResponse, null, e))
+                .and().anonymous().and();
                 http.authorizeRequests()
                 //.antMatchers("api/v1/resource/**", "api/v1/profile/**")
                 .antMatchers("/api/v1/public/**").permitAll()

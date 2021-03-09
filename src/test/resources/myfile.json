@@ -1,0 +1,23 @@
+{
+  "SUCCESS": {
+    "name": "test",
+    "email": "test@rest.com",
+    "password": "pass",
+    "grantedAuthoritiesList": [{
+      "authority":"ROLE_USER"}]
+  },
+  "SUCCESS2": {
+    "name": "chan",
+    "email": "chan@rest.com",
+    "password": "pass",
+    "grantedAuthoritiesList": [{
+      "authority":"ROLE_USER"}]
+  },
+  "CREATE_SUCCESS": {
+    "name": "swathy",
+    "email": "swathy@kothi.com",
+    "password": "pass",
+    "grantedAuthoritiesList": [{
+      "authority":"ROLE_USER"}]
+  }
+}

@@ -21,23 +21,22 @@ public class Comment implements ApiResourceMarker {
 
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @NotNull
-    @JoinColumn(name = "owned_by_user", foreignKey = @ForeignKey(name = "fk_owner_user_id"))
+    @JoinColumn(name = "owned_by_user", foreignKey = @ForeignKey(name = "fk_owner_user_id"), nullable = false)
     private User owner;
 
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @NotNull
-    @JoinColumn(name = "parent_comment", foreignKey = @ForeignKey(name = "fk_parent_comment_id"))
+    @JoinColumn(name = "parent_comment", foreignKey = @ForeignKey(name = "fk_parent_comment_id"), nullable = false)
     Comment parentComment;
-    @NotNull
+
+    @Column(nullable = false)
     private String commentContent;
     private LocalDate commentedOnDate;
     private LocalDate modifiedOnDate;
-    private long noOfLikes;
+    private Long noOfLikes;
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "commented_on_post", foreignKey = @ForeignKey(name = "fk_parent_post_id"))
+    @JoinColumn(name = "commented_on_post", foreignKey = @ForeignKey(name = "fk_parent_post_id"), nullable = false)
     private Post commentedOn;
 
     public Comment() {

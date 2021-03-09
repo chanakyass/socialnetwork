@@ -1,16 +1,19 @@
 package com.springboot.rest.config.security;
 
-import com.springboot.rest.model.entities.ApiResourceMarker;
-import com.springboot.rest.model.entities.SecureResource;
-import com.springboot.rest.model.entities.User;
+import com.springboot.rest.model.entities.*;
 import com.springboot.rest.repository.SecureResourceRepos;
 import com.springboot.rest.repository.UserRepos;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 import java.util.Optional;
 
@@ -19,75 +22,82 @@ public class PermissionEvaluatorImpl implements PermissionEvaluator {
 
     private final UserRepos userRepos;
     private final SecureResourceRepos secureResourceRepos;
+    private final HandlerExceptionResolver exceptionHandler;
 
     @Autowired
-    public PermissionEvaluatorImpl(UserRepos userRepos, SecureResourceRepos secureResourceRepos) {
+    public PermissionEvaluatorImpl(UserRepos userRepos, SecureResourceRepos secureResourceRepos, @Qualifier("handlerExceptionResolver") HandlerExceptionResolver exceptionHandler) {
         this.userRepos = userRepos;
         this.secureResourceRepos = secureResourceRepos;
+        this.exceptionHandler = exceptionHandler;
 
     }
 
     @Override
     public boolean hasPermission(Authentication authentication, Object targetDomainObject, Object permission) {
 
-        if (authentication != null) {
-            UserDetails loggedUserDetails = (UserDetails) authentication.getPrincipal();
+            if (authentication != null) {
+                UserDetails loggedUserDetails = (UserDetails) authentication.getPrincipal();
 
-            //Gathering user details and user id of the logged in user
-            //access denied if user not logged in
+                //Gathering user details and user id of the logged in user
+                //access denied if user not logged in
 
-            Long loggedInUserId = null;
+                WebAuthenticationDetails webAuthenticationDetails = (WebAuthenticationDetails) authentication.getDetails();
 
-            if (loggedUserDetails == null || targetDomainObject == null)
-                return false;
+                Long loggedInUserId = null;
 
-            User loggedUser = userRepos.findUserByEmail(loggedUserDetails.getUsername()).orElse(null);
+                if (loggedUserDetails == null || targetDomainObject == null)
+                    throw new AccessDeniedException("Access is denied");
 
-            if (loggedUser == null || loggedUser.getId() == null) {
-                return false;
-            }
+                User loggedUser = userRepos.findUserByEmail(loggedUserDetails.getUsername()).orElse(null);
 
-            else loggedInUserId = loggedUser.getId();
+                if (loggedUser == null || loggedUser.getId() == null) {
+                    throw new AccessDeniedException("Access is denied");
+                } else loggedInUserId = loggedUser.getId();
 
-            //Check which class resource belongs to
+                //Check which class resource belongs to
 
-            if (targetDomainObject instanceof ApiResourceMarker) {
-                ApiResourceMarker resource = (ApiResourceMarker) targetDomainObject;
-                Optional<User> optionalUser = userRepos.findById(resource.getOwnerId());
+                if (targetDomainObject instanceof ApiResourceMarker) {
+                    ApiResourceMarker resource = (ApiResourceMarker) targetDomainObject;
+                    Optional<User> optionalUser = userRepos.findById(resource.getOwnerId());
 
-                if (optionalUser.isEmpty() || loggedInUserId.compareTo(optionalUser.get().getId()) != 0) {
-                    return false;
-                }
+                    if (optionalUser.isEmpty() || loggedInUserId.compareTo(optionalUser.get().getId()) != 0) {
+                        throw new AccessDeniedException("Access is denied");
+                    }
 
-                if (resource.getId() != null) {
+                    if (resource.getId() != null) {
 
-                    //Get the secured resource details like id, owner, etc from the secure_resource table
-                    SecureResource secureResource = secureResourceRepos.findById(resource.getId()).orElse(null);
+                        //Get the secured resource details like id, owner, etc from the secure_resource table
 
-                    if (secureResource != null)
-                        //check if the resource belongs to the logged in user
-                        return (secureResource.getOwner().getId().compareTo(loggedInUserId) == 0);
+                        SecureResource secureResource = secureResourceRepos.findByResourceTypeAndId(resource.getId()).orElse(null);
+
+                        if (secureResource != null)
+                            //check if the resource belongs to the logged in user
+                            if( secureResource.getOwner().getId().compareTo(loggedInUserId) != 0)
+                                throw new AccessDeniedException("Access is denied");
+                            else return true;
+                        return true;
+                    }
                     return true;
-                }
-                return true;
-            } else if (targetDomainObject instanceof User) {
+                } else if (targetDomainObject instanceof UserPersonalMarker) {
 
-                //If object is user profile then we only need to check if logged in user is trying to change the owner of the resource
+                    //If object is user profile then we only need to check if logged in user is trying to change the owner of the resource
 
-                User targetUser = (User) targetDomainObject;
+                    UserPersonalMarker targetUser = (UserPersonalMarker) targetDomainObject;
 
-                if (targetUser.getId() != null) {
+                    if (targetUser.getId() != null) {
 
-                    return targetUser.getId().compareTo(loggedInUserId) == 0;
-                }
-                return true;
+                        if(targetUser.getId().compareTo(loggedInUserId) != 0)
+                            throw new AccessDeniedException("Access is denied");
+                        else return true;
+                    }
+                    return true;
+                } else throw new AccessDeniedException("Access is denied");
+
             }
-            else return false;
 
+            return false;
         }
 
-        return false;
-    }
 
     @Override
     public boolean hasPermission(Authentication authentication, Serializable targetId, String targetType, Object permission) {

@@ -1,11 +1,19 @@
 package com.springboot.rest.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.springboot.rest.model.entities.ApiResourceMarker;
 import com.springboot.rest.model.entities.User;
+import net.bytebuddy.implementation.bind.annotation.IgnoreForBinding;
 
 import java.time.LocalDate;
 import java.util.Objects;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class PostDto implements ApiResourceMarker {
 
     Long id;
@@ -90,10 +98,12 @@ public class PostDto implements ApiResourceMarker {
         this.noOfLikes = noOfLikes;
     }
 
+    @JsonSerialize(using = LocalDateSerializer.class)
     public LocalDate getPostedOnDate() {
         return postedOnDate;
     }
 
+    @JsonDeserialize(using = LocalDateDeserializer.class)
     public void setPostedOnDate(LocalDate postedOnDate) {
         this.postedOnDate = postedOnDate;
     }
