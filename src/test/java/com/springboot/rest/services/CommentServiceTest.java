@@ -2,11 +2,10 @@ package com.springboot.rest.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.springboot.rest.DemoApplicationTests;
-import com.springboot.rest.data.PostTestDataFactory;
-import com.springboot.rest.model.dto.PostDto;
-import com.springboot.rest.model.entities.Post;
-import com.springboot.rest.model.mapper.PostMapper;
-import com.springboot.rest.model.projections.PostView;
+import com.springboot.rest.data.CommentTestDataFactory;
+import com.springboot.rest.model.dto.CommentDto;
+import com.springboot.rest.model.entities.Comment;
+import com.springboot.rest.model.mapper.CommentMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -25,26 +24,28 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @WithUserDetails(value = "test@rest.com", userDetailsServiceBeanName = "basicUsers")
 @Slf4j
-public class PostServiceTest extends DemoApplicationTests {
+public class CommentServiceTest extends DemoApplicationTests {
 
     private final MockMvc mockMvc;
     private final ObjectMapper objectMapper;
-    private final PostMapper postMapper;
-    private final PostTestDataFactory postTestDataFactory;
+    private final CommentMapper commentMapper;
+    private final CommentTestDataFactory commentTestDataFactory;
 
 
     @Autowired
-    public PostServiceTest(MockMvc mockMvc, ObjectMapper objectMapper, PostMapper postMapper, PostTestDataFactory postTestDataFactory) {
+    public CommentServiceTest(MockMvc mockMvc, ObjectMapper objectMapper, CommentMapper commentMapper,
+                            CommentTestDataFactory commentTestDataFactory) {
         this.mockMvc = mockMvc;
         this.objectMapper = objectMapper;
-        this.postMapper = postMapper;
-        this.postTestDataFactory = postTestDataFactory;
+        this.commentMapper = commentMapper;
+        this.commentTestDataFactory = commentTestDataFactory;
     }
 
     @BeforeAll
@@ -74,61 +75,59 @@ public class PostServiceTest extends DemoApplicationTests {
     }
 
     @Test
-    public void testPostCreateSuccess() throws Exception
+    public void testCommentCreateSuccess() throws Exception
     {
-        Post post = postTestDataFactory.createPostForLoggedInUser();
-
+        Comment comment = commentTestDataFactory.createCommentTemplateForLoggedInUser();
         MvcResult createResult = this.mockMvc
-                .perform(post("/api/v1/resource/post")
+                .perform(post("/api/v1/resource/comment")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(post)))
+                        .content(objectMapper.writeValueAsString(comment)))
                 .andExpect(status().isOk())
                 .andReturn();
 
     }
 
     @Test
-    public void testPostCreateFailureAuth() throws Exception
+    public void testCommentCreateFailureAuth() throws Exception
     {
-        Post post = postTestDataFactory.createPostForOtherUser();
+        Comment comment = commentTestDataFactory.createCommentTemplateForOtherUser();
         MvcResult createResult = this.mockMvc
-                .perform(post("/api/v1/resource/post")
+                .perform(post("/api/v1/resource/comment")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(post)))
+                        .content(objectMapper.writeValueAsString(comment)))
                 .andExpect(status().isInternalServerError())
                 .andReturn();
 
     }
 
     @Test
-    public void testPostCreateFailureOther() throws Exception
+    public void testCommentCreateFailureOther() throws Exception
     {
-        Post post = postTestDataFactory.createPostForLoggedInUser();
-        post.setPostHeading(null);
-        post.setPostBody(null);
+        Comment comment = commentTestDataFactory.createCommentTemplateForLoggedInUser();
+        comment.setCommentContent(null);
         MvcResult createResult = this.mockMvc
-                .perform(post("/api/v1/resource/post")
+                .perform(post("/api/v1/resource/comment")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(post)))
+                        .content(objectMapper.writeValueAsString(comment)))
                 .andExpect(status().isInternalServerError())
                 .andReturn();
 
     }
 
     @Test
-    public void testPostUpdateSuccess() throws Exception
+    public void testCommentUpdateSuccess() throws Exception
     {
-        // Create Post
-        Post post = postTestDataFactory.getPreExistingPost();
-        post.setPostBody("This is changed");
+        // Create Comment
+        Comment comment = commentTestDataFactory.getPreExistingComment();
+        comment.setCommentContent("This is changed");
 
-        PostDto postEdit = new PostDto();
-        postMapper.toPostDto(post, postEdit);
+        CommentDto commentEdit = new CommentDto();
+        commentMapper.toCommentDto(comment, commentEdit);
 
         MvcResult createResult = this.mockMvc
-                .perform(put("/api/v1/resource/post")
+                .perform(put("/api/v1/resource/comment")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(postEdit)))
+                        .content(objectMapper.writeValueAsString(commentEdit)))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -136,32 +135,21 @@ public class PostServiceTest extends DemoApplicationTests {
 
     @Test
     @WithUserDetails(value = "chan@rest.com", userDetailsServiceBeanName = "basicUsers")
-    public void testPostUpdateFailureAuth() throws Exception
+    public void testCommentUpdateFailureAuth() throws Exception
     {
-        PostDto postEdit = new PostDto();
-        Post post = postTestDataFactory.getPreExistingPost();
-        post.setPostBody("This is changed");
-        postMapper.toPostDto(post, postEdit);
+        CommentDto commentEdit = new CommentDto();
+        Comment comment = commentTestDataFactory.getPreExistingComment();
+        comment.setCommentContent("This is changed");
+
+        commentMapper.toCommentDto(comment, commentEdit);
 
         MvcResult createResult = this.mockMvc
-                .perform(put("/api/v1/resource/post")
+                .perform(put("/api/v1/resource/comment")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(postEdit)))
+                        .content(objectMapper.writeValueAsString(commentEdit)))
                 .andExpect(status().isInternalServerError())
                 .andReturn();
 
-    }
-
-    @Test
-    public void testPostDeleteSuccess() throws Exception
-    {
-        Post post = postTestDataFactory.getPreExistingPost();
-        MvcResult createResult = this.mockMvc
-                .perform(delete("/api/v1/resource/post")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(post)))
-                .andExpect(status().isOk())
-                .andReturn();
     }
 
 }

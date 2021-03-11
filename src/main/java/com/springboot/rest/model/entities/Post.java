@@ -1,9 +1,6 @@
 package com.springboot.rest.model.entities;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
@@ -22,7 +19,6 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include;
 @JsonInclude(value = Include.NON_EMPTY)
 @Table(name = "posts")
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@postId")
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class Post implements ApiResourceMarker {
 
     @Id

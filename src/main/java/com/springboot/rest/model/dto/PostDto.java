@@ -13,7 +13,6 @@ import net.bytebuddy.implementation.bind.annotation.IgnoreForBinding;
 import java.time.LocalDate;
 import java.util.Objects;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class PostDto implements ApiResourceMarker {
 
     Long id;
@@ -42,6 +41,8 @@ public class PostDto implements ApiResourceMarker {
 
     public PostDto() {
     }
+
+
 
     public Long getId() {
         return id;
@@ -108,16 +109,18 @@ public class PostDto implements ApiResourceMarker {
         this.postedOnDate = postedOnDate;
     }
 
+    @JsonSerialize(using = LocalDateSerializer.class)
     public LocalDate getModifiedOnDate() {
         return modifiedOnDate;
     }
 
+    @JsonDeserialize(using = LocalDateDeserializer.class)
     public void setModifiedOnDate(LocalDate modifiedOnDate) {
         this.modifiedOnDate = modifiedOnDate;
     }
 
     @Override
     public Long getOwnerId() {
-        return owner.getId();
+        return this.owner.getId();
     }
 }

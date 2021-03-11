@@ -1,7 +1,13 @@
 package com.springboot.rest.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.sun.istack.NotNull;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -15,8 +21,8 @@ import java.time.LocalDate;
 public class Comment implements ApiResourceMarker {
 
     @Id
-    @SequenceGenerator(name = "resource_sequence", sequenceName = "resource_sequence", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "resource_sequence")
+    @SequenceGenerator(name = "comment_sequence", sequenceName = "comment_sequence", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "comment_sequence")
     private Long id;
 
     @ManyToOne
@@ -26,7 +32,7 @@ public class Comment implements ApiResourceMarker {
 
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "parent_comment", foreignKey = @ForeignKey(name = "fk_parent_comment_id"), nullable = false)
+    @JoinColumn(name = "parent_comment", foreignKey = @ForeignKey(name = "fk_parent_comment_id"))
     Comment parentComment;
 
     @Column(nullable = false)
@@ -42,7 +48,7 @@ public class Comment implements ApiResourceMarker {
     public Comment() {
     }
 
-    public Comment(Long id, User owner, Comment parentComment, String commentContent, LocalDate commentedOnDate, LocalDate modifiedOnDate, long noOfLikes, Post commentedOn) {
+    public Comment(Long id, User owner, Comment parentComment, String commentContent, LocalDate commentedOnDate, LocalDate modifiedOnDate, Long noOfLikes, Post commentedOn) {
         this.id = id;
         this.owner = owner;
         this.parentComment = parentComment;
@@ -90,27 +96,31 @@ public class Comment implements ApiResourceMarker {
         this.commentContent = commentContent;
     }
 
+    @JsonSerialize(using = LocalDateSerializer.class)
     public LocalDate getCommentedOnDate() {
         return commentedOnDate;
     }
 
+    @JsonDeserialize(using = LocalDateDeserializer.class)
     public void setCommentedOnDate(LocalDate commentedOnDate) {
         this.commentedOnDate = commentedOnDate;
     }
 
+    @JsonSerialize(using = LocalDateSerializer.class)
     public LocalDate getModifiedOnDate() {
         return modifiedOnDate;
     }
 
+    @JsonDeserialize(using = LocalDateDeserializer.class)
     public void setModifiedOnDate(LocalDate modifiedOnDate) {
         this.modifiedOnDate = modifiedOnDate;
     }
 
-    public long getNoOfLikes() {
+    public Long getNoOfLikes() {
         return noOfLikes;
     }
 
-    public void setNoOfLikes(long noOfLikes) {
+    public void setNoOfLikes(Long noOfLikes) {
         this.noOfLikes = noOfLikes;
     }
 

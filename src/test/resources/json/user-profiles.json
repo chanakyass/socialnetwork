@@ -1,21 +1,24 @@
 {
-  "SUCCESS": {
+  "LOGGED_IN_USER": {
+    "id": 1,
     "name": "test",
     "email": "test@rest.com",
     "password": "pass",
     "grantedAuthoritiesList": [{
       "authority":"ROLE_USER"}]
   },
-  "SUCCESS2": {
+  "ANOTHER_USER": {
+    "id": 2,
     "name": "chan",
     "email": "chan@rest.com",
     "password": "pass",
     "grantedAuthoritiesList": [{
       "authority":"ROLE_USER"}]
   },
-  "CREATE_SUCCESS": {
-    "name": "swathy",
-    "email": "swathy@kothi.com",
+  "THIRD_USER": {
+    "id": 3,
+    "name": "whataview",
+    "email": "whataview@rest.com",
     "password": "pass",
     "grantedAuthoritiesList": [{
       "authority":"ROLE_USER"}]

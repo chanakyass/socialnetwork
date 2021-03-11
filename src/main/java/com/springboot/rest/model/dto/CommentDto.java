@@ -1,5 +1,12 @@
 package com.springboot.rest.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+import com.springboot.rest.model.entities.ApiResourceMarker;
 import com.springboot.rest.model.entities.Comment;
 import com.springboot.rest.model.entities.Post;
 import com.springboot.rest.model.entities.User;
@@ -7,11 +14,11 @@ import com.springboot.rest.model.entities.User;
 import java.time.LocalDate;
 import java.util.Objects;
 
-public class CommentEdit{
+public class CommentDto implements ApiResourceMarker {
 
     Long id;
 
-    User owner;
+    UserDto owner;
 
     String commentContent;
 
@@ -21,11 +28,11 @@ public class CommentEdit{
 
     Long noOfLikes;
 
-    Post commentedOn;
+    PostDto commentedOn;
 
-    Comment parentComment;
+    CommentDto parentComment;
 
-    public CommentEdit(Long id, User owner, String commentContent, LocalDate commentedOnDate, LocalDate modifiedOnDate, Long noOfLikes, Post commentedOn, Comment parentComment) {
+    public CommentDto(Long id, UserDto owner, String commentContent, LocalDate commentedOnDate, LocalDate modifiedOnDate, Long noOfLikes, PostDto commentedOn, CommentDto parentComment) {
         this.id = id;
         this.owner = owner;
         this.commentContent = commentContent;
@@ -36,14 +43,14 @@ public class CommentEdit{
         this.parentComment = parentComment;
     }
 
-    public CommentEdit() {
+    public CommentDto() {
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof CommentEdit)) return false;
-        CommentEdit that = (CommentEdit) o;
+        if (!(o instanceof CommentDto)) return false;
+        CommentDto that = (CommentDto) o;
         return getId().equals(that.getId()) && getOwner().equals(that.getOwner());
     }
 
@@ -60,11 +67,11 @@ public class CommentEdit{
         this.id = id;
     }
 
-    public User getOwner() {
+    public UserDto getOwner() {
         return owner;
     }
 
-    public void setOwner(User owner) {
+    public void setOwner(UserDto owner) {
         this.owner = owner;
     }
 
@@ -76,18 +83,22 @@ public class CommentEdit{
         this.commentContent = commentContent;
     }
 
+    @JsonSerialize(using = LocalDateSerializer.class)
     public LocalDate getCommentedOnDate() {
         return commentedOnDate;
     }
 
+    @JsonDeserialize(using = LocalDateDeserializer.class)
     public void setCommentedOnDate(LocalDate commentedOnDate) {
         this.commentedOnDate = commentedOnDate;
     }
 
+    @JsonSerialize(using = LocalDateSerializer.class)
     public LocalDate getModifiedOnDate() {
         return modifiedOnDate;
     }
 
+    @JsonDeserialize(using = LocalDateDeserializer.class)
     public void setModifiedOnDate(LocalDate modifiedOnDate) {
         this.modifiedOnDate = modifiedOnDate;
     }
@@ -100,19 +111,24 @@ public class CommentEdit{
         this.noOfLikes = noOfLikes;
     }
 
-    public Post getCommentedOn() {
+    public PostDto getCommentedOn() {
         return commentedOn;
     }
 
-    public void setCommentedOn(Post commentedOn) {
+    public void setCommentedOn(PostDto commentedOn) {
         this.commentedOn = commentedOn;
     }
 
-    public Comment getParentComment() {
+    public CommentDto getParentComment() {
         return parentComment;
     }
 
-    public void setParentComment(Comment parentComment) {
+    public void setParentComment(CommentDto parentComment) {
         this.parentComment = parentComment;
+    }
+
+    @Override
+    public Long getOwnerId() {
+        return this.owner.getId();
     }
 }

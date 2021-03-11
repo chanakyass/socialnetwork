@@ -1,0 +1,12 @@
+{
+  "EXISTING_POST": {
+    "id": 1,
+    "owner": {
+      "id": 1
+    },
+    "postedOnDate": "2020-02-05",
+    "postHeading": "post heading",
+    "postBody": "post body",
+    "noOfLikes": 0
+  }
+}

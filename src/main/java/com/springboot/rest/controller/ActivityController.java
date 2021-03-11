@@ -1,7 +1,7 @@
 package com.springboot.rest.controller;
 
 import com.springboot.rest.model.dto.ApiMessageResponse;
-import com.springboot.rest.model.dto.CommentEdit;
+import com.springboot.rest.model.dto.CommentDto;
 import com.springboot.rest.model.dto.PostDto;
 import com.springboot.rest.model.entities.Comment;
 import com.springboot.rest.model.entities.LikeComment;
@@ -18,8 +18,6 @@ import com.springboot.rest.service.PostService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PostAuthorize;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.RolesAllowed;
@@ -97,8 +95,8 @@ public class ActivityController {
     }
 
     @PutMapping("comment")
-    public ResponseEntity<ApiMessageResponse> updateComment(@RequestBody CommentEdit commentEdit) {
-        return commentService.changeCommentOnActivity(commentEdit);
+    public ResponseEntity<ApiMessageResponse> updateComment(@RequestBody CommentDto commentDto) {
+        return commentService.changeCommentOnActivity(commentDto);
     }
 
     //@PostAuthorize(value = "@authorizationService.deleteSecureResource(returnObject.body.resourceId)")
@@ -116,7 +114,9 @@ public class ActivityController {
     @GetMapping("comment/{commentId}/replies/{pageNo}")
     public List<CommentView> getRepliesOnComment(@PathVariable("commentId") Long commentId,
                                                  @PathVariable("pageNo") int pageNo) {
-        return commentService.getRepliesOnComment(commentId, pageNo);
+        List<CommentView> comments =  commentService.getRepliesOnComment(commentId, pageNo);
+        System.out.println("to debug");
+        return comments;
     }
 
 

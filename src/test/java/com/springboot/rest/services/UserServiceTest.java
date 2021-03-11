@@ -1,9 +1,7 @@
 package com.springboot.rest.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.springboot.rest.config.TestBeansConfig;
-import com.springboot.rest.config.TestConfig;
-import com.springboot.rest.config.security.SpringSecurityWebAuxTestConfig;
+import com.springboot.rest.DemoApplicationTests;
 import com.springboot.rest.data.UserTestDataFactory;
 import com.springboot.rest.model.dto.UserDto;
 import com.springboot.rest.model.entities.User;
@@ -13,9 +11,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
@@ -23,7 +18,6 @@ import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -32,11 +26,9 @@ import java.sql.SQLException;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@Import({TestBeansConfig.class, SpringSecurityWebAuxTestConfig.class, TestConfig.class})
+
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class UserServiceTest {
+public class UserServiceTest extends DemoApplicationTests {
 
 
     private final MockMvc mockMvc;
@@ -48,19 +40,13 @@ public class UserServiceTest {
 
     void setup(@Autowired DataSource dataSource,
                @Autowired PlatformTransactionManager transactionManager) {
-        new TransactionTemplate(transactionManager).execute((ts) -> {
-            try (Connection conn = dataSource.getConnection()) {
-                ScriptUtils.executeSqlScript(conn, new ClassPathResource("1.sql"));
-                //ScriptUtils.executeSqlScript(conn, new ClassPathResource("album.sql"));
-                // should work without manually commit but didn't for me (because of using AUTOCOMMIT=OFF)
-                // I use url=jdbc:h2:mem:myDb;DB_CLOSE_DELAY=-1;MODE=MySQL;AUTOCOMMIT=OFF
-                // same will happen with DataSourceInitializer & DatabasePopulator (at least with this setup)
-                conn.commit();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            return null;
-        });
+        try (Connection conn = dataSource.getConnection()) {
+            // you'll have to make sure conn.autoCommit = true (default for e.g. H2)
+            // e.g. url=jdbc:h2:mem:myDb;DB_CLOSE_DELAY=-1;MODE=MySQL
+            ScriptUtils.executeSqlScript(conn, new ClassPathResource("db/write-related/1.sql"));
+        } catch (SQLException throwable) {
+            throwable.printStackTrace();
+        }
     }
 
 
@@ -68,19 +54,13 @@ public class UserServiceTest {
     public void fireDown(@Autowired DataSource dataSource,
                          @Autowired PlatformTransactionManager transactionManager)
     {
-        new TransactionTemplate(transactionManager).execute((ts) -> {
-            try (Connection conn = dataSource.getConnection()) {
-                ScriptUtils.executeSqlScript(conn, new ClassPathResource("2.sql"));
-                //ScriptUtils.executeSqlScript(conn, new ClassPathResource("album.sql"));
-                // should work without manually commit but didn't for me (because of using AUTOCOMMIT=OFF)
-                // I use url=jdbc:h2:mem:myDb;DB_CLOSE_DELAY=-1;MODE=MySQL;AUTOCOMMIT=OFF
-                // same will happen with DataSourceInitializer & DatabasePopulator (at least with this setup)
-                conn.commit();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            return null;
-        });
+        try (Connection conn = dataSource.getConnection()) {
+            // you'll have to make sure conn.autoCommit = true (default for e.g. H2)
+            // e.g. url=jdbc:h2:mem:myDb;DB_CLOSE_DELAY=-1;MODE=MySQL
+            ScriptUtils.executeSqlScript(conn, new ClassPathResource("db/write-related/2.sql"));
+        } catch (SQLException throwable) {
+            throwable.printStackTrace();
+        }
     }
 
     @Autowired
@@ -98,7 +78,7 @@ public class UserServiceTest {
     @Test
     public void testUserCreateSuccess() throws Exception  {
 
-        User user = userTestDataFactory.createUserForTest("CREATE_SUCCESS");
+        User user = userTestDataFactory.createUserForTest();
 
             MvcResult createResult = this.mockMvc
                     .perform(post("/api/v1/public/register")
@@ -111,7 +91,7 @@ public class UserServiceTest {
     @Test
     public void testUserCreateFailure() throws Exception{
 
-        User user = userTestDataFactory.createUserForTest("CREATE_SUCCESS");
+        User user = userTestDataFactory.createUserForTest();
         user.setEmail(null);
             MvcResult createResult = this.mockMvc.perform(post("/api/v1/public/register").contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(user)))

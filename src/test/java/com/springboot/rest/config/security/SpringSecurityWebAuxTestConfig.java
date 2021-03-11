@@ -17,6 +17,7 @@ public class SpringSecurityWebAuxTestConfig {
     @Bean(name = "basicUsers")
     @Primary
     public static UserDetailsService userDetailsService(@Qualifier("testUsers") HashMap<String, User> userHashMap) {
-        return new InMemoryUserDetailsManager(new UserAdapter(userHashMap.get("SUCCESS")), new UserAdapter(userHashMap.get("SUCCESS2")));
+        return new InMemoryUserDetailsManager(new UserAdapter(userHashMap.get("LOGGED_IN_USER")), new UserAdapter(userHashMap.get("ANOTHER_USER")),
+                                                                new UserAdapter(userHashMap.get("THIRD_USER")));
     }
 }

@@ -2,7 +2,7 @@ package com.springboot.rest.service;
 
 import com.springboot.rest.config.exceptions.ApiSpecificException;
 import com.springboot.rest.model.dto.ApiMessageResponse;
-import com.springboot.rest.model.dto.CommentEdit;
+import com.springboot.rest.model.dto.CommentDto;
 import com.springboot.rest.model.entities.Comment;
 import com.springboot.rest.model.mapper.CommentMapper;
 import com.springboot.rest.model.projections.CommentView;
@@ -81,16 +81,16 @@ public class CommentService {
 
 
     @Transactional
-    @PreAuthorize(value = "hasPermission(#commentEdit, null)")
-    public ResponseEntity<ApiMessageResponse> changeCommentOnActivity(CommentEdit commentEdit) {
-        if (commentEdit.getCommentContent().isEmpty()) {
+    @PreAuthorize(value = "hasPermission(#commentDto, null)")
+    public ResponseEntity<ApiMessageResponse> changeCommentOnActivity(CommentDto commentDto) {
+        if (commentDto.getCommentContent().isEmpty()) {
             throw new ApiSpecificException("Please add some comment content");
         }
 
-        Comment comment = commentRepos.findById(commentEdit.getId()).orElseThrow(() -> new ApiSpecificException("Comment is not present"));
+        Comment comment = commentRepos.findById(commentDto.getId()).orElseThrow(() -> new ApiSpecificException("Comment is not present"));
 
-        commentEdit.setModifiedOnDate(LocalDate.now());
-        commentMapper.update(commentEdit, comment);
-        return ResponseEntity.ok().body(new ApiMessageResponse(commentEdit.getId()));
+        commentDto.setModifiedOnDate(LocalDate.now());
+        commentMapper.update(commentDto, comment);
+        return ResponseEntity.ok().body(new ApiMessageResponse(commentDto.getId()));
     }
 }

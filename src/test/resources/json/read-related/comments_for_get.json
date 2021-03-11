@@ -1,0 +1,83 @@
+[
+  {
+    "id": 1,
+    "owner" : {
+      "id" : 1
+    },
+    "commentContent": "This is comment existing",
+    "commentedOnDate": "2020-02-05",
+    "noOfLikes":0,
+    "commentedOn": {
+      "id" : 1
+    }
+  },
+  {
+    "id": 2,
+    "owner" : {
+      "id" : 2
+    },
+    "commentContent": "This is comment existing",
+    "commentedOnDate": "2020-02-05",
+    "noOfLikes":0,
+    "commentedOn": {
+      "id" : 1
+    }
+  },
+  {
+    "id": 3,
+    "owner" : {
+      "id" : 1
+    },
+    "commentContent": "This is comment existing",
+    "commentedOnDate": "2020-02-05",
+    "noOfLikes":0,
+    "commentedOn": {
+      "id" : 1
+    }
+  },
+  {
+    "id": 4,
+    "owner" : {
+      "id" : 2
+    },
+    "commentContent": "This is comment existing",
+    "commentedOnDate": "2020-02-05",
+    "noOfLikes":0,
+    "commentedOn": {
+      "id" : 1
+    },
+    "parentComment": {
+      "id": 1
+    }
+  },
+  {
+    "id": 5,
+    "owner" : {
+      "id" : 1
+    },
+    "commentContent": "This is comment existing",
+    "commentedOnDate": "2020-02-05",
+    "noOfLikes":0,
+    "commentedOn": {
+      "id" : 1
+    },
+    "parentComment": {
+      "id": 1
+    }
+  },
+  {
+    "id": 6,
+    "owner" : {
+      "id" : 2
+    },
+    "commentContent": "This is comment existing",
+    "commentedOnDate": "2020-02-05",
+    "noOfLikes":0,
+    "commentedOn": {
+      "id" : 1
+    },
+    "parentComment": {
+      "id": 1
+    }
+  }
+]
