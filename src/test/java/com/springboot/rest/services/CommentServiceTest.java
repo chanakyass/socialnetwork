@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.springboot.rest.DemoApplicationTests;
 import com.springboot.rest.data.CommentTestDataFactory;
 import com.springboot.rest.model.dto.CommentDto;
-import com.springboot.rest.model.entities.Comment;
-import com.springboot.rest.model.mapper.CommentMapper;
+import com.springboot.rest.model.dto.CommentEditDto;
+import com.springboot.rest.model.mapper.CommentEditMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -24,8 +24,7 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -35,16 +34,16 @@ public class CommentServiceTest extends DemoApplicationTests {
 
     private final MockMvc mockMvc;
     private final ObjectMapper objectMapper;
-    private final CommentMapper commentMapper;
+    private final CommentEditMapper commentEditMapper;
     private final CommentTestDataFactory commentTestDataFactory;
 
 
     @Autowired
-    public CommentServiceTest(MockMvc mockMvc, ObjectMapper objectMapper, CommentMapper commentMapper,
+    public CommentServiceTest(MockMvc mockMvc, ObjectMapper objectMapper, CommentEditMapper commentEditMapper,
                             CommentTestDataFactory commentTestDataFactory) {
         this.mockMvc = mockMvc;
         this.objectMapper = objectMapper;
-        this.commentMapper = commentMapper;
+        this.commentEditMapper = commentEditMapper;
         this.commentTestDataFactory = commentTestDataFactory;
     }
 
@@ -77,7 +76,7 @@ public class CommentServiceTest extends DemoApplicationTests {
     @Test
     public void testCommentCreateSuccess() throws Exception
     {
-        Comment comment = commentTestDataFactory.createCommentTemplateForLoggedInUser();
+        CommentDto comment = commentTestDataFactory.createCommentTemplateForLoggedInUser();
         MvcResult createResult = this.mockMvc
                 .perform(post("/api/v1/resource/comment")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -90,7 +89,7 @@ public class CommentServiceTest extends DemoApplicationTests {
     @Test
     public void testCommentCreateFailureAuth() throws Exception
     {
-        Comment comment = commentTestDataFactory.createCommentTemplateForOtherUser();
+        CommentDto comment = commentTestDataFactory.createCommentTemplateForOtherUser();
         MvcResult createResult = this.mockMvc
                 .perform(post("/api/v1/resource/comment")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -103,7 +102,7 @@ public class CommentServiceTest extends DemoApplicationTests {
     @Test
     public void testCommentCreateFailureOther() throws Exception
     {
-        Comment comment = commentTestDataFactory.createCommentTemplateForLoggedInUser();
+        CommentDto comment = commentTestDataFactory.createCommentTemplateForLoggedInUser();
         comment.setCommentContent(null);
         MvcResult createResult = this.mockMvc
                 .perform(post("/api/v1/resource/comment")
@@ -118,11 +117,11 @@ public class CommentServiceTest extends DemoApplicationTests {
     public void testCommentUpdateSuccess() throws Exception
     {
         // Create Comment
-        Comment comment = commentTestDataFactory.getPreExistingComment();
+        CommentDto comment = commentTestDataFactory.getPreExistingComment();
         comment.setCommentContent("This is changed");
 
-        CommentDto commentEdit = new CommentDto();
-        commentMapper.toCommentDto(comment, commentEdit);
+        CommentEditDto commentEdit = new CommentEditDto();
+        commentEditMapper.toCommentEditDto(comment, commentEdit);
 
         MvcResult createResult = this.mockMvc
                 .perform(put("/api/v1/resource/comment")
@@ -137,11 +136,11 @@ public class CommentServiceTest extends DemoApplicationTests {
     @WithUserDetails(value = "chan@rest.com", userDetailsServiceBeanName = "basicUsers")
     public void testCommentUpdateFailureAuth() throws Exception
     {
-        CommentDto commentEdit = new CommentDto();
-        Comment comment = commentTestDataFactory.getPreExistingComment();
+        CommentEditDto commentEdit = new CommentEditDto();
+        CommentDto comment = commentTestDataFactory.getPreExistingComment();
         comment.setCommentContent("This is changed");
 
-        commentMapper.toCommentDto(comment, commentEdit);
+        commentEditMapper.toCommentEditDto(comment, commentEdit);
 
         MvcResult createResult = this.mockMvc
                 .perform(put("/api/v1/resource/comment")
@@ -150,6 +149,16 @@ public class CommentServiceTest extends DemoApplicationTests {
                 .andExpect(status().isInternalServerError())
                 .andReturn();
 
+    }
+
+    @Test
+    public void testCommentDeleteSuccess() throws Exception
+    {
+        Long commentId = commentTestDataFactory.createCommentTemplateForLoggedInUserAndInsertInDb();
+        MvcResult createResult = this.mockMvc
+                .perform(delete("/api/v1/resource/comment/"+commentId))
+                .andExpect(status().isOk())
+                .andReturn();
     }
 
 }

@@ -3,9 +3,10 @@ package com.springboot.rest.services;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.springboot.rest.DemoApplicationTests;
 import com.springboot.rest.data.UserTestDataFactory;
+import com.springboot.rest.model.dto.AuthRequest;
 import com.springboot.rest.model.dto.UserDto;
-import com.springboot.rest.model.entities.User;
-import com.springboot.rest.model.mapper.UserMapper;
+import com.springboot.rest.model.dto.UserEditDto;
+import com.springboot.rest.model.mapper.UserEditMapper;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -34,7 +35,7 @@ public class UserServiceTest extends DemoApplicationTests {
     private final MockMvc mockMvc;
     private final UserTestDataFactory userTestDataFactory;
     private final ObjectMapper objectMapper;
-    private final UserMapper userMapper;
+    private final UserEditMapper userEditMapper;
 
     @BeforeAll
 
@@ -64,13 +65,13 @@ public class UserServiceTest extends DemoApplicationTests {
     }
 
     @Autowired
-    public UserServiceTest(MockMvc mockMvc, UserTestDataFactory userTestDataFactory, UserMapper userMapper,
+    public UserServiceTest(MockMvc mockMvc, UserTestDataFactory userTestDataFactory, UserEditMapper userEditMapper,
                            ObjectMapper objectMapper) {
 
         this.mockMvc = mockMvc;
         this.userTestDataFactory = userTestDataFactory;
         this.objectMapper = objectMapper;
-        this.userMapper = userMapper;
+        this.userEditMapper = userEditMapper;
     }
 
 
@@ -78,7 +79,7 @@ public class UserServiceTest extends DemoApplicationTests {
     @Test
     public void testUserCreateSuccess() throws Exception  {
 
-        User user = userTestDataFactory.createUserForTest();
+        UserDto user = userTestDataFactory.createUserForTest();
 
             MvcResult createResult = this.mockMvc
                     .perform(post("/api/v1/public/register")
@@ -91,7 +92,7 @@ public class UserServiceTest extends DemoApplicationTests {
     @Test
     public void testUserCreateFailure() throws Exception{
 
-        User user = userTestDataFactory.createUserForTest();
+        UserDto user = userTestDataFactory.createUserForTest();
         user.setEmail(null);
             MvcResult createResult = this.mockMvc.perform(post("/api/v1/public/register").contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(user)))
@@ -105,9 +106,9 @@ public class UserServiceTest extends DemoApplicationTests {
     @WithUserDetails(value = "test@rest.com", userDetailsServiceBeanName = "basicUsers")
     public void testUpdateSuccess() throws Exception{
 
-            UserDto userEdit = new UserDto();
+            UserEditDto userEdit = new UserEditDto();
 
-            userMapper.toUserEdit(userTestDataFactory.getLoggedInUser(), userEdit);
+            userEditMapper.toUserEdit(userTestDataFactory.getLoggedInUser(), userEdit);
             userEdit.setAge(12);
 
             MvcResult createResult = this.mockMvc.perform(put("/api/v1/profile/my-profile").contentType(MediaType.APPLICATION_JSON)
@@ -121,9 +122,10 @@ public class UserServiceTest extends DemoApplicationTests {
     @WithUserDetails(value = "test@rest.com", userDetailsServiceBeanName = "basicUsers")
     public void testUpdateFail() throws Exception{
 
-        User user = userTestDataFactory.getOtherThanLoggedInUser();
-        UserDto userEdit = new UserDto();
-        userMapper.toUserEdit(user, userEdit);
+        UserDto user = userTestDataFactory.getOtherThanLoggedInUser();
+
+        UserEditDto userEdit = new UserEditDto();
+        userEditMapper.toUserEdit(user, userEdit);
         userEdit.setAge(13);
 
         MvcResult createResult = this.mockMvc.perform(put("/api/v1/profile/my-profile").contentType(MediaType.APPLICATION_JSON)
@@ -136,11 +138,25 @@ public class UserServiceTest extends DemoApplicationTests {
     @Test
     @WithUserDetails(value = "test@rest.com", userDetailsServiceBeanName = "basicUsers")
     public void testDeleteSuccess() throws Exception{
-        User user = userTestDataFactory.getLoggedInUser();
+        UserDto user = userTestDataFactory.getLoggedInUser();
 
-        MvcResult createResult = this.mockMvc.perform(delete("/api/v1/profile/my-profile").contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(user)))
+        MvcResult createResult = this.mockMvc.perform(delete("/api/v1/profile/" + user.getId()))
                 .andExpect(status().isOk())
+                .andReturn();
+
+    }
+
+    @Test
+    public void testAuthenticationFailure() throws Exception
+    {
+        UserDto user = userTestDataFactory.createUserWithCreds("chanakya2@gmail.com", "pass");
+
+
+        AuthRequest authRequest = new AuthRequest(user.getEmail(), user.getPassword()+"12");
+
+        MvcResult createResult = this.mockMvc.perform(put("/api/v1/public/login").contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(authRequest)))
+                .andExpect(status().isForbidden())
                 .andReturn();
 
     }

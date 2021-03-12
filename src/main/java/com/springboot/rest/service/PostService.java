@@ -3,9 +3,10 @@ package com.springboot.rest.service;
 import com.springboot.rest.config.exceptions.ApiSpecificException;
 import com.springboot.rest.model.dto.ApiMessageResponse;
 import com.springboot.rest.model.dto.PostDto;
+import com.springboot.rest.model.dto.PostEditDto;
 import com.springboot.rest.model.entities.Post;
+import com.springboot.rest.model.mapper.PostEditMapper;
 import com.springboot.rest.model.mapper.PostMapper;
-import com.springboot.rest.model.projections.PostView;
 import com.springboot.rest.repository.PostRepos;
 import com.springboot.rest.repository.UserRepos;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,70 +29,84 @@ public class PostService {
 
     private final PostRepos postRepos;
     private final UserRepos userRepos;
+    private final PostEditMapper postEditMapper;
     private final PostMapper postMapper;
     private final CommentService commentService;
 
     @Autowired
-    public PostService(PostRepos postRepos, UserRepos userRepos, PostMapper postMapper, CommentService commentService) {
+    public PostService(PostRepos postRepos, UserRepos userRepos, PostEditMapper postEditMapper, PostMapper postMapper, CommentService commentService) {
         this.postRepos = postRepos;
         this.userRepos = userRepos;
-        this.postMapper = postMapper;
+        this.postEditMapper = postEditMapper;
         this.commentService = commentService;
+        this.postMapper = postMapper;
 
     }
 
-    @PreAuthorize(value = "hasPermission(#post, null)")
+    @PreAuthorize(value = "hasPermission(#postDto, null)")
     @PostAuthorize(value = "@authorizationService.saveSecureResource(returnObject.body.resourceId, 'P')")
-    public ResponseEntity<ApiMessageResponse> addPost(Post post) {
-        Optional.ofNullable(post).orElseThrow(() -> new ApiSpecificException("Some problem in your post"));
+    public ResponseEntity<ApiMessageResponse> addPost(PostDto postDto) {
+        Optional.ofNullable(postDto).orElseThrow(() -> new ApiSpecificException("Some problem in your post"));
+
+        Post post = postMapper.toPost(postDto);
         Post responsePost = postRepos.save(post);
+
         return ResponseEntity.ok().body(new ApiMessageResponse(responsePost.getId()));
     }
 
-    public List<PostView> getPosts(int pageNo) {
-        Page<PostView> page = postRepos.findPostsForUserFeedBy(
+    public List<PostDto> getPosts(int pageNo) {
+        Page<Post> page = postRepos.findPostsForUserFeedBy(
                 (Pageable) PageRequest.of(pageNo, 10, Sort.by("noOfLikes").descending()))
                 .orElseThrow(() -> new ApiSpecificException("There are no posts to show"));
-        if (page.getTotalElements() > 0)
-            return page.getContent();
+
+        PostDto postDto = new PostDto();
+
+
+        if (page.getTotalElements() > 0) {
+            List<Post> posts = page.getContent();
+            return postMapper.toPostDtoList(posts);
+        }
         else throw new ApiSpecificException("No more pages to show");
 
     }
 
-    public PostView getSelectedPost(Long Id) {
-        return postRepos.findPostById(Id).orElseThrow(() -> new ApiSpecificException(("The post is not present")));
+    public PostDto getSelectedPost(Long Id) {
+        Post post =  postRepos.findPostById(Id).orElseThrow(() -> new ApiSpecificException(("The post is not present")));
+        return postMapper.toPostDto(post);
     }
 
-    public List<PostView> getPostsOfUser(Long userId, int pageNo) {
+    public List<PostDto> getPostsOfUser(Long userId, int pageNo) {
         userRepos.findById(userId).orElseThrow(() -> new ApiSpecificException("User is not present"));
-        Page<PostView> page = postRepos.findPostsByOwner_Id(userId,
+        Page<Post> page = postRepos.findPostsByOwner_Id(userId,
                 (Pageable) PageRequest.of(pageNo, 10, Sort.by("noOfLikes").descending()))
                 .orElseThrow(() -> new ApiSpecificException(("No posts by user")));
         if (page.getTotalElements() > 0)
-            return page.getContent();
+        {
+            return postMapper.toPostDtoList(page.getContent());
+        }
         else throw new ApiSpecificException("No more pages to show");
 
     }
 
     @Transactional
-    @PreAuthorize(value = "hasPermission(#postDto, null)")
-    public ResponseEntity<ApiMessageResponse> updatePost(PostDto postDto) {
-        Post postToUpdate = postRepos.findById(postDto.getId()).orElseThrow(() -> new ApiSpecificException("Post is not present"));
+    @PreAuthorize(value = "hasPermission(#postEditDto, null)")
+    public ResponseEntity<ApiMessageResponse> updatePost(PostEditDto postEditDto) {
+        Post postToUpdate = postRepos.findById(postEditDto.getId()).orElseThrow(() -> new ApiSpecificException("Post is not present"));
 
-        postDto.setModifiedOnDate(LocalDate.now());
-        postMapper.update(postDto, postToUpdate);
-        return ResponseEntity.ok().body(new ApiMessageResponse(postDto.getId()));
+        postEditDto.setModifiedOnDate(LocalDate.now());
+        postEditMapper.toPost(postEditDto, postToUpdate);
+        return ResponseEntity.ok().body(new ApiMessageResponse(postEditDto.getId()));
 
     }
 
     @Transactional
-    @PreAuthorize(value = "hasPermission(#post, null)")
-    public ResponseEntity<ApiMessageResponse> deletePost(Post post) {
-        postRepos.findById(post.getId()).orElseThrow(() -> new ApiSpecificException("Post is not present"));
+    @PreAuthorize(value = "hasPermission(#postId, \"ApiResourceMarker\", null)")
+    public ResponseEntity<ApiMessageResponse> deletePost(Long postId) {
+        postRepos.findById(postId).orElseThrow(() -> new ApiSpecificException("Post is not present"));
 
 
-        postRepos.deleteById(post.getId());
-        return ResponseEntity.ok().body(new ApiMessageResponse(post.getId()));
+        postRepos.deleteById(postId);
+        return ResponseEntity.ok().body(new ApiMessageResponse(postId));
     }
 
     @Transactional

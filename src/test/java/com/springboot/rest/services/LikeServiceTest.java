@@ -2,10 +2,9 @@ package com.springboot.rest.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.springboot.rest.DemoApplicationTests;
-import com.springboot.rest.data.PostTestDataFactory;
-import com.springboot.rest.model.dto.PostDto;
-import com.springboot.rest.model.dto.PostEditDto;
-import com.springboot.rest.model.mapper.PostEditMapper;
+import com.springboot.rest.data.LikeTestDataFactory;
+import com.springboot.rest.model.dto.LikeCommentDto;
+import com.springboot.rest.model.dto.LikePostDto;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -24,26 +23,24 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @WithUserDetails(value = "test@rest.com", userDetailsServiceBeanName = "basicUsers")
 @Slf4j
-public class PostServiceTest extends DemoApplicationTests {
+public class LikeServiceTest extends DemoApplicationTests {
 
     private final MockMvc mockMvc;
     private final ObjectMapper objectMapper;
-    private final PostEditMapper postEditMapper;
-    private final PostTestDataFactory postTestDataFactory;
-
+    private final LikeTestDataFactory likeTestDataFactory;
 
     @Autowired
-    public PostServiceTest(MockMvc mockMvc, ObjectMapper objectMapper, PostEditMapper postEditMapper, PostTestDataFactory postTestDataFactory) {
+    public LikeServiceTest(MockMvc mockMvc, ObjectMapper objectMapper, LikeTestDataFactory likeTestDataFactory) {
         this.mockMvc = mockMvc;
         this.objectMapper = objectMapper;
-        this.postEditMapper = postEditMapper;
-        this.postTestDataFactory = postTestDataFactory;
+        this.likeTestDataFactory = likeTestDataFactory;
     }
 
     @BeforeAll
@@ -73,92 +70,52 @@ public class PostServiceTest extends DemoApplicationTests {
     }
 
     @Test
-    public void testPostCreateSuccess() throws Exception
+    @WithUserDetails(value = "whataview@rest.com", userDetailsServiceBeanName = "basicUsers")
+    public void likeAPostSuccess() throws Exception
     {
-        PostDto post = postTestDataFactory.createPostForLoggedInUser();
-
+        LikePostDto like = likeTestDataFactory.createLikeOnPostForLoggedInUser();
         MvcResult createResult = this.mockMvc
-                .perform(post("/api/v1/resource/post")
+                .perform(post("/api/v1/resource/post/1/like")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(post)))
-                .andExpect(status().isOk())
-                .andReturn();
-
-    }
-
-    @Test
-    public void testPostCreateFailureAuth() throws Exception
-    {
-        PostDto post = postTestDataFactory.createPostForOtherUser();
-        MvcResult createResult = this.mockMvc
-                .perform(post("/api/v1/resource/post")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(post)))
-                .andExpect(status().isInternalServerError())
-                .andReturn();
-
-    }
-
-    @Test
-    public void testPostCreateFailureOther() throws Exception
-    {
-        PostDto post = postTestDataFactory.createPostForLoggedInUser();
-        post.setPostHeading(null);
-        post.setPostBody(null);
-        MvcResult createResult = this.mockMvc
-                .perform(post("/api/v1/resource/post")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(post)))
-                .andExpect(status().isInternalServerError())
-                .andReturn();
-
-    }
-
-    @Test
-    public void testPostUpdateSuccess() throws Exception
-    {
-        // Create Post
-        PostDto post = postTestDataFactory.getPreExistingPost();
-        post.setPostBody("This is changed");
-
-        PostEditDto postEdit = new PostEditDto();
-        postEditMapper.toPostEditDto(post, postEdit);
-
-        MvcResult createResult = this.mockMvc
-                .perform(put("/api/v1/resource/post")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(postEdit)))
-                .andExpect(status().isOk())
-                .andReturn();
-
-    }
-
-    @Test
-    @WithUserDetails(value = "chan@rest.com", userDetailsServiceBeanName = "basicUsers")
-    public void testPostUpdateFailureAuth() throws Exception
-    {
-        PostEditDto postEdit = new PostEditDto();
-        PostDto post = postTestDataFactory.getPreExistingPost();
-        post.setPostBody("This is changed");
-        postEditMapper.toPostEditDto(post, postEdit);
-
-        MvcResult createResult = this.mockMvc
-                .perform(put("/api/v1/resource/post")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(postEdit)))
-                .andExpect(status().isInternalServerError())
-                .andReturn();
-
-    }
-
-    @Test
-    public void testPostDeleteSuccess() throws Exception
-    {
-        Long postId = postTestDataFactory.createPostForLoggedInUserAndInsertInDB();
-        MvcResult createResult = this.mockMvc
-                .perform(delete("/api/v1/resource/post/"+postId))
+                        .content(objectMapper.writeValueAsString(like)))
                 .andExpect(status().isOk())
                 .andReturn();
     }
 
+    @Test
+    public void UnlikePostSuccess() throws Exception
+    {
+        LikePostDto like = likeTestDataFactory.getPreExistingLikePost();
+        MvcResult createResult = this.mockMvc
+                .perform(delete("/api/v1/resource/post/1/unlike")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(like)))
+                .andExpect(status().isOk())
+                .andReturn();
+    }
+
+    @Test
+    @WithUserDetails(value = "whataview@rest.com", userDetailsServiceBeanName = "basicUsers")
+    public void likeACommentSuccess() throws Exception
+    {
+        LikeCommentDto like = likeTestDataFactory.createLikeOnCommentForLoggedInUser();
+        MvcResult createResult = this.mockMvc
+                .perform(post("/api/v1/resource/comment/1/like")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(like)))
+                .andExpect(status().isOk())
+                .andReturn();
+    }
+
+    @Test
+    public void UnlikeCommentSuccess() throws Exception
+    {
+        LikeCommentDto like = likeTestDataFactory.getPreExistingLikeComment();
+        MvcResult createResult = this.mockMvc
+                .perform(delete("/api/v1/resource/comment/1/unlike")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(like)))
+                .andExpect(status().isOk())
+                .andReturn();
+    }
 }

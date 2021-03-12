@@ -1,9 +1,8 @@
 package com.springboot.rest.data;
 
 import com.springboot.rest.model.dto.ApiMessageResponse;
-import com.springboot.rest.model.entities.Post;
-import com.springboot.rest.model.entities.User;
-import com.springboot.rest.model.projections.PostView;
+import com.springboot.rest.model.dto.PostDto;
+import com.springboot.rest.model.dto.UserDto;
 import com.springboot.rest.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -22,12 +21,12 @@ public class PostTestDataFactory {
     private final PostService postService;
     private final UserTestDataFactory userTestDataFactory;
     private final HashMap<String, Object> resourceHashMap;
-    private final List<Post> postListInDb;
+    private final List<PostDto> postListInDb;
 
     @Autowired
     public PostTestDataFactory(PostService postService, UserTestDataFactory userTestDataFactory,
                                @Qualifier("testExistingResources") HashMap<String, Object> resourceHashMap,
-                               @Qualifier("testPostsListForRead") List<Post> postListInDb)
+                               @Qualifier("testPostsListForRead") List<PostDto> postListInDb)
     {
         this.postService = postService;
         this.userTestDataFactory = userTestDataFactory;
@@ -35,7 +34,7 @@ public class PostTestDataFactory {
         this.postListInDb = postListInDb;
     }
 
-    private Post createNewPost()
+    private PostDto createNewPost()
     {
         String body = "post body";
         String heading = "post heading";
@@ -43,7 +42,7 @@ public class PostTestDataFactory {
         LocalDate postedOnDate = LocalDate.of(2020, 5, 10);
 
 
-        Post latest = new Post();
+        PostDto latest = new PostDto();
         latest.setPostBody(body);
         latest.setPostHeading(heading);
         latest.setNoOfLikes(noOfLikes);
@@ -51,35 +50,43 @@ public class PostTestDataFactory {
         return latest;
     }
 
-    public Post createPostForLoggedInUser()
+
+    public PostDto createPostForLoggedInUser()
     {
-        Post post = createNewPost();
+        PostDto post = createNewPost();
         post.setOwner(userTestDataFactory.getLoggedInUser());
         return post;
     }
 
-    public Post createPostForOtherUser()
+    public PostDto createPostForOtherUser()
     {
-        Post post = createNewPost();
+        PostDto post = createNewPost();
         post.setOwner(userTestDataFactory.getOtherThanLoggedInUser());
         return post;
     }
 
-    public Post getPreExistingPost()
+    public Long createPostForLoggedInUserAndInsertInDB()
     {
-        return (Post) resourceHashMap.get("EXISTING_POST");
+        PostDto postDto = createPostForLoggedInUser();
+        ResponseEntity<ApiMessageResponse> message = postService.addPost(postDto);
+        return Objects.requireNonNull(message.getBody()).getResourceId();
     }
 
-    public List<Post> getPostsOfUser(User user)
+    public PostDto getPreExistingPost()
     {
-        return postListInDb.stream().filter((Post post) -> post.getId() != null
+        return (PostDto) resourceHashMap.get("EXISTING_POST");
+    }
+
+    public List<PostDto> getPostsOfUser(UserDto user)
+    {
+        return postListInDb.stream().filter((PostDto post) -> post.getId() != null
                 && post.getOwner() != null
                 && post.getOwner().getId().compareTo(user.getId()) == 0).collect(Collectors.toList());
     }
 
-    public PostView createPostForLoggedInUserAndAddToDB()
+    public PostDto createPostForLoggedInUserAndAddToDB()
     {
-        Post post = createPostForLoggedInUser();
+        PostDto post = createPostForLoggedInUser();
         ResponseEntity<ApiMessageResponse> message = postService.addPost(post);
         Long postId = Objects.requireNonNull(message.getBody()).getResourceId();
         return postService.getSelectedPost(postId);
@@ -90,7 +97,7 @@ public class PostTestDataFactory {
         postService.deleteAllPosts();
     }
 
-    public void createPostForUser(Post post)
+    public void createPostForUser(PostDto post)
     {
         postService.addPost(post);
     }

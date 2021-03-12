@@ -3,17 +3,19 @@ package com.springboot.rest.model.entities;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import com.sun.istack.NotNull;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "[users]", uniqueConstraints = @UniqueConstraint(columnNames = {"email"}))
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@userId")
-public class User implements Serializable, UserPersonalMarker{
+public class User implements Serializable{
     @Id
     @SequenceGenerator(name = "user_sequence",
             sequenceName = "user_sequence",
@@ -30,9 +32,11 @@ public class User implements Serializable, UserPersonalMarker{
     private Integer age;
     private LocalDate DOB;
     private String userSummary;
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinTable(name = "user_role", joinColumns = {@JoinColumn(name = "role_id", nullable = false)}, inverseJoinColumns = {@JoinColumn(name = "user_id", nullable = false)})
+    //@JoinTable(name = "user_role", joinColumns = {@JoinColumn(name = "role_id", nullable = false)},
+    //        inverseJoinColumns = {@JoinColumn(name = "user_id", nullable = false)})
+    @JoinColumn(name = "role_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_role_id"))
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Role> grantedAuthoritiesList;
 
     public User(Long id, String name, String profileName, String email, String password, Integer age,
@@ -192,6 +196,19 @@ public class User implements Serializable, UserPersonalMarker{
 
         public String toString() {
             return "User.UserBuilder(id=" + this.id + ", name=" + this.name + ", profileName=" + this.profileName + ", email=" + this.email + ", password=" + this.password + ", age=" + this.age + ", DOB=" + this.DOB + ", userSummary=" + this.userSummary + ", grantedAuthoritiesList=" + this.grantedAuthoritiesList + ")";
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof UserBuilder)) return false;
+            UserBuilder that = (UserBuilder) o;
+            return id.equals(that.id) && name.equals(that.name) && email.equals(that.email);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(id, name, email);
         }
     }
 }

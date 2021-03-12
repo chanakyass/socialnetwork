@@ -1,7 +1,6 @@
 package com.springboot.rest.service;
 
 import com.springboot.rest.config.exceptions.ApiAccessException;
-import com.springboot.rest.config.exceptions.ApiSpecificException;
 import com.springboot.rest.config.security.SecurityUtils;
 import com.springboot.rest.config.security.jwt.JwtTokenUtil;
 import com.springboot.rest.model.dto.ApiMessageResponse;
@@ -89,6 +88,7 @@ public class AuthorizationService implements UserDetailsService {
 
 
         } catch (BadCredentialsException badCredentialsException) {
+            badCredentialsException.printStackTrace();
             throw new ApiAccessException("Incorrect credentials.");
         }
     }

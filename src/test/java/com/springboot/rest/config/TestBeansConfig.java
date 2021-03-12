@@ -4,8 +4,10 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.springboot.rest.model.entities.Comment;
-import com.springboot.rest.model.entities.Post;
+import com.springboot.rest.model.dto.CommentDto;
+import com.springboot.rest.model.dto.LikeCommentDto;
+import com.springboot.rest.model.dto.LikePostDto;
+import com.springboot.rest.model.dto.PostDto;
 import com.springboot.rest.model.entities.User;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -42,6 +44,8 @@ public class TestBeansConfig {
     {
         String pathToTestPosts="src/test/resources/json/write-related/posts.json";
         String pathToTestComments="src/test/resources/json/write-related/comments.json";
+        String pathToTestLikesOnPosts="src/test/resources/json/write-related/like-post.json";
+        String pathToTestLikesOnComments="src/test/resources/json/write-related/like-comment.json";
 
         ObjectMapper objectMapper = new ObjectMapper();
         HashMap<String, Object> resourcesHashMap = new HashMap<>();
@@ -51,19 +55,38 @@ public class TestBeansConfig {
             JsonFactory jsonFactory = new JsonFactory();
             FileReader fileReader = new FileReader(pathToTestPosts);
             JsonParser jsonParser = jsonFactory.createParser(fileReader);
-            TypeReference<HashMap<String, Post>> typeRef
+            TypeReference<HashMap<String, PostDto>> typeRef
                     = new TypeReference<>() {
             };
-            HashMap<String, Post> postHashMap = objectMapper.readValue(jsonParser, typeRef);
+            HashMap<String, PostDto> postHashMap = objectMapper.readValue(jsonParser, typeRef);
+
             resourcesHashMap.putAll(postHashMap);
 
             fileReader = new FileReader(pathToTestComments);
             jsonParser = jsonFactory.createParser(fileReader);
-            TypeReference<HashMap<String, Comment>>typeRef2 = new TypeReference<>() {
+            TypeReference<HashMap<String, CommentDto>>typeRef2 = new TypeReference<>() {
             };
-            HashMap<String, Comment> commentHashMap = objectMapper.readValue(jsonParser, typeRef2);
+            HashMap<String, CommentDto> commentHashMap = objectMapper.readValue(jsonParser, typeRef2);
 
             resourcesHashMap.putAll(commentHashMap);
+
+            fileReader = new FileReader(pathToTestLikesOnPosts);
+            jsonParser = jsonFactory.createParser(fileReader);
+            TypeReference<HashMap<String, LikePostDto>>typeRef3 = new TypeReference<>() {
+            };
+            HashMap<String, LikePostDto> likePostHashMap = objectMapper.readValue(jsonParser, typeRef3);
+
+            resourcesHashMap.putAll(likePostHashMap);
+
+            fileReader = new FileReader(pathToTestLikesOnComments);
+            jsonParser = jsonFactory.createParser(fileReader);
+            TypeReference<HashMap<String, LikeCommentDto>>typeRef4 = new TypeReference<>() {
+            };
+            HashMap<String, LikeCommentDto> likeCommentHashMap = objectMapper.readValue(jsonParser, typeRef4);
+
+            resourcesHashMap.putAll(likeCommentHashMap);
+
+
 
 
         } catch (IOException e)
@@ -100,18 +123,18 @@ public class TestBeansConfig {
     }
 
     @Bean(name = "testCommentsListForRead")
-    public static List<Comment> getTestCommentsList(/*@Value("${springboot.test.config.path}")*/)
+    public static List<CommentDto> getTestCommentsList(/*@Value("${springboot.test.config.path}")*/)
     {
         String pathToTestComments="src/test/resources/json/read-related/comments_for_get.json";
         ObjectMapper objectMapper = new ObjectMapper();
-        List<Comment> commentsList = null;
+        List<CommentDto> commentsList = null;
 
         try {
 
             JsonFactory jsonFactory = new JsonFactory();
             FileReader fileReader = new FileReader(pathToTestComments);
             JsonParser jsonParser = jsonFactory.createParser(fileReader);
-            TypeReference<List<Comment>> typeRef
+            TypeReference<List<CommentDto>> typeRef
                     = new TypeReference<>() {
             };
             commentsList = objectMapper.readValue(jsonParser, typeRef);
@@ -125,18 +148,18 @@ public class TestBeansConfig {
     }
 
     @Bean(name = "testPostsListForRead")
-    public static List<Post> getTestPostsList(/*@Value("${springboot.test.config.path}")*/)
+    public static List<PostDto> getTestPostsList(/*@Value("${springboot.test.config.path}")*/)
     {
         String pathToTestPosts="src/test/resources/json/read-related/posts_for_get.json";
         ObjectMapper objectMapper = new ObjectMapper();
-        List<Post> postsList = null;
+        List<PostDto> postsList = null;
 
         try {
 
             JsonFactory jsonFactory = new JsonFactory();
             FileReader fileReader = new FileReader(pathToTestPosts);
             JsonParser jsonParser = jsonFactory.createParser(fileReader);
-            TypeReference<List<Post>> typeRef
+            TypeReference<List<PostDto>> typeRef
                     = new TypeReference<>() {
             };
             postsList = objectMapper.readValue(jsonParser, typeRef);
@@ -147,6 +170,56 @@ public class TestBeansConfig {
             e.printStackTrace();
         }
         return postsList;
+    }
+
+    @Bean(name = "testLikePostsListForRead")
+    public static List<LikePostDto> getTestLikesOnPostsList(/*@Value("${springboot.test.config.path}")*/)
+    {
+        String pathToTestPosts="src/test/resources/json/read-related/likes_on_posts_for_get.json";
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<LikePostDto> likesList = null;
+
+        try {
+
+            JsonFactory jsonFactory = new JsonFactory();
+            FileReader fileReader = new FileReader(pathToTestPosts);
+            JsonParser jsonParser = jsonFactory.createParser(fileReader);
+            TypeReference<List<LikePostDto>> typeRef
+                    = new TypeReference<>() {
+            };
+            likesList = objectMapper.readValue(jsonParser, typeRef);
+
+
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+        return likesList;
+    }
+
+    @Bean(name = "testLikeCommentsListForRead")
+    public static List<LikeCommentDto> getTestLikesOnCommentsList(/*@Value("${springboot.test.config.path}")*/)
+    {
+        String pathToTestLikes="src/test/resources/json/read-related/likes_on_comments_for_get.json";
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<LikeCommentDto> likesList = null;
+
+        try {
+
+            JsonFactory jsonFactory = new JsonFactory();
+            FileReader fileReader = new FileReader(pathToTestLikes);
+            JsonParser jsonParser = jsonFactory.createParser(fileReader);
+            TypeReference<List<LikeCommentDto>> typeRef
+                    = new TypeReference<>() {
+            };
+            likesList = objectMapper.readValue(jsonParser, typeRef);
+
+
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+        return likesList;
     }
 }
 

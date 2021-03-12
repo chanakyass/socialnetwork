@@ -1,0 +1,15 @@
+{
+  "EXISTING_LIKE_POST": {
+    "id" : 1,
+
+    "owner": {
+      "id": 1
+    },
+
+    "likedOnDate": "2020-08-07",
+
+    "likedPost": {
+      "id": 1
+    }
+  }
+}

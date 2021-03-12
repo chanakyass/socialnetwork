@@ -1,24 +1,22 @@
 package com.springboot.rest.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
-import com.sun.istack.NotNull;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Entity
 @Table(name = "comments")
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@commentId")
-public class Comment implements ApiResourceMarker {
+public class Comment {
 
     @Id
     @SequenceGenerator(name = "comment_sequence", sequenceName = "comment_sequence", allocationSize = 1)
@@ -67,11 +65,6 @@ public class Comment implements ApiResourceMarker {
         this.id = id;
     }
 
-    @Override
-    public Long getOwnerId() {
-        return owner.getId();
-    }
-
     public User getOwner() {
         return owner;
     }
@@ -117,11 +110,11 @@ public class Comment implements ApiResourceMarker {
     }
 
     public Long getNoOfLikes() {
-        return noOfLikes;
+        return Objects.requireNonNullElse(noOfLikes, 0L);
     }
 
     public void setNoOfLikes(Long noOfLikes) {
-        this.noOfLikes = noOfLikes;
+        this.noOfLikes = Objects.requireNonNullElse(noOfLikes, 0L);
     }
 
     public Post getCommentedOn() {

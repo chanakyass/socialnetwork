@@ -13,11 +13,11 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "likes_on_comments")
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@likeCommentId")
-public class LikeComment implements ApiResourceMarker {
+public class LikeComment {
 
     @Id
-    @SequenceGenerator(name = "resource_sequence", sequenceName = "resource_sequence", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "resource_sequence")
+    @SequenceGenerator(name = "like_comment_sequence", sequenceName = "like_comment_sequence", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "like_comment_sequence")
     private Long id;
 
     @ManyToOne
@@ -70,11 +70,6 @@ public class LikeComment implements ApiResourceMarker {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    @Override
-    public Long getOwnerId() {
-        return owner.getId();
     }
 
     public void setOwner(User owner) {

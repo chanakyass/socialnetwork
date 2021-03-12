@@ -2,19 +2,17 @@ package com.springboot.rest.model.mapper;
 
 import com.springboot.rest.model.dto.PostDto;
 import com.springboot.rest.model.entities.Post;
-import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
-import org.mapstruct.MappingTarget;
 
-import static org.mapstruct.NullValueCheckStrategy.ALWAYS;
-import static org.mapstruct.NullValuePropertyMappingStrategy.IGNORE;
+import java.util.List;
+
 
 @Mapper(componentModel = "spring")
 public abstract class PostMapper {
 
-    @BeanMapping(nullValueCheckStrategy = ALWAYS, nullValuePropertyMappingStrategy = IGNORE)
-    public abstract void update(PostDto request, @MappingTarget Post post);
+    public abstract Post toPost(PostDto postDto);
 
-    @BeanMapping(nullValueCheckStrategy = ALWAYS, nullValuePropertyMappingStrategy = IGNORE)
-    public abstract void toPostDto(Post request, @MappingTarget PostDto postDto);
+    public abstract PostDto toPostDto(Post request);
+
+    public abstract List<PostDto> toPostDtoList(List<Post> posts);
 }

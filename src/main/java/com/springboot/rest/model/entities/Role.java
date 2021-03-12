@@ -2,9 +2,12 @@ package com.springboot.rest.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Table(name = "role")
@@ -33,6 +36,19 @@ public class Role implements GrantedAuthority {
     public String getAuthority() {
         return authority;
 
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Role)) return false;
+        Role role = (Role) o;
+        return getId().equals(role.getId()) && getAuthority().equals(role.getAuthority());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getAuthority());
     }
 
     public void setAuthority(String authority) {

@@ -30,3 +30,18 @@ insert into comments(id, comment_content, commented_on_date, commented_on_post, 
 values (nextval('comment_sequence'), 'This is reply existing on comment 1', '2020-02-05', 1, 2, 1 );
 insert into comments(id, comment_content, commented_on_date, commented_on_post, owned_by_user, parent_comment)
 values (nextval('comment_sequence'), 'This is reply existing on comment 1', '2020-02-05', 1, 1, 1 );
+
+insert into likes_on_posts(id, liked_on_date, liked_post, owned_by_user)
+values (nextval('like_post_sequence'), '2020-02-05', 1, 1);
+insert into likes_on_posts(id, liked_on_date, liked_post, owned_by_user)
+values (nextval('like_post_sequence'), '2020-02-05', 1, 2);
+insert into likes_on_posts(id, liked_on_date, liked_post, owned_by_user)
+values (nextval('like_post_sequence'), '2020-02-05', 1, 3);
+
+
+insert into likes_on_comments(id, liked_on_date, liked_comment, owned_by_user)
+values (nextval('like_comment_sequence'), '2020-02-05', 1, 1);
+insert into likes_on_comments(id, liked_on_date, liked_comment, owned_by_user)
+values (nextval('like_comment_sequence'), '2020-02-05', 2, 2);
+insert into likes_on_comments(id, liked_on_date, liked_comment, owned_by_user)
+values (nextval('like_comment_sequence'), '2020-02-05', 1, 3);

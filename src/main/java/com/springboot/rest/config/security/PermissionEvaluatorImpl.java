@@ -1,6 +1,10 @@
 package com.springboot.rest.config.security;
 
-import com.springboot.rest.model.entities.*;
+import com.springboot.rest.config.exceptions.ApiAccessException;
+import com.springboot.rest.model.entities.ApiResourceMarker;
+import com.springboot.rest.model.entities.SecureResource;
+import com.springboot.rest.model.entities.User;
+import com.springboot.rest.model.entities.UserPersonalMarker;
 import com.springboot.rest.repository.SecureResourceRepos;
 import com.springboot.rest.repository.UserRepos;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,11 +13,9 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 import java.util.Optional;
 
@@ -40,8 +42,6 @@ public class PermissionEvaluatorImpl implements PermissionEvaluator {
 
                 //Gathering user details and user id of the logged in user
                 //access denied if user not logged in
-
-                WebAuthenticationDetails webAuthenticationDetails = (WebAuthenticationDetails) authentication.getDetails();
 
                 Long loggedInUserId = null;
 
@@ -101,7 +101,47 @@ public class PermissionEvaluatorImpl implements PermissionEvaluator {
 
     @Override
     public boolean hasPermission(Authentication authentication, Serializable targetId, String targetType, Object permission) {
-        return true;
+        if(targetId != null)
+        {
+            Long resourceId = (Long) targetId;
+            UserDetails loggedUserDetails = (UserDetails) authentication.getPrincipal();
+
+            //Gathering user details and user id of the logged in user
+            //access denied if user not logged in
+
+            Long loggedInUserId = null;
+
+            if (loggedUserDetails == null )
+                throw new AccessDeniedException("Access is denied");
+
+            User loggedUser = userRepos.findUserByEmail(loggedUserDetails.getUsername()).orElse(null);
+
+            if (loggedUser == null || loggedUser.getId() == null) {
+                throw new AccessDeniedException("Access is denied");
+            } else loggedInUserId = loggedUser.getId();
+
+
+            if(targetType.equals("ApiResourceMarker"))
+            {
+                SecureResource secureResource = secureResourceRepos.findByResourceTypeAndId(resourceId).orElse(null);
+
+                if (secureResource != null)
+                    //check if the resource belongs to the logged in user
+                    if( secureResource.getOwner().getId().compareTo(loggedInUserId) != 0)
+                        throw new AccessDeniedException("Access is denied");
+                    else return true;
+                return true;
+            }
+            else if(targetType.equals("UserPersonalMarker")){
+                if(resourceId.compareTo(loggedInUserId) != 0)
+                {
+                    throw new AccessDeniedException("Access is denied");
+                }
+                else return true;
+            }
+            else throw new ApiAccessException("Access is denied");
+        }
+        return false;
     }
 
 }

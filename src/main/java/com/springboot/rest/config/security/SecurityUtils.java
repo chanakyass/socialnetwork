@@ -3,7 +3,6 @@ package com.springboot.rest.config.security;
 import com.springboot.rest.config.exceptions.ApiAccessException;
 import com.springboot.rest.model.entities.User;
 import com.springboot.rest.repository.UserRepos;
-import com.springboot.rest.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;

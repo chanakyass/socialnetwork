@@ -1,6 +1,5 @@
 package com.springboot.rest.model.entities;
 
-import com.sun.istack.Nullable;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -17,29 +16,29 @@ public class SecureResource {
             generator = "secure_resource_seq")
     Long id;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "post_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_post_id"))
     Post post;
 
-    @OneToOne(targetEntity = Comment.class)
+    @OneToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "comment_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_comment_id"))
     Comment comment;
 
 
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "like_post_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_like_post_id"))
     LikePost likePost;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "like_comment_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_like_comment_id"))
     LikeComment likeComment;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "owner_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_resource_owner_id"))
     User owner;

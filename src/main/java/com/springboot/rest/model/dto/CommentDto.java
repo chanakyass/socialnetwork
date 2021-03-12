@@ -1,86 +1,36 @@
 package com.springboot.rest.model.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.springboot.rest.model.entities.ApiResourceMarker;
-import com.springboot.rest.model.entities.Comment;
-import com.springboot.rest.model.entities.Post;
-import com.springboot.rest.model.entities.User;
 
 import java.time.LocalDate;
 import java.util.Objects;
 
-public class CommentDto implements ApiResourceMarker {
-
-    Long id;
-
-    UserDto owner;
-
-    String commentContent;
+public class CommentDto extends CommentProxyDto implements ApiResourceMarker {
 
     LocalDate commentedOnDate;
-
     LocalDate modifiedOnDate;
-
+    PostProxyDto commentedOn;
+    CommentProxyDto parentComment;
+    String commentContent;
     Long noOfLikes;
 
-    PostDto commentedOn;
-
-    CommentDto parentComment;
-
-    public CommentDto(Long id, UserDto owner, String commentContent, LocalDate commentedOnDate, LocalDate modifiedOnDate, Long noOfLikes, PostDto commentedOn, CommentDto parentComment) {
-        this.id = id;
-        this.owner = owner;
-        this.commentContent = commentContent;
+    public CommentDto(Long id, UserProxyDto owner, LocalDate commentedOnDate, LocalDate modifiedOnDate, PostProxyDto commentedOn, CommentProxyDto parentComment, String commentContent, Long noOfLikes) {
+        super(id, owner);
         this.commentedOnDate = commentedOnDate;
         this.modifiedOnDate = modifiedOnDate;
-        this.noOfLikes = noOfLikes;
         this.commentedOn = commentedOn;
         this.parentComment = parentComment;
-    }
-
-    public CommentDto() {
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof CommentDto)) return false;
-        CommentDto that = (CommentDto) o;
-        return getId().equals(that.getId()) && getOwner().equals(that.getOwner());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId(), getOwner());
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public UserDto getOwner() {
-        return owner;
-    }
-
-    public void setOwner(UserDto owner) {
-        this.owner = owner;
-    }
-
-    public String getCommentContent() {
-        return commentContent;
-    }
-
-    public void setCommentContent(String commentContent) {
         this.commentContent = commentContent;
+        this.noOfLikes = noOfLikes;
+    }
+
+    public CommentDto()
+    {
+        super();
     }
 
     @JsonSerialize(using = LocalDateSerializer.class)
@@ -91,6 +41,30 @@ public class CommentDto implements ApiResourceMarker {
     @JsonDeserialize(using = LocalDateDeserializer.class)
     public void setCommentedOnDate(LocalDate commentedOnDate) {
         this.commentedOnDate = commentedOnDate;
+    }
+
+    public PostProxyDto getCommentedOn() {
+        return commentedOn;
+    }
+
+    public void setCommentedOn(PostProxyDto commentedOn) {
+        this.commentedOn = commentedOn;
+    }
+
+    public CommentProxyDto getParentComment() {
+        return parentComment;
+    }
+
+    public void setParentComment(CommentProxyDto parentComment) {
+        this.parentComment = parentComment;
+    }
+
+    public String getCommentContent() {
+        return commentContent;
+    }
+
+    public void setCommentContent(String commentContent) {
+        this.commentContent = commentContent;
     }
 
     @JsonSerialize(using = LocalDateSerializer.class)
@@ -108,27 +82,24 @@ public class CommentDto implements ApiResourceMarker {
     }
 
     public void setNoOfLikes(Long noOfLikes) {
-        this.noOfLikes = noOfLikes;
+        this.noOfLikes = Objects.requireNonNullElse(noOfLikes, 0L);
     }
 
-    public PostDto getCommentedOn() {
-        return commentedOn;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof CommentDto)) return false;
+        CommentDto that = (CommentDto) o;
+        return getId().equals(that.getId()) && getOwner().equals(that.getOwner()) && Objects.equals(getCommentedOnDate(), that.getCommentedOnDate()) && getCommentedOn().equals(that.getCommentedOn()) && Objects.equals(getParentComment(), that.getParentComment()) && Objects.equals(getCommentContent(), that.getCommentContent());
     }
 
-    public void setCommentedOn(PostDto commentedOn) {
-        this.commentedOn = commentedOn;
-    }
-
-    public CommentDto getParentComment() {
-        return parentComment;
-    }
-
-    public void setParentComment(CommentDto parentComment) {
-        this.parentComment = parentComment;
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getOwner(), getCommentedOnDate(), getCommentedOn(), getParentComment(), getCommentContent());
     }
 
     @Override
     public Long getOwnerId() {
-        return this.owner.getId();
+        return owner.getId();
     }
 }

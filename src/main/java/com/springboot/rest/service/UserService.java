@@ -3,9 +3,10 @@ package com.springboot.rest.service;
 import com.springboot.rest.config.exceptions.ApiSpecificException;
 import com.springboot.rest.model.dto.ApiMessageResponse;
 import com.springboot.rest.model.dto.UserDto;
+import com.springboot.rest.model.dto.UserEditDto;
 import com.springboot.rest.model.entities.User;
+import com.springboot.rest.model.mapper.UserEditMapper;
 import com.springboot.rest.model.mapper.UserMapper;
-import com.springboot.rest.model.projections.UserView;
 import com.springboot.rest.repository.UserRepos;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,27 +23,34 @@ public class UserService {
 
     private final UserRepos userRepos;
     private final PasswordEncoder passwordEncoder;
+    private final UserEditMapper userEditMapper;
     private final UserMapper userMapper;
 
     @Autowired
-    public UserService(UserRepos userRepos, PasswordEncoder passwordEncoder, UserMapper userMapper) {
+    public UserService(UserRepos userRepos, PasswordEncoder passwordEncoder, UserEditMapper userEditMapper, UserMapper userMapper) {
         this.userRepos = userRepos;
         this.passwordEncoder = passwordEncoder;
+        this.userEditMapper = userEditMapper;
         this.userMapper = userMapper;
     }
 
     @RolesAllowed("ROLE_USER")
     @GetMapping(path = "api/v1/profile/{profileName}")
-    public UserView getUser(Long userId) {
-        return userRepos.findUserById(userId).orElseThrow(() -> new ApiSpecificException("User is not present"));
+    public UserDto getUser(Long userId) {
+        User user = userRepos.findUserById(userId).orElseThrow(() -> new ApiSpecificException("User is not present"));
+        UserDto userDto = new UserDto();
+        userMapper.toUserDto(user, userDto);
+        return userDto;
     }
 
     public User getUserByEmail(String email) {
         return userRepos.findUserByEmail(email).orElseThrow(() -> new ApiSpecificException("email not present in db"));
-
     }
 
-    public ResponseEntity<ApiMessageResponse> createUser(User user) {
+    public ResponseEntity<ApiMessageResponse> createUser(UserDto userDto) {
+        User user = new User();
+        userMapper.toUser(userDto, user);
+
         if (userRepos.findUserByEmail(user.getEmail()).isPresent()) {
             throw new ApiSpecificException("Email is taken");
         }
@@ -56,21 +64,23 @@ public class UserService {
 
     @Transactional
     @RolesAllowed("ROLE_USER")
-    @PreAuthorize(value = "hasPermission(#user, null)")
-    public ResponseEntity<ApiMessageResponse> delUser(User user) {
-        userRepos.findById(user.getId()).orElseThrow(() -> new ApiSpecificException("User is not present"));
-        userRepos.deleteById(user.getId());
-        return ResponseEntity.ok().body(new ApiMessageResponse(user.getId()));
+    @PreAuthorize(value = "hasPermission(#profileId, \"UserPersonalMarker\", null)")
+    public ResponseEntity<ApiMessageResponse> delUser(Long profileId) {
+
+
+        userRepos.findById(profileId).orElseThrow(() -> new ApiSpecificException("User is not present"));
+        userRepos.deleteById(profileId);
+        return ResponseEntity.ok().body(new ApiMessageResponse(profileId));
 
     }
 
     @Transactional
     @RolesAllowed("ROLE_USER")
-    @PreAuthorize(value = "hasPermission(#userDto, null)")
-    public ResponseEntity<ApiMessageResponse> updateUser(UserDto userDto) {
-        User user = userRepos.findById(userDto.getId()).orElseThrow(() -> new ApiSpecificException("User is not present"));
-        userMapper.update(userDto, user);
-        return ResponseEntity.ok().body(new ApiMessageResponse(userDto.getId()));
+    @PreAuthorize(value = "hasPermission(#userEditDto, null)")
+    public ResponseEntity<ApiMessageResponse> updateUser(UserEditDto userEditDto) {
+        User user = userRepos.findById(userEditDto.getId()).orElseThrow(() -> new ApiSpecificException("User is not present"));
+        userEditMapper.update(userEditDto, user);
+        return ResponseEntity.ok().body(new ApiMessageResponse(userEditDto.getId()));
     }
 
     @Transactional

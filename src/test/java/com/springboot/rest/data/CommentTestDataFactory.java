@@ -1,16 +1,19 @@
 package com.springboot.rest.data;
 
-import com.springboot.rest.model.entities.Comment;
-import com.springboot.rest.model.entities.Post;
-import com.springboot.rest.model.entities.User;
+import com.springboot.rest.model.dto.ApiMessageResponse;
+import com.springboot.rest.model.dto.CommentDto;
+import com.springboot.rest.model.dto.PostDto;
+import com.springboot.rest.model.dto.UserDto;
 import com.springboot.rest.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -19,12 +22,12 @@ public class CommentTestDataFactory {
     private final HashMap<String, Object> resourcesHashMap;
     private final UserTestDataFactory userTestDataFactory;
     private final PostTestDataFactory postTestDataFactory;
-    private final List<Comment> commentsInDb;
+    private final List<CommentDto> commentsInDb;
 
     @Autowired
     public CommentTestDataFactory(CommentService commentService, UserTestDataFactory userTestDataFactory, PostTestDataFactory postTestDataFactory,
                                   @Qualifier("testExistingResources") HashMap<String, Object> resourcesHashMap,
-                                    @Qualifier("testCommentsListForRead") List<Comment> commentsInDb)
+                                    @Qualifier("testCommentsListForRead") List<CommentDto> commentsInDb)
     {
         this.commentService = commentService;
         this.postTestDataFactory = postTestDataFactory;
@@ -33,50 +36,56 @@ public class CommentTestDataFactory {
         this.commentsInDb = commentsInDb;
     }
 
-    public Comment createNewComment()
+    public CommentDto createNewComment()
     {
-        Comment latest = new Comment();
+        CommentDto latest = new CommentDto();
         latest.setCommentContent("This is a comment");
-        latest.setNoOfLikes(0L);
         latest.setCommentedOnDate(LocalDate.of(2020,5,10));
         return latest;
     }
 
-    public Comment createCommentTemplateForLoggedInUser()
+    public CommentDto createCommentTemplateForLoggedInUser()
     {
-        Comment comment =  createNewComment();
-        User user = userTestDataFactory.getLoggedInUser();
-        Post post = postTestDataFactory.getPreExistingPost();
+        CommentDto comment =  createNewComment();
+        UserDto user = userTestDataFactory.getLoggedInUser();
+        PostDto post = postTestDataFactory.getPreExistingPost();
         comment.setOwner(user);
         comment.setCommentedOn(post);
         return comment;
     }
 
-    public Comment createCommentTemplateForOtherUser()
+    public CommentDto createCommentTemplateForOtherUser()
     {
-        Comment comment =  createNewComment();
-        User user = userTestDataFactory.getOtherThanLoggedInUser();
-        Post post = postTestDataFactory.getPreExistingPost();
+        CommentDto comment =  createNewComment();
+        UserDto user = userTestDataFactory.getOtherThanLoggedInUser();
+        PostDto post = postTestDataFactory.getPreExistingPost();
         comment.setCommentedOn(post);
         comment.setOwner(user);
         return comment;
     }
 
-
-    public Comment getPreExistingComment()
+    public Long createCommentTemplateForLoggedInUserAndInsertInDb()
     {
-        return (Comment) resourcesHashMap.get("EXISTING_COMMENT");
+        CommentDto commentDto = createCommentTemplateForLoggedInUser();
+        ResponseEntity<ApiMessageResponse> message =  commentService.addCommentOnActivity(commentDto);
+        return Objects.requireNonNull(message.getBody()).getResourceId();
     }
 
-    public List<Comment> getAllCommentsOnPost(Post reqPost)
+
+    public CommentDto getPreExistingComment()
     {
-        return commentsInDb.stream().filter((Comment comment)->(comment.getCommentedOn()!=null && comment.getCommentedOn().getId().compareTo(reqPost.getId()) == 0)
+        return (CommentDto) resourcesHashMap.get("EXISTING_COMMENT");
+    }
+
+    public List<CommentDto> getAllCommentsOnPost(PostDto reqPost)
+    {
+        return commentsInDb.stream().filter((CommentDto comment)->(comment.getCommentedOn()!=null && comment.getCommentedOn().getId().compareTo(reqPost.getId()) == 0)
                 && (comment.getParentComment() == null)).collect(Collectors.toList());
     }
 
-    public List<Comment> getRepliesOnComment(Comment reqComment)
+    public List<CommentDto> getRepliesOnComment(CommentDto reqComment)
     {
-        return commentsInDb.stream().filter((Comment comment)->comment.getParentComment()!= null
+        return commentsInDb.stream().filter((CommentDto comment)->comment.getParentComment()!= null
                             && comment.getParentComment().getId().compareTo(reqComment.getId()) == 0).collect(Collectors.toList());
     }
 }

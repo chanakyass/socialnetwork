@@ -1,17 +1,18 @@
 package com.springboot.rest.model.entities;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
-import com.sun.istack.NotNull;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.Optional;
+import java.util.Objects;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include;
 
@@ -19,7 +20,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include;
 @JsonInclude(value = Include.NON_EMPTY)
 @Table(name = "posts")
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@postId")
-public class Post implements ApiResourceMarker {
+public class Post {
 
     @Id
     @SequenceGenerator(name = "post_sequence", sequenceName = "post_sequence", allocationSize = 1)
@@ -62,11 +63,6 @@ public class Post implements ApiResourceMarker {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    @Override
-    public Long getOwnerId() {
-        return owner.getId();
     }
 
     public User getOwner() {
@@ -115,11 +111,11 @@ public class Post implements ApiResourceMarker {
     }
 
     public Long getNoOfLikes() {
-        return noOfLikes;
+        return  Objects.requireNonNullElse(noOfLikes, 0L);
     }
 
     public void setNoOfLikes(Long noOfLikes) {
-        this.noOfLikes = Optional.of(noOfLikes).orElse(0L);
+        this.noOfLikes = Objects.requireNonNullElse(noOfLikes, 0L);
     }
 
     @Override
