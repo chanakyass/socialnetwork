@@ -11,7 +11,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -38,22 +38,22 @@ public class Post {
     @Column(nullable = false)
     private String postBody;
 
-    private LocalDate postedOnDate;
+    private LocalDateTime postedAtTime;
 
-    private LocalDate modifiedOnDate;
+    private LocalDateTime modifiedAtTime;
     private Long noOfLikes;
 
     public Post() {
 
     }
 
-    public Post(Long id, User owner, String postHeading, String postBody, LocalDate postedOnDate, LocalDate modifiedOnDate, Long noOfLikes) {
+    public Post(Long id, User owner, String postHeading, String postBody, LocalDateTime postedAtTime, LocalDateTime modifiedAtTime, Long noOfLikes) {
         this.id = id;
         this.owner = owner;
         this.postHeading = postHeading;
         this.postBody = postBody;
-        this.postedOnDate = postedOnDate;
-        this.modifiedOnDate = modifiedOnDate;
+        this.postedAtTime = postedAtTime;
+        this.modifiedAtTime = modifiedAtTime;
         this.noOfLikes = noOfLikes;
     }
 
@@ -91,23 +91,23 @@ public class Post {
     }
 
     @JsonSerialize(using = LocalDateSerializer.class)
-    public LocalDate getPostedOnDate() {
-        return postedOnDate;
+    public LocalDateTime getPostedAtTime() {
+        return postedAtTime;
     }
 
     @JsonDeserialize(using = LocalDateDeserializer.class)
-    public void setPostedOnDate(LocalDate postedOnDate) {
-        this.postedOnDate = postedOnDate;
+    public void setPostedAtTime(LocalDateTime postedOnDate) {
+        this.postedAtTime = postedOnDate;
     }
 
     @JsonSerialize(using = LocalDateSerializer.class)
-    public LocalDate getModifiedOnDate() {
-        return modifiedOnDate;
+    public LocalDateTime getModifiedAtTime() {
+        return modifiedAtTime;
     }
 
     @JsonDeserialize(using = LocalDateDeserializer.class)
-    public void setModifiedOnDate(LocalDate modifiedOnDate) {
-        this.modifiedOnDate = modifiedOnDate;
+    public void setModifiedAtTime(LocalDateTime modifiedOnDate) {
+        this.modifiedAtTime = modifiedOnDate;
     }
 
     public Long getNoOfLikes() {
@@ -125,8 +125,8 @@ public class Post {
                 ", owner=" + owner +
                 ", postHeading='" + postHeading + '\'' +
                 ", postBody='" + postBody + '\'' +
-                ", postedOnDate=" + postedOnDate +
-                ", modifiedOnDate=" + modifiedOnDate +
+                ", postedOnDate=" + postedAtTime +
+                ", modifiedOnDate=" + modifiedAtTime +
                 ", noOfLikes=" + noOfLikes +
                 '}';
     }

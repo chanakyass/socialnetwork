@@ -4,9 +4,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
-import com.springboot.rest.model.entities.ApiResourceMarker;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class PostEditDto implements ApiResourceMarker {
@@ -19,14 +18,14 @@ public class PostEditDto implements ApiResourceMarker {
 
     String postBody;
 
-    LocalDate modifiedOnDate;
+    LocalDateTime modifiedAtTime;
 
-    public PostEditDto(Long id, UserProxyDto owner, String postHeading, String postBody, LocalDate modifiedOnDate) {
+    public PostEditDto(Long id, UserProxyDto owner, String postHeading, String postBody, LocalDateTime modifiedAtTime) {
         this.id = id;
         this.owner = owner;
         this.postHeading = postHeading;
         this.postBody = postBody;
-        this.modifiedOnDate = modifiedOnDate;
+        this.modifiedAtTime = modifiedAtTime;
     }
 
     public PostEditDto() {
@@ -82,13 +81,13 @@ public class PostEditDto implements ApiResourceMarker {
     }
 
     @JsonSerialize(using = LocalDateSerializer.class)
-    public LocalDate getModifiedOnDate() {
-        return modifiedOnDate;
+    public LocalDateTime getModifiedAtTime() {
+        return modifiedAtTime;
     }
 
     @JsonDeserialize(using = LocalDateDeserializer.class)
-    public void setModifiedOnDate(LocalDate modifiedOnDate) {
-        this.modifiedOnDate = modifiedOnDate;
+    public void setModifiedAtTime(LocalDateTime modifiedAtTime) {
+        this.modifiedAtTime = modifiedAtTime;
     }
 
     @Override

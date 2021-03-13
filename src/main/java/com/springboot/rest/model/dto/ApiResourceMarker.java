@@ -1,4 +1,4 @@
-package com.springboot.rest.model.entities;
+package com.springboot.rest.model.dto;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;

@@ -109,7 +109,7 @@ public class UserServiceTest extends DemoApplicationTests {
             UserEditDto userEdit = new UserEditDto();
 
             userEditMapper.toUserEdit(userTestDataFactory.getLoggedInUser(), userEdit);
-            userEdit.setAge(12);
+            userEdit.setUserSummary("blah");
 
             MvcResult createResult = this.mockMvc.perform(put("/api/v1/profile/my-profile").contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(userEdit)))
@@ -126,7 +126,7 @@ public class UserServiceTest extends DemoApplicationTests {
 
         UserEditDto userEdit = new UserEditDto();
         userEditMapper.toUserEdit(user, userEdit);
-        userEdit.setAge(13);
+        userEdit.setUserSummary("blah");
 
         MvcResult createResult = this.mockMvc.perform(put("/api/v1/profile/my-profile").contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(userEdit)))

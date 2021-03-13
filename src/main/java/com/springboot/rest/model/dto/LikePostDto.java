@@ -4,9 +4,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
-import com.springboot.rest.model.entities.ApiResourceMarker;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class LikePostDto implements ApiResourceMarker {
@@ -15,14 +14,14 @@ public class LikePostDto implements ApiResourceMarker {
 
     UserProxyDto owner;
 
-    LocalDate likedOnDate;
+    LocalDateTime likedAtTime;
 
     PostProxyDto likedPost;
 
-    public LikePostDto(Long id, UserProxyDto owner, LocalDate likedOnDate, PostProxyDto likedPost) {
+    public LikePostDto(Long id, UserProxyDto owner, LocalDateTime likedAtTime, PostProxyDto likedPost) {
         this.id = id;
         this.owner = owner;
-        this.likedOnDate = likedOnDate;
+        this.likedAtTime = likedAtTime;
         this.likedPost = likedPost;
     }
 
@@ -46,13 +45,13 @@ public class LikePostDto implements ApiResourceMarker {
     }
 
     @JsonSerialize(using = LocalDateSerializer.class)
-    public LocalDate getLikedOnDate() {
-        return likedOnDate;
+    public LocalDateTime getLikedAtTime() {
+        return likedAtTime;
     }
 
     @JsonDeserialize(using = LocalDateDeserializer.class)
-    public void setLikedOnDate(LocalDate likedOnDate) {
-        this.likedOnDate = likedOnDate;
+    public void setLikedAtTime(LocalDateTime likedAtTime) {
+        this.likedAtTime = likedAtTime;
     }
 
     public PostProxyDto getLikedPost() {
@@ -68,12 +67,12 @@ public class LikePostDto implements ApiResourceMarker {
         if (this == o) return true;
         if (!(o instanceof LikePostDto)) return false;
         LikePostDto that = (LikePostDto) o;
-        return getId().equals(that.getId()) && getOwner().equals(that.getOwner()) && Objects.equals(getLikedOnDate(), that.getLikedOnDate()) && getLikedPost().equals(that.getLikedPost());
+        return getId().equals(that.getId()) && getOwner().equals(that.getOwner()) && Objects.equals(getLikedAtTime(), that.getLikedAtTime()) && getLikedPost().equals(that.getLikedPost());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getOwner(), getLikedOnDate(), getLikedPost());
+        return Objects.hash(getId(), getOwner(), getLikedAtTime(), getLikedPost());
     }
 
     @Override

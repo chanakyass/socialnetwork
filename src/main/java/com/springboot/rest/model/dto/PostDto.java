@@ -5,10 +5,9 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
-import com.springboot.rest.model.entities.ApiResourceMarker;
 import io.swagger.annotations.ApiModel;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @ApiModel(description = "Post details", parent = PostProxyDto.class)
@@ -18,19 +17,19 @@ public class PostDto extends PostProxyDto implements ApiResourceMarker {
 
     String postBody;
 
-    LocalDate postedOnDate;
+    LocalDateTime postedAtTime;
 
-    LocalDate modifiedOnDate;
+    LocalDateTime modifiedAtTime;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     Long noOfLikes;
 
-    public PostDto(Long id, UserProxyDto owner, String postHeading, String postBody, LocalDate postedOnDate, LocalDate modifiedOnDate, Long noOfLikes) {
+    public PostDto(Long id, UserProxyDto owner, String postHeading, String postBody, LocalDateTime postedAtTime, LocalDateTime modifiedAtTime, Long noOfLikes) {
         super(id, owner);
         this.postHeading = postHeading;
         this.postBody = postBody;
-        this.postedOnDate = postedOnDate;
-        this.modifiedOnDate = modifiedOnDate;
+        this.postedAtTime = postedAtTime;
+        this.modifiedAtTime = modifiedAtTime;
         this.noOfLikes = noOfLikes;
     }
 
@@ -55,23 +54,23 @@ public class PostDto extends PostProxyDto implements ApiResourceMarker {
     }
 
     @JsonSerialize(using = LocalDateSerializer.class)
-    public LocalDate getPostedOnDate() {
-        return postedOnDate;
+    public LocalDateTime getPostedAtTime() {
+        return postedAtTime;
     }
 
     @JsonDeserialize(using = LocalDateDeserializer.class)
-    public void setPostedOnDate(LocalDate postedOnDate) {
-        this.postedOnDate = postedOnDate;
+    public void setPostedAtTime(LocalDateTime postedAtTime) {
+        this.postedAtTime = postedAtTime;
     }
 
     @JsonSerialize(using = LocalDateSerializer.class)
-    public LocalDate getModifiedOnDate() {
-        return modifiedOnDate;
+    public LocalDateTime getModifiedAtTime() {
+        return modifiedAtTime;
     }
 
     @JsonDeserialize(using = LocalDateDeserializer.class)
-    public void setModifiedOnDate(LocalDate modifiedOnDate) {
-        this.modifiedOnDate = modifiedOnDate;
+    public void setModifiedAtTime(LocalDateTime modifiedAtTime) {
+        this.modifiedAtTime = modifiedAtTime;
     }
 
     public Long getNoOfLikes() {
@@ -87,12 +86,12 @@ public class PostDto extends PostProxyDto implements ApiResourceMarker {
         if (this == o) return true;
         if (!(o instanceof PostDto)) return false;
         PostDto postDto = (PostDto) o;
-        return getId().equals(postDto.getId()) && getOwner().equals(postDto.getOwner()) && Objects.equals(getPostHeading(), postDto.getPostHeading()) && Objects.equals(getPostBody(), postDto.getPostBody()) && Objects.equals(getPostedOnDate(), postDto.getPostedOnDate());
+        return getId().equals(postDto.getId()) && getOwner().equals(postDto.getOwner()) && Objects.equals(getPostHeading(), postDto.getPostHeading()) && Objects.equals(getPostBody(), postDto.getPostBody()) && Objects.equals(getPostedAtTime(), postDto.getPostedAtTime());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getOwner(), getPostHeading(), getPostBody(), getPostedOnDate());
+        return Objects.hash(getId(), getOwner(), getPostHeading(), getPostBody(), getPostedAtTime());
     }
 
     @Override

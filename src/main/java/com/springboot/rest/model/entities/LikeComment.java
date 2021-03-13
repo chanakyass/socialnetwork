@@ -8,7 +8,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "likes_on_comments")
@@ -26,7 +26,7 @@ public class LikeComment {
     @JoinColumn(name = "owned_by_user", foreignKey = @ForeignKey(name = "fk_owner_user_id"))
     private User owner;
 
-    private LocalDate likedOnDate;
+    private LocalDateTime likedAtTime;
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
     @NotNull
@@ -34,10 +34,10 @@ public class LikeComment {
     @JsonProperty("likedComment")
     private Comment likedComment;
 
-    public LikeComment(Long id, User owner, LocalDate likedOnDate, Comment likedComment) {
+    public LikeComment(Long id, User owner, LocalDateTime likedAtTime, Comment likedComment) {
         this.id = id;
         this.owner = owner;
-        this.likedOnDate = likedOnDate;
+        this.likedAtTime = likedAtTime;
         this.likedComment = likedComment;
     }
 
@@ -48,12 +48,12 @@ public class LikeComment {
         return owner;
     }
 
-    public LocalDate getLikedOnDate() {
-        return likedOnDate;
+    public LocalDateTime getLikedAtTime() {
+        return likedAtTime;
     }
 
-    public void setLikedOnDate(LocalDate likedOnDate) {
-        this.likedOnDate = likedOnDate;
+    public void setLikedAtTime(LocalDateTime likedOnDate) {
+        this.likedAtTime = likedOnDate;
     }
 
     public Comment getLikedComment() {

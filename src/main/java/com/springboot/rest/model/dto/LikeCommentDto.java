@@ -4,9 +4,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
-import com.springboot.rest.model.entities.ApiResourceMarker;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class LikeCommentDto implements ApiResourceMarker {
@@ -15,14 +14,14 @@ public class LikeCommentDto implements ApiResourceMarker {
 
     UserProxyDto owner;
 
-    LocalDate likedOnDate;
+    LocalDateTime likedAtTime;
 
     CommentProxyDto likedComment;
 
-    public LikeCommentDto(Long id, UserProxyDto owner, LocalDate likedOnDate, CommentProxyDto likedComment) {
+    public LikeCommentDto(Long id, UserProxyDto owner, LocalDateTime likedAtTime, CommentProxyDto likedComment) {
         this.id = id;
         this.owner = owner;
-        this.likedOnDate = likedOnDate;
+        this.likedAtTime = likedAtTime;
         this.likedComment = likedComment;
     }
 
@@ -46,13 +45,13 @@ public class LikeCommentDto implements ApiResourceMarker {
     }
 
     @JsonSerialize(using = LocalDateSerializer.class)
-    public LocalDate getLikedOnDate() {
-        return likedOnDate;
+    public LocalDateTime getLikedAtTime() {
+        return likedAtTime;
     }
 
     @JsonDeserialize(using = LocalDateDeserializer.class)
-    public void setLikedOnDate(LocalDate likedOnDate) {
-        this.likedOnDate = likedOnDate;
+    public void setLikedAtTime(LocalDateTime likedAtTime) {
+        this.likedAtTime = likedAtTime;
     }
 
     public CommentProxyDto getLikedComment() {
@@ -68,12 +67,12 @@ public class LikeCommentDto implements ApiResourceMarker {
         if (this == o) return true;
         if (!(o instanceof LikeCommentDto)) return false;
         LikeCommentDto that = (LikeCommentDto) o;
-        return getId().equals(that.getId()) && getOwner().equals(that.getOwner()) && Objects.equals(getLikedOnDate(), that.getLikedOnDate()) && getLikedComment().equals(that.getLikedComment());
+        return getId().equals(that.getId()) && getOwner().equals(that.getOwner()) && Objects.equals(getLikedAtTime(), that.getLikedAtTime()) && getLikedComment().equals(that.getLikedComment());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getOwner(), getLikedOnDate(), getLikedComment());
+        return Objects.hash(getId(), getOwner(), getLikedAtTime(), getLikedComment());
     }
 
     @Override

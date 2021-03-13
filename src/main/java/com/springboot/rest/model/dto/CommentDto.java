@@ -5,25 +5,24 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
-import com.springboot.rest.model.entities.ApiResourceMarker;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class CommentDto extends CommentProxyDto implements ApiResourceMarker {
 
-    LocalDate commentedOnDate;
-    LocalDate modifiedOnDate;
+    LocalDateTime commentedAtTime;
+    LocalDateTime modifiedAtTime;
     PostProxyDto commentedOn;
     CommentProxyDto parentComment;
     String commentContent;
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     Long noOfLikes;
 
-    public CommentDto(Long id, UserProxyDto owner, LocalDate commentedOnDate, LocalDate modifiedOnDate, PostProxyDto commentedOn, CommentProxyDto parentComment, String commentContent, Long noOfLikes) {
+    public CommentDto(Long id, UserProxyDto owner, LocalDateTime commentedAtTime, LocalDateTime modifiedAtTime, PostProxyDto commentedOn, CommentProxyDto parentComment, String commentContent, Long noOfLikes) {
         super(id, owner);
-        this.commentedOnDate = commentedOnDate;
-        this.modifiedOnDate = modifiedOnDate;
+        this.commentedAtTime = commentedAtTime;
+        this.modifiedAtTime = modifiedAtTime;
         this.commentedOn = commentedOn;
         this.parentComment = parentComment;
         this.commentContent = commentContent;
@@ -36,13 +35,13 @@ public class CommentDto extends CommentProxyDto implements ApiResourceMarker {
     }
 
     @JsonSerialize(using = LocalDateSerializer.class)
-    public LocalDate getCommentedOnDate() {
-        return commentedOnDate;
+    public LocalDateTime getCommentedAtTime() {
+        return commentedAtTime;
     }
 
     @JsonDeserialize(using = LocalDateDeserializer.class)
-    public void setCommentedOnDate(LocalDate commentedOnDate) {
-        this.commentedOnDate = commentedOnDate;
+    public void setCommentedAtTime(LocalDateTime commentedAtTime) {
+        this.commentedAtTime = commentedAtTime;
     }
 
     public PostProxyDto getCommentedOn() {
@@ -70,13 +69,13 @@ public class CommentDto extends CommentProxyDto implements ApiResourceMarker {
     }
 
     @JsonSerialize(using = LocalDateSerializer.class)
-    public LocalDate getModifiedOnDate() {
-        return modifiedOnDate;
+    public LocalDateTime getModifiedAtTime() {
+        return modifiedAtTime;
     }
 
     @JsonDeserialize(using = LocalDateDeserializer.class)
-    public void setModifiedOnDate(LocalDate modifiedOnDate) {
-        this.modifiedOnDate = modifiedOnDate;
+    public void setModifiedAtTime(LocalDateTime modifiedAtTime) {
+        this.modifiedAtTime = modifiedAtTime;
     }
 
     public Long getNoOfLikes() {
@@ -92,12 +91,12 @@ public class CommentDto extends CommentProxyDto implements ApiResourceMarker {
         if (this == o) return true;
         if (!(o instanceof CommentDto)) return false;
         CommentDto that = (CommentDto) o;
-        return getId().equals(that.getId()) && getOwner().equals(that.getOwner()) && Objects.equals(getCommentedOnDate(), that.getCommentedOnDate()) && getCommentedOn().equals(that.getCommentedOn()) && Objects.equals(getParentComment(), that.getParentComment()) && Objects.equals(getCommentContent(), that.getCommentContent());
+        return getId().equals(that.getId()) && getOwner().equals(that.getOwner()) && Objects.equals(getCommentedAtTime(), that.getCommentedAtTime()) && getCommentedOn().equals(that.getCommentedOn()) && Objects.equals(getParentComment(), that.getParentComment()) && Objects.equals(getCommentContent(), that.getCommentContent());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getOwner(), getCommentedOnDate(), getCommentedOn(), getParentComment(), getCommentContent());
+        return Objects.hash(getId(), getOwner(), getCommentedAtTime(), getCommentedOn(), getParentComment(), getCommentContent());
     }
 
     @Override

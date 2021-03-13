@@ -1,10 +1,10 @@
 package com.springboot.rest.config.security;
 
 import com.springboot.rest.config.exceptions.ApiAccessException;
-import com.springboot.rest.model.entities.ApiResourceMarker;
+import com.springboot.rest.model.dto.ApiResourceMarker;
 import com.springboot.rest.model.entities.SecureResource;
 import com.springboot.rest.model.entities.User;
-import com.springboot.rest.model.entities.UserPersonalMarker;
+import com.springboot.rest.model.dto.UserPersonalMarker;
 import com.springboot.rest.repository.SecureResourceRepos;
 import com.springboot.rest.repository.UserRepos;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,7 +1,5 @@
 package com.springboot.rest.model.dto;
 
-import com.springboot.rest.model.entities.UserPersonalMarker;
-
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -13,17 +11,14 @@ public class UserEditDto implements UserPersonalMarker {
 
     String email;
 
-    Integer age;
-
     LocalDate DOB;
 
     String userSummary;
 
-    public UserEditDto(Long id, String name, String email, Integer age, LocalDate DOB, String userSummary) {
+    public UserEditDto(Long id, String name, String email, LocalDate DOB, String userSummary) {
         this.id = id;
         this.name = name;
         this.email = email;
-        this.age = age;
         this.DOB = DOB;
         this.userSummary = userSummary;
     }
@@ -66,14 +61,6 @@ public class UserEditDto implements UserPersonalMarker {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public Integer getAge() {
-        return age;
-    }
-
-    public void setAge(Integer age) {
-        this.age = age;
     }
 
     public LocalDate getDOB() {

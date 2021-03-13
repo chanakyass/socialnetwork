@@ -1,4 +1,4 @@
-package com.springboot.rest.config;
+package com.springboot.rest.config.swagger;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

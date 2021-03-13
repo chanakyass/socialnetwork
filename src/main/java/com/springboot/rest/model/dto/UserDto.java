@@ -2,7 +2,6 @@ package com.springboot.rest.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.springboot.rest.model.entities.Role;
-import com.springboot.rest.model.entities.UserPersonalMarker;
 
 import java.time.LocalDate;
 import java.time.Period;
@@ -12,12 +11,14 @@ public class UserDto extends UserProxyDto implements UserPersonalMarker {
 
     String profileName;
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     String password;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     Integer age;
+
     LocalDate DOB;
     String userSummary;
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     List<Role> grantedAuthoritiesList;
 
     public UserDto(Long id, String name, String profileName, String email, String password, Integer age, LocalDate DOB, String userSummary, List<Role> grantedAuthoritiesList) {
@@ -51,12 +52,8 @@ public class UserDto extends UserProxyDto implements UserPersonalMarker {
     }
 
     public Integer getAge() {
-        return age;
-    }
-
-    public void setAge(Integer age) {
         Period between  = Period.between(getDOB(), LocalDate.now());
-        this.age = between.getDays();
+        return between.getYears();
     }
 
     public LocalDate getDOB() {

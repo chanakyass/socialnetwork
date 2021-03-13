@@ -10,7 +10,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -35,8 +35,8 @@ public class Comment {
 
     @Column(nullable = false)
     private String commentContent;
-    private LocalDate commentedOnDate;
-    private LocalDate modifiedOnDate;
+    private LocalDateTime commentedAtTime;
+    private LocalDateTime modifiedAtTime;
     private Long noOfLikes;
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -46,13 +46,13 @@ public class Comment {
     public Comment() {
     }
 
-    public Comment(Long id, User owner, Comment parentComment, String commentContent, LocalDate commentedOnDate, LocalDate modifiedOnDate, Long noOfLikes, Post commentedOn) {
+    public Comment(Long id, User owner, Comment parentComment, String commentContent, LocalDateTime commentedAtTime, LocalDateTime modifiedAtTime, Long noOfLikes, Post commentedOn) {
         this.id = id;
         this.owner = owner;
         this.parentComment = parentComment;
         this.commentContent = commentContent;
-        this.commentedOnDate = commentedOnDate;
-        this.modifiedOnDate = modifiedOnDate;
+        this.commentedAtTime = commentedAtTime;
+        this.modifiedAtTime = modifiedAtTime;
         this.noOfLikes = noOfLikes;
         this.commentedOn = commentedOn;
     }
@@ -90,23 +90,23 @@ public class Comment {
     }
 
     @JsonSerialize(using = LocalDateSerializer.class)
-    public LocalDate getCommentedOnDate() {
-        return commentedOnDate;
+    public LocalDateTime getCommentedAtTime() {
+        return commentedAtTime;
     }
 
     @JsonDeserialize(using = LocalDateDeserializer.class)
-    public void setCommentedOnDate(LocalDate commentedOnDate) {
-        this.commentedOnDate = commentedOnDate;
+    public void setCommentedAtTime(LocalDateTime commentedOnDate) {
+        this.commentedAtTime = commentedOnDate;
     }
 
     @JsonSerialize(using = LocalDateSerializer.class)
-    public LocalDate getModifiedOnDate() {
-        return modifiedOnDate;
+    public LocalDateTime getModifiedAtTime() {
+        return modifiedAtTime;
     }
 
     @JsonDeserialize(using = LocalDateDeserializer.class)
-    public void setModifiedOnDate(LocalDate modifiedOnDate) {
-        this.modifiedOnDate = modifiedOnDate;
+    public void setModifiedAtTime(LocalDateTime modifiedOnDate) {
+        this.modifiedAtTime = modifiedOnDate;
     }
 
     public Long getNoOfLikes() {

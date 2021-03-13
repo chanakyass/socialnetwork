@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -39,14 +40,14 @@ public class PostTestDataFactory {
         String body = "post body";
         String heading = "post heading";
         Long noOfLikes = 0L;
-        LocalDate postedOnDate = LocalDate.of(2020, 5, 10);
+        LocalDateTime postedOnDate = LocalDateTime.now();
 
 
         PostDto latest = new PostDto();
         latest.setPostBody(body);
         latest.setPostHeading(heading);
         latest.setNoOfLikes(noOfLikes);
-        latest.setPostedOnDate(postedOnDate);
+        latest.setPostedAtTime(postedOnDate);
         return latest;
     }
 

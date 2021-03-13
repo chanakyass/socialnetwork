@@ -20,7 +20,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -98,7 +98,7 @@ public class CommentService {
 
         Comment comment = commentRepos.findById(commentEditDto.getId()).orElseThrow(() -> new ApiSpecificException("Comment is not present"));
 
-        commentEditDto.setModifiedOnDate(LocalDate.now());
+        commentEditDto.setModifiedAtTime(LocalDateTime.now());
         commentEditMapper.update(commentEditDto, comment);
         return ResponseEntity.ok().body(new ApiMessageResponse(commentEditDto.getId()));
     }

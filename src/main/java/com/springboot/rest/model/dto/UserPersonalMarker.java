@@ -1,4 +1,4 @@
-package com.springboot.rest.model.entities;
+package com.springboot.rest.model.dto;
 
 public interface UserPersonalMarker {
 

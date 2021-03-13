@@ -20,7 +20,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -93,7 +93,7 @@ public class PostService {
     public ResponseEntity<ApiMessageResponse> updatePost(PostEditDto postEditDto) {
         Post postToUpdate = postRepos.findById(postEditDto.getId()).orElseThrow(() -> new ApiSpecificException("Post is not present"));
 
-        postEditDto.setModifiedOnDate(LocalDate.now());
+        postEditDto.setModifiedAtTime(LocalDateTime.now());
         postEditMapper.toPost(postEditDto, postToUpdate);
         return ResponseEntity.ok().body(new ApiMessageResponse(postEditDto.getId()));
 

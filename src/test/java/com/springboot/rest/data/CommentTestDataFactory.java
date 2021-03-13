@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -40,7 +41,7 @@ public class CommentTestDataFactory {
     {
         CommentDto latest = new CommentDto();
         latest.setCommentContent("This is a comment");
-        latest.setCommentedOnDate(LocalDate.of(2020,5,10));
+        latest.setCommentedAtTime(LocalDateTime.now());
         return latest;
     }
 
