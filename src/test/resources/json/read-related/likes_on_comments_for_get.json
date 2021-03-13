@@ -1,0 +1,41 @@
+[
+  {
+    "id" : 1,
+
+    "owner": {
+      "id": 1
+    },
+
+    "likedAtTime": "2020-08-07T10:35:00",
+
+    "likedComment": {
+      "id": 1
+    }
+  },
+  {
+    "id" : 2,
+
+    "owner": {
+      "id": 2
+    },
+
+    "likedAtTime": "2020-08-07T10:35:00",
+
+    "likedComment": {
+      "id": 2
+    }
+  },
+  {
+    "id" : 3,
+
+    "owner": {
+      "id": 3
+    },
+
+    "likedAtTime": "2020-08-07T10:35:00",
+
+    "likedComment": {
+      "id": 1
+    }
+  }
+]

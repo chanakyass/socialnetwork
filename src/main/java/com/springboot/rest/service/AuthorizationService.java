@@ -88,7 +88,6 @@ public class AuthorizationService implements UserDetailsService {
 
 
         } catch (BadCredentialsException badCredentialsException) {
-            badCredentialsException.printStackTrace();
             throw new ApiAccessException("Incorrect credentials.");
         }
     }

@@ -1,0 +1,14 @@
+{
+  "EXISTING_COMMENT": {
+    "id": 1,
+    "owner" : {
+      "id" : 1
+    },
+    "commentContent": "This is comment existing",
+    "commentedAtTime": "2020-02-05T10:35:00",
+    "noOfLikes":0,
+    "commentedOn": {
+      "id" : 1
+    }
+  }
+}

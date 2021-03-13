@@ -1,0 +1,15 @@
+{
+  "EXISTING_LIKE_COMMENT": {
+    "id" : 1,
+
+    "owner": {
+      "id": 1
+    },
+
+    "likedAtTime": "2020-02-05T10:35:00",
+
+    "likedComment": {
+      "id": 1
+    }
+  }
+}
