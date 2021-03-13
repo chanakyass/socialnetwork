@@ -1,7 +1,9 @@
 package com.springboot.rest.model.dto;
 
 import com.springboot.rest.model.entities.UserAdapter;
+import io.swagger.annotations.ApiModel;
 
+@ApiModel(value = "Authentication Response", description = "Contains the user id and the user email")
 public class AuthResponse {
 
     private Long id;

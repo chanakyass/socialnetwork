@@ -5,11 +5,13 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import io.swagger.annotations.ApiModel;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+@ApiModel(value = "Comment", description = "Contains a proxy for the post, parent comment", parent = CommentProxyDto.class)
 public class CommentDto extends CommentProxyDto implements ApiResourceMarker {
 
     LocalDateTime commentedAtTime;

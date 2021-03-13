@@ -1,10 +1,12 @@
 package com.springboot.rest.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import io.swagger.annotations.ApiModel;
 
 import java.util.Objects;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
+@ApiModel(value = "Comment proxy", description = "Contains only the comment id and the owner proxy")
 public class CommentProxyDto {
 
     Long id;

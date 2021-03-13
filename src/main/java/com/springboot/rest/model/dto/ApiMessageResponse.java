@@ -1,5 +1,8 @@
 package com.springboot.rest.model.dto;
 
+import io.swagger.annotations.ApiModel;
+
+@ApiModel(value = "ApiMessageResponse", description = "Contains the success response message along with the id of the resource handled")
 public class ApiMessageResponse {
 
     private String message;
@@ -9,6 +12,7 @@ public class ApiMessageResponse {
     public ApiMessageResponse(String message) {
         this.message = message;
     }
+
     public ApiMessageResponse(Long resourceId)
     {
         this.message = "Action successful";

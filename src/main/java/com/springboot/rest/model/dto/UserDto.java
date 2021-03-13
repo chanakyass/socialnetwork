@@ -6,11 +6,13 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.springboot.rest.model.entities.Role;
+import io.swagger.annotations.ApiModel;
 
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
 
+@ApiModel(value = "User", description = "Contains only the additional details of the user", parent = UserProxyDto.class)
 public class UserDto extends UserProxyDto implements UserPersonalMarker {
 
     String profileName;

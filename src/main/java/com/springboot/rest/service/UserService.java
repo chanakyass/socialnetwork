@@ -78,6 +78,7 @@ public class UserService {
     @RolesAllowed("ROLE_USER")
     @PreAuthorize(value = "hasPermission(#userEditDto, null)")
     public ResponseEntity<ApiMessageResponse> updateUser(UserEditDto userEditDto) {
+
         User user = userRepos.findById(userEditDto.getId()).orElseThrow(() -> new ApiSpecificException("User is not present"));
         userEditMapper.update(userEditDto, user);
         return ResponseEntity.ok().body(new ApiMessageResponse(userEditDto.getId()));

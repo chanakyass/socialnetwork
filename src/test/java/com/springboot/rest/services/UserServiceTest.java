@@ -154,7 +154,7 @@ public class UserServiceTest extends DemoApplicationTests {
 
         AuthRequest authRequest = new AuthRequest(user.getEmail(), user.getPassword()+"12");
 
-        MvcResult createResult = this.mockMvc.perform(put("/api/v1/public/login").contentType(MediaType.APPLICATION_JSON)
+        MvcResult createResult = this.mockMvc.perform(post("/api/v1/public/login").contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(authRequest)))
                 .andExpect(status().isForbidden())
                 .andReturn();

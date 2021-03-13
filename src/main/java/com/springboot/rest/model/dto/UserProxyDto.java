@@ -1,10 +1,12 @@
 package com.springboot.rest.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import io.swagger.annotations.ApiModel;
 
 import java.util.Objects;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
+@ApiModel(value = "User proxy structure", description = "Contains the id, name and email of user")
 public class UserProxyDto {
 
     Long id;

@@ -11,7 +11,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-@ApiModel(description = "Post details", parent = PostProxyDto.class)
+@ApiModel(value = "Post",description = "Post structure. Contains the actual details of the post",  parent = PostProxyDto.class)
 public class PostDto extends PostProxyDto implements ApiResourceMarker {
 
     String postHeading;

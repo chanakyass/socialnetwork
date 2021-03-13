@@ -4,16 +4,14 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import io.swagger.annotations.ApiModel;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class PostEditDto implements ApiResourceMarker {
-
-    Long id;
-
-    UserProxyDto owner;
+@ApiModel(value = "Post Edit",  description = "Contains the actual details of the post. Only used for editing a post",  parent = PostProxyDto.class)
+public class PostEditDto extends PostProxyDto implements ApiResourceMarker {
 
     String postHeading;
 
@@ -22,48 +20,15 @@ public class PostEditDto implements ApiResourceMarker {
     LocalDateTime modifiedAtTime;
 
     public PostEditDto(Long id, UserProxyDto owner, String postHeading, String postBody, LocalDateTime modifiedAtTime) {
-        this.id = id;
-        this.owner = owner;
+        super(id, owner);
         this.postHeading = postHeading;
         this.postBody = postBody;
         this.modifiedAtTime = modifiedAtTime;
     }
 
     public PostEditDto() {
+        super();
     }
-
-
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public UserProxyDto getOwner() {
-        return owner;
-    }
-
-    public void setOwner(UserProxyDto owner) {
-        this.owner = owner;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof PostEditDto)) return false;
-        PostEditDto postEditDto = (PostEditDto) o;
-        return getId().equals(postEditDto.getId()) && getOwner().equals(postEditDto.getOwner());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId(), getOwner());
-    }
-
-
 
     public String getPostHeading() {
         return postHeading;

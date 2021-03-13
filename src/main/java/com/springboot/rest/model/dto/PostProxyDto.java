@@ -1,11 +1,14 @@
 package com.springboot.rest.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiModel;
 
 import java.util.Objects;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class PostProxyDto {
+@ApiModel(value = "Post proxy", description = "Contains only the id and owner of the post")
+public class  PostProxyDto {
 
     Long id;
     UserProxyDto owner;
