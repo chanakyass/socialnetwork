@@ -1,14 +1,17 @@
 package com.springboot.rest.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.springboot.rest.model.entities.ApiResourceMarker;
+import io.swagger.annotations.ApiModel;
 
 import java.time.LocalDate;
 import java.util.Objects;
 
+@ApiModel(description = "Post details", parent = PostProxyDto.class)
 public class PostDto extends PostProxyDto implements ApiResourceMarker {
 
     String postHeading;
@@ -19,6 +22,7 @@ public class PostDto extends PostProxyDto implements ApiResourceMarker {
 
     LocalDate modifiedOnDate;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     Long noOfLikes;
 
     public PostDto(Long id, UserProxyDto owner, String postHeading, String postBody, LocalDate postedOnDate, LocalDate modifiedOnDate, Long noOfLikes) {

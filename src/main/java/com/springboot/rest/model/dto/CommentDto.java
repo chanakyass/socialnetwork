@@ -1,5 +1,6 @@
 package com.springboot.rest.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
@@ -16,6 +17,7 @@ public class CommentDto extends CommentProxyDto implements ApiResourceMarker {
     PostProxyDto commentedOn;
     CommentProxyDto parentComment;
     String commentContent;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     Long noOfLikes;
 
     public CommentDto(Long id, UserProxyDto owner, LocalDate commentedOnDate, LocalDate modifiedOnDate, PostProxyDto commentedOn, CommentProxyDto parentComment, String commentContent, Long noOfLikes) {

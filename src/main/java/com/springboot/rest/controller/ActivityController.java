@@ -22,49 +22,47 @@ public class ActivityController {
     private final PostService postService;
     private final CommentService commentService;
     private final LikeService likeService;
-    private final AuthorizationService authorizationService;
 
     @Autowired
 
-    public ActivityController(PostService postService, CommentService commentService, LikeService likeService, AuthorizationService authorizationService) {
+    public ActivityController(PostService postService, CommentService commentService, LikeService likeService) {
         this.postService = postService;
         this.commentService = commentService;
         this.likeService = likeService;
-        this.authorizationService = authorizationService;
     }
 
     /*
         Post related controls starts here
      */
 
+    @PostMapping("post")
+    public ResponseEntity<ApiMessageResponse> addUserPost(@RequestBody PostDto post) {
+        return postService.addPost(post);
+    }
+
+
+    @PutMapping("post")
+    public ResponseEntity<ApiMessageResponse> updateUserPost(@RequestBody PostEditDto postEditDto) {
+        return postService.updatePost(postEditDto);
+    }
+
+    @GetMapping("profile/{userId}/posts/{pageNo}")
+    public List<PostDto> getUserPost(@PathVariable("userId") Long user_id,
+                                        @PathVariable("pageNo") int pageNo) {
+        return postService.getPostsOfUser(user_id, pageNo);
+    }
+
+    @GetMapping("post/{postId}")
+    public PostDto getRequiredPost(@PathVariable("postId") Long postId) {
+        return postService.getSelectedPost(postId);
+    }
+
     @GetMapping("posts/{pageNo}")
     public List<PostDto> getPostsForFeed(@PathVariable int pageNo) {
         return postService.getPosts(pageNo);
     }
 
-    @GetMapping("profile/{userId}/posts/{pageNo}")
-    public List<PostDto> getPostsOfUser(@PathVariable("userId") Long user_id,
-                                         @PathVariable("pageNo") int pageNo) {
-        return postService.getPostsOfUser(user_id, pageNo);
-    }
-
-    @GetMapping("post/{postId}")
-    public PostDto getPostReq(@PathVariable("postId") Long postId) {
-        return postService.getSelectedPost(postId);
-    }
-
-    @PostMapping("post")
-    public ResponseEntity<ApiMessageResponse> addPostOfUser(@RequestBody PostDto post) {
-        return postService.addPost(post);
-    }
-
-    @PutMapping("post")
-    public ResponseEntity<ApiMessageResponse> updatePostOfUser(@RequestBody PostEditDto postEditDto) {
-        return postService.updatePost(postEditDto);
-    }
-
     @DeleteMapping("post/{postId}")
-    //@PostAuthorize(value = "@authorizationService.deleteSecureResource(returnObject.body.resourceId)")
     public ResponseEntity<ApiMessageResponse> deletePostOfUser(@PathVariable Long postId) {
         return postService.deletePost(postId);
     }

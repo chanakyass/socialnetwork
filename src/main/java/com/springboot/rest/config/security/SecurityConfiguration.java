@@ -87,15 +87,16 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                         }
                 )
                 .accessDeniedHandler((httpServletRequest, httpServletResponse, e) -> exceptionHandler.resolveException(httpServletRequest, httpServletResponse, null, e))
-                .and().anonymous().and();
-                http.authorizeRequests()
+                .and().anonymous().and()
+                .authorizeRequests()
                 //.antMatchers("api/v1/resource/**", "api/v1/profile/**")
+                .antMatchers("/").permitAll()
                 .antMatchers("/api/v1/public/**").permitAll()
-                        .antMatchers("/api/v1/public").permitAll()
-                        .antMatchers("/api/v1/public/*").permitAll()
-                .anyRequest().authenticated();
-
-                http.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
+                .antMatchers("/v2/api-docs", "/configuration/ui", "/configuration/security").permitAll()
+                .antMatchers("/swagger-resources/**", "/webjars/**", "/swagger-ui.html").permitAll()
+                .anyRequest().authenticated()
+                .and()
+                .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
 
 
 

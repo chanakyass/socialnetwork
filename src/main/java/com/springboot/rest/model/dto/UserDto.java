@@ -5,11 +5,14 @@ import com.springboot.rest.model.entities.Role;
 import com.springboot.rest.model.entities.UserPersonalMarker;
 
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.List;
 
 public class UserDto extends UserProxyDto implements UserPersonalMarker {
 
     String profileName;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     String password;
     Integer age;
     LocalDate DOB;
@@ -52,7 +55,8 @@ public class UserDto extends UserProxyDto implements UserPersonalMarker {
     }
 
     public void setAge(Integer age) {
-        this.age = age;
+        Period between  = Period.between(getDOB(), LocalDate.now());
+        this.age = between.getDays();
     }
 
     public LocalDate getDOB() {

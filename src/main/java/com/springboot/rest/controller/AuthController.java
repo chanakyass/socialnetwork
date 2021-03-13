@@ -29,7 +29,7 @@ public class AuthController {
     }
 
     @RolesAllowed("ROLE_USER")
-    @RequestMapping("/api/v1/{username}/logout")
+    @RequestMapping("/api/v1/logout")
     public ResponseEntity<ApiMessageResponse> logoutUser() {
         return authorizationService.logout();
     }
