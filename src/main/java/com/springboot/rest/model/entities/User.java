@@ -38,13 +38,12 @@ public class User implements Serializable {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Role> grantedAuthoritiesList;
 
-    public User(Long id, String name, String profileName, String email, String password, Integer age,
+    public User(Long id, String name, String profileName, String email, String password,
                 LocalDate DOB, String userSummary, List<Role> grantedAuthoritiesList) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
-        this.age = age;
         this.DOB = DOB;
         this.userSummary = userSummary;
         this.grantedAuthoritiesList = grantedAuthoritiesList;
@@ -133,7 +132,6 @@ public class User implements Serializable {
         private String profileName;
         private String email;
         private String password;
-        private int age;
         private LocalDate DOB;
         private String userSummary;
         private List<Role> grantedAuthoritiesList;
@@ -166,11 +164,6 @@ public class User implements Serializable {
             return this;
         }
 
-        public UserBuilder age(int age) {
-            this.age = age;
-            return this;
-        }
-
         public UserBuilder DOB(LocalDate DOB) {
             this.DOB = DOB;
             return this;
@@ -187,11 +180,11 @@ public class User implements Serializable {
         }
 
         public User build() {
-            return new User(id, name, profileName, email, password, age, DOB, userSummary, grantedAuthoritiesList);
+            return new User(id, name, profileName, email, password, DOB, userSummary, grantedAuthoritiesList);
         }
 
         public String toString() {
-            return "User.UserBuilder(id=" + this.id + ", name=" + this.name + ", profileName=" + this.profileName + ", email=" + this.email + ", password=" + this.password + ", age=" + this.age + ", DOB=" + this.DOB + ", userSummary=" + this.userSummary + ", grantedAuthoritiesList=" + this.grantedAuthoritiesList + ")";
+            return "User.UserBuilder(id=" + this.id + ", name=" + this.name + ", profileName=" + this.profileName + ", email=" + this.email + ", password=" + this.password + ", DOB=" + this.DOB + ", userSummary=" + this.userSummary + ", grantedAuthoritiesList=" + this.grantedAuthoritiesList + ")";
         }
 
         @Override

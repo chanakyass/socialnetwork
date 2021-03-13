@@ -1,5 +1,10 @@
 package com.springboot.rest.model.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -63,10 +68,12 @@ public class UserEditDto implements UserPersonalMarker {
         this.email = email;
     }
 
+    @JsonSerialize(using = LocalDateSerializer.class)
     public LocalDate getDOB() {
         return DOB;
     }
 
+    @JsonDeserialize(using = LocalDateDeserializer.class)
     public void setDOB(LocalDate DOB) {
         this.DOB = DOB;
     }

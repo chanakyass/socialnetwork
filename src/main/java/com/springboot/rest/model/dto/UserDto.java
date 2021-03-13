@@ -1,6 +1,12 @@
 package com.springboot.rest.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.springboot.rest.model.entities.Role;
 
 import java.time.LocalDate;
@@ -21,11 +27,10 @@ public class UserDto extends UserProxyDto implements UserPersonalMarker {
     String userSummary;
     List<Role> grantedAuthoritiesList;
 
-    public UserDto(Long id, String name, String profileName, String email, String password, Integer age, LocalDate DOB, String userSummary, List<Role> grantedAuthoritiesList) {
+    public UserDto(Long id, String name, String profileName, String email, String password, LocalDate DOB, String userSummary, List<Role> grantedAuthoritiesList) {
         super(id, name,email);
         this.profileName = profileName;
         this.password = password;
-        this.age = age;
         this.DOB = DOB;
         this.userSummary = userSummary;
         this.grantedAuthoritiesList = grantedAuthoritiesList;
@@ -52,14 +57,20 @@ public class UserDto extends UserProxyDto implements UserPersonalMarker {
     }
 
     public Integer getAge() {
-        Period between  = Period.between(getDOB(), LocalDate.now());
-        return between.getYears();
+        Period period;
+        if(getDOB() != null) {
+            period = Period.between(getDOB(), LocalDate.now());
+            return period.getYears();
+        }
+        return null;
     }
 
+    @JsonSerialize(using = LocalDateSerializer.class)
     public LocalDate getDOB() {
         return DOB;
     }
 
+    @JsonDeserialize(using = LocalDateDeserializer.class)
     public void setDOB(LocalDate DOB) {
         this.DOB = DOB;
     }

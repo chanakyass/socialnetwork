@@ -84,7 +84,7 @@ public class UserServiceTest extends DemoApplicationTests {
             MvcResult createResult = this.mockMvc
                     .perform(post("/api/v1/public/register")
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(user)))
+                            .content(objectMapper.writeValueAsString(user).replaceAll("}$", ",\"password\": \"pass\"}")))
                     .andExpect(status().isOk())
                     .andReturn();
     }
