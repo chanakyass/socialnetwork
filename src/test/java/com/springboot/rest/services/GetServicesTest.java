@@ -1,6 +1,5 @@
 package com.springboot.rest.services;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.springboot.rest.DemoApplicationTests;
 import com.springboot.rest.data.CommentTestDataFactory;
 import com.springboot.rest.data.LikeTestDataFactory;
@@ -15,7 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.http.MediaType;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
@@ -28,7 +26,6 @@ import java.sql.SQLException;
 import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 

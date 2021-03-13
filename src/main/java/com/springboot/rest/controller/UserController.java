@@ -5,7 +5,6 @@ import com.springboot.rest.model.dto.UserDto;
 import com.springboot.rest.model.dto.UserEditDto;
 import com.springboot.rest.service.UserService;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

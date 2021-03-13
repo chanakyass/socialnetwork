@@ -1,7 +1,6 @@
 package com.springboot.rest.controller;
 
 import com.springboot.rest.model.dto.*;
-import com.springboot.rest.service.AuthorizationService;
 import com.springboot.rest.service.CommentService;
 import com.springboot.rest.service.LikeService;
 import com.springboot.rest.service.PostService;
