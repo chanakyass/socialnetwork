@@ -91,7 +91,7 @@ public class GetServicesTest extends DemoApplicationTests {
         MvcResult mvcResult = this.mockMvc
                 .perform(get(String.format("/api/v1/resource/post/%d/comments/0", post.getId())))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.[*].id", Matchers.containsInAnyOrder(idsInInt)))
+                .andExpect(jsonPath("$.dataList.[*].id", Matchers.containsInAnyOrder(idsInInt)))
                 .andReturn();
     }
 
@@ -111,7 +111,7 @@ public class GetServicesTest extends DemoApplicationTests {
         MvcResult mvcResult = this.mockMvc
                 .perform(get(String.format("/api/v1/resource/comment/%d/replies/0", comment.getId())))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.[*].id", Matchers.containsInAnyOrder(idsInInt)))
+                .andExpect(jsonPath("$.dataList.[*].id", Matchers.containsInAnyOrder(idsInInt)))
                 .andReturn();
 
     }
@@ -125,7 +125,7 @@ public class GetServicesTest extends DemoApplicationTests {
         MvcResult mvcResult = this.mockMvc
                 .perform(get(String.format("/api/v1/resource/profile/%d/posts/0", userTestDataFactory.getThisUser("THIRD_USER").getId())))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.[*].id", Matchers.containsInAnyOrder(idsInInt)))
+                .andExpect(jsonPath("$.dataList.[*].id", Matchers.containsInAnyOrder(idsInInt)))
                 .andReturn();
     }
 
@@ -140,7 +140,7 @@ public class GetServicesTest extends DemoApplicationTests {
         MvcResult mvcResult = this.mockMvc
                 .perform(get(String.format("/api/v1/resource/post/%d/likes", postDto.getId())))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.[*].id", Matchers.containsInAnyOrder(idsInInt)))
+                .andExpect(jsonPath("$.dataList.[*].id", Matchers.containsInAnyOrder(idsInInt)))
                 .andReturn();
     }
 
@@ -155,7 +155,7 @@ public class GetServicesTest extends DemoApplicationTests {
         MvcResult mvcResult = this.mockMvc
                 .perform(get(String.format("/api/v1/resource/comment/%d/likes", commentDto.getId())))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.[*].id", Matchers.containsInAnyOrder(idsInInt)))
+                .andExpect(jsonPath("$.dataList.[*].id", Matchers.containsInAnyOrder(idsInInt)))
                 .andReturn();
 
 

@@ -2,6 +2,7 @@ package com.springboot.rest.service;
 
 import com.springboot.rest.config.exceptions.ApiSpecificException;
 import com.springboot.rest.model.dto.ApiMessageResponse;
+import com.springboot.rest.model.dto.Data;
 import com.springboot.rest.model.dto.UserDto;
 import com.springboot.rest.model.dto.UserEditDto;
 import com.springboot.rest.model.entities.User;
@@ -36,18 +37,18 @@ public class UserService {
 
     @RolesAllowed("ROLE_USER")
     @GetMapping(path = "api/v1/profile/{profileName}")
-    public UserDto getUser(Long userId) {
+    public Data<UserDto> getUser(Long userId) {
         User user = userRepos.findUserById(userId).orElseThrow(() -> new ApiSpecificException("User is not present"));
         UserDto userDto = new UserDto();
         userMapper.toUserDto(user, userDto);
-        return userDto;
+        return new Data<>(userDto);
     }
 
     public User getUserByEmail(String email) {
         return userRepos.findUserByEmail(email).orElseThrow(() -> new ApiSpecificException("email not present in db"));
     }
 
-    public ResponseEntity<ApiMessageResponse> createUser(UserDto userDto) {
+    public Long createUser(UserDto userDto) {
         User user = new User();
         userMapper.toUser(userDto, user);
 
@@ -58,30 +59,30 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         User responseUser = userRepos.save(user);
-        return ResponseEntity.ok().body(new ApiMessageResponse(responseUser.getId()));
+        return responseUser.getId();
 
     }
 
     @Transactional
     @RolesAllowed("ROLE_USER")
     @PreAuthorize(value = "hasPermission(#profileId, \"UserPersonalMarker\", null)")
-    public ResponseEntity<ApiMessageResponse> delUser(Long profileId) {
+    public Long delUser(Long profileId) {
 
 
         userRepos.findById(profileId).orElseThrow(() -> new ApiSpecificException("User is not present"));
         userRepos.deleteById(profileId);
-        return ResponseEntity.ok().body(new ApiMessageResponse(profileId));
+        return profileId;
 
     }
 
     @Transactional
     @RolesAllowed("ROLE_USER")
     @PreAuthorize(value = "hasPermission(#userEditDto, null)")
-    public ResponseEntity<ApiMessageResponse> updateUser(UserEditDto userEditDto) {
+    public Long updateUser(UserEditDto userEditDto) {
 
         User user = userRepos.findById(userEditDto.getId()).orElseThrow(() -> new ApiSpecificException("User is not present"));
         userEditMapper.update(userEditDto, user);
-        return ResponseEntity.ok().body(new ApiMessageResponse(userEditDto.getId()));
+        return userEditDto.getId();
     }
 
     @Transactional

@@ -67,8 +67,7 @@ public class CommentTestDataFactory {
     public Long createCommentTemplateForLoggedInUserAndInsertInDb()
     {
         CommentDto commentDto = createCommentTemplateForLoggedInUser();
-        ResponseEntity<ApiMessageResponse> message =  commentService.addCommentOnActivity(commentDto);
-        return Objects.requireNonNull(message.getBody()).getResourceId();
+        return commentService.addCommentOnActivity(commentDto);
     }
 
 

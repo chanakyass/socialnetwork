@@ -1,9 +1,9 @@
 package com.springboot.rest.service;
 
 import com.springboot.rest.config.exceptions.ApiSpecificException;
-import com.springboot.rest.model.dto.ApiMessageResponse;
 import com.springboot.rest.model.dto.CommentDto;
 import com.springboot.rest.model.dto.CommentEditDto;
+import com.springboot.rest.model.dto.DataList;
 import com.springboot.rest.model.entities.Comment;
 import com.springboot.rest.model.mapper.CommentEditMapper;
 import com.springboot.rest.model.mapper.CommentMapper;
@@ -14,14 +14,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -42,8 +40,8 @@ public class CommentService {
 
     }
     @PreAuthorize(value = "hasPermission(#commentDto, null)")
-    @PostAuthorize(value = "@authorizationService.saveSecureResource(returnObject.body.resourceId, 'C')")
-    public ResponseEntity<ApiMessageResponse> addCommentOnActivity(CommentDto commentDto) {
+    @PostAuthorize(value = "@authorizationService.saveSecureResource(returnObject, 'C')")
+    public Long addCommentOnActivity(CommentDto commentDto) {
 
         Optional.ofNullable(commentDto).orElseThrow(() -> new ApiSpecificException("Some issue with your comment. Please check again"));
 
@@ -54,44 +52,44 @@ public class CommentService {
             commentRepos.findById(comment.getParentComment().getId()).orElseThrow(() -> new ApiSpecificException("Parent Comment is not present"));
         }
         Comment responseComment = commentRepos.save(comment);
-        return ResponseEntity.ok().body(new ApiMessageResponse(responseComment.getId()));
+        return responseComment.getId();
     }
 
-    public List<CommentDto> getCommentsOnPost(Long postId, int pageNo) {
+    public DataList<CommentDto> getCommentsOnPost(Long postId, int pageNo) {
         Page<Comment> page = commentRepos.findCommentsByCommentedOn_IdAndParentCommentIsNull(postId,
                 (Pageable) PageRequest.of(pageNo, 10, Sort.by("noOfLikes").descending()))
                 .orElseThrow(() -> new ApiSpecificException("Post is not present"));
         if (page.getTotalElements() > 0) {
-            return commentMapper.toCommentDtoList(page.getContent());
+            return new DataList<CommentDto>(commentMapper.toCommentDtoList(page.getContent()), page.getTotalPages(), pageNo);
         }
         else throw new ApiSpecificException("No more comments to show");
     }
 
-    public List<CommentDto> getRepliesOnComment(Long commentId, int pageNo) {
+    public DataList<CommentDto> getRepliesOnComment(Long commentId, int pageNo) {
         commentRepos.findById(commentId).orElseThrow(() -> new ApiSpecificException("Parent Comment is not present"));
         Page<Comment> page = commentRepos.findCommentsByParentComment_Id(commentId,
                 (Pageable) PageRequest.of(pageNo, 10, Sort.by("noOfLikes")))
                 .orElseThrow(() -> new ApiSpecificException("No replies on comment"));
         if (page.getTotalElements() > 0) {
-            return commentMapper.toCommentDtoList(page.getContent());
+            return new DataList<CommentDto>(commentMapper.toCommentDtoList(page.getContent()), page.getTotalPages(), pageNo);
         }
         else throw new ApiSpecificException("No more comments to show");
     }
 
     @Transactional
     @PreAuthorize(value = "hasPermission(#commentId, \"ApiResourceMarker\", null)")
-    public ResponseEntity<ApiMessageResponse> delCommentOnActivity(Long commentId) {
+    public Long delCommentOnActivity(Long commentId) {
         commentRepos.findById(commentId).orElseThrow(() -> new ApiSpecificException("Comment is not present"));
 
         commentRepos.deleteById(commentId);
 
-        return ResponseEntity.ok().body(new ApiMessageResponse(commentId));
+        return commentId;
     }
 
 
     @Transactional
     @PreAuthorize(value = "hasPermission(#commentEditDto, null)")
-    public ResponseEntity<ApiMessageResponse> changeCommentOnActivity(CommentEditDto commentEditDto) {
+    public Long changeCommentOnActivity(CommentEditDto commentEditDto) {
         if (commentEditDto.getCommentContent().isEmpty()) {
             throw new ApiSpecificException("Please add some comment content");
         }
@@ -100,6 +98,6 @@ public class CommentService {
 
         commentEditDto.setModifiedAtTime(LocalDateTime.now());
         commentEditMapper.update(commentEditDto, comment);
-        return ResponseEntity.ok().body(new ApiMessageResponse(commentEditDto.getId()));
+        return commentEditDto.getId();
     }
 }

@@ -1,7 +1,7 @@
 package com.springboot.rest.service;
 
 import com.springboot.rest.config.exceptions.ApiSpecificException;
-import com.springboot.rest.model.dto.ApiMessageResponse;
+import com.springboot.rest.model.dto.DataList;
 import com.springboot.rest.model.dto.LikeCommentDto;
 import com.springboot.rest.model.dto.LikePostDto;
 import com.springboot.rest.model.entities.Comment;
@@ -15,7 +15,6 @@ import com.springboot.rest.repository.LikeCommentRepos;
 import com.springboot.rest.repository.LikePostRepos;
 import com.springboot.rest.repository.PostRepos;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -48,8 +47,8 @@ public class LikeService {
 
     @Transactional
     @PreAuthorize(value = "hasPermission(#likePostDto, null)")
-    @PostAuthorize(value = "@authorizationService.saveSecureResource(returnObject.body.resourceId, 'L')")
-    public ResponseEntity<ApiMessageResponse> likeAPost(LikePostDto likePostDto) {
+    @PostAuthorize(value = "@authorizationService.saveSecureResource(returnObject, 'L')")
+    public Long likeAPost(LikePostDto likePostDto) {
 
         LikePost like = likePostMapper.toLikePost(likePostDto);
 
@@ -65,13 +64,13 @@ public class LikeService {
 
         post.setNoOfLikes(post.getNoOfLikes() + 1);
         LikePost responseLikePost = likePostRepos.save(like);
-        return ResponseEntity.ok().body(new ApiMessageResponse(responseLikePost.getId()));
+        return responseLikePost.getId();
     }
 
     @Transactional
     @PreAuthorize(value = "hasPermission(#likeCommentDto, null)")
-    @PostAuthorize(value = "@authorizationService.saveSecureResource(returnObject.body.resourceId, 'Q')")
-    public ResponseEntity<ApiMessageResponse> likeComment(LikeCommentDto likeCommentDto) {
+    @PostAuthorize(value = "@authorizationService.saveSecureResource(returnObject, 'Q')")
+    public Long likeComment(LikeCommentDto likeCommentDto) {
 
         LikeComment like = likeCommentMapper.toLikeComment(likeCommentDto);
 
@@ -86,50 +85,50 @@ public class LikeService {
 
         comment.setNoOfLikes(comment.getNoOfLikes() + 1);
         LikeComment responseLikeComment = likeCommentRepos.save(like);
-        return ResponseEntity.ok().body(new ApiMessageResponse(responseLikeComment.getId()));
+        return responseLikeComment.getId();
     }
 
     @Transactional
     @PreAuthorize(value = "hasPermission(#likePostDto, null)")
-    public ResponseEntity<ApiMessageResponse> unlikePost(LikePostDto likePostDto) {
+    public Long unlikePost(LikePostDto likePostDto) {
 
         LikePost like = likePostMapper.toLikePost(likePostDto);
 
         Optional.ofNullable(like).orElseThrow(() -> new ApiSpecificException("Something is wrong"));
         Post post = postRepos.findById(like.getLikedPost().getId()).orElseThrow(() -> new ApiSpecificException("Post is not present"));
         post.setNoOfLikes(post.getNoOfLikes() - 1);
-        LikePost likePostProjection = likePostRepos.findLikeByLikedPost_IdAndOwner_Id(like.getLikedPost().getId(), like.getOwner().getId()).orElseThrow(() ->
+        LikePost likePost = likePostRepos.findLikeByLikedPost_IdAndOwner_Id(like.getLikedPost().getId(), like.getOwner().getId()).orElseThrow(() ->
                 new ApiSpecificException("Nothing to unlike"));
 
-        likePostRepos.deleteById(likePostProjection.getId());
-        return ResponseEntity.ok().body(new ApiMessageResponse(like.getId()));
+        likePostRepos.deleteById(likePost.getId());
+        return likePost.getId();
     }
 
     @Transactional
     @PreAuthorize(value = "hasPermission(#likeCommentDto, null)")
-    public ResponseEntity<ApiMessageResponse> unlikeComment(LikeCommentDto likeCommentDto) {
+    public Long unlikeComment(LikeCommentDto likeCommentDto) {
 
         LikeComment like = likeCommentMapper.toLikeComment(likeCommentDto);
 
         Optional.ofNullable(like).orElseThrow(() -> new ApiSpecificException("Something is wrong"));
 
-        likeCommentRepos.findLikeByLikedComment_IdAndOwner_Id(like.getLikedComment().getId(),
+        LikeComment likeComment = likeCommentRepos.findLikeByLikedComment_IdAndOwner_Id(like.getLikedComment().getId(),
                 like.getOwner().getId()).orElseThrow(() -> new ApiSpecificException("Nothing to unlike"));
         Comment comment = commentRepos.findById(like.getLikedComment().getId()).orElseThrow(() -> new ApiSpecificException("Comment is not present"));
         comment.setNoOfLikes(comment.getNoOfLikes() - 1);
         likeCommentRepos.deleteById(like.getId());
-        return ResponseEntity.ok().body(new ApiMessageResponse(like.getId()));
+        return likeComment.getId();
 
     }
 
-    public List<LikePostDto> getLikesOnPost(long postId) {
+    public DataList<LikePostDto> getLikesOnPost(long postId) {
         List<LikePost> likes =  likePostRepos.findLikesByLikedPost_Id(postId).orElseThrow(() -> new ApiSpecificException("No likes on post"));
-        return likePostMapper.toLikePostDtoList(likes);
+        return new DataList<LikePostDto>(likePostMapper.toLikePostDtoList(likes));
     }
 
-    public List<LikeCommentDto> getLikesOnComment(long commentId) {
+    public DataList<LikeCommentDto> getLikesOnComment(long commentId) {
         List<LikeComment> likes = likeCommentRepos.findLikesByLikedComment_Id(commentId).orElseThrow(() -> new ApiSpecificException("No likes on comment"));
-        return likeCommentMapper.toLikeCommentDtoList(likes);
+        return new DataList<LikeCommentDto>(likeCommentMapper.toLikeCommentDtoList(likes));
     }
 
 

@@ -1,9 +1,6 @@
 package com.springboot.rest.controller;
 
-import com.springboot.rest.model.dto.ApiMessageResponse;
-import com.springboot.rest.model.dto.AuthResponse;
-import com.springboot.rest.model.dto.UserDto;
-import com.springboot.rest.model.dto.UserEditDto;
+import com.springboot.rest.model.dto.*;
 import com.springboot.rest.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -25,7 +22,7 @@ public class UserController {
     @PostMapping(path = "api/v1/public/register")
     @ApiOperation(value = "Register the user", notes = "User details to be provided in the payload",responseContainer = "ResponseEntity", response = ApiMessageResponse.class)
     public ResponseEntity<ApiMessageResponse> registerUser(@RequestBody UserDto user) {
-        return userService.createUser(user);
+        return ResponseEntity.ok().body(new ApiMessageResponse(userService.createUser(user)));
     }
 
     @PutMapping(path = "api/v1/profile/{profileId}")
@@ -33,7 +30,7 @@ public class UserController {
             notes = "Details for update to be provided as part of payload. Currently doesnt support password modification",
             responseContainer = "ResponseEntity", response = ApiMessageResponse.class)
     public ResponseEntity<ApiMessageResponse> updateUser(@RequestBody UserEditDto userEditDto) {
-        return userService.updateUser(userEditDto);
+        return ResponseEntity.ok().body(new ApiMessageResponse(userService.updateUser(userEditDto)));
     }
 
     @ApiOperation(value = "Gets the user details",
@@ -41,8 +38,8 @@ public class UserController {
             , response = UserDto.class)
 
     @GetMapping(path = "api/v1/profile/{profileId}")
-    public UserDto getUser(@RequestBody Long profileId) {
-        return userService.getUser(profileId);
+    public ResponseEntity<Data<UserDto>> getUser(@RequestBody Long profileId) {
+        return ResponseEntity.ok().body(userService.getUser(profileId));
     }
 
     @ApiOperation(value = "Deletes the user from application",
@@ -50,7 +47,7 @@ public class UserController {
 
     @DeleteMapping(path = "api/v1/profile/{profileId}")
     public ResponseEntity<ApiMessageResponse> deleteUser(@PathVariable Long profileId) {
-        return userService.delUser(profileId);
+        return ResponseEntity.ok().body(new ApiMessageResponse(userService.delUser(profileId)));
     }
 
 }

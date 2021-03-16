@@ -17,16 +17,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @ControllerAdvice
-//@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 public class GlobalExceptionHandler{
 
     private final Logger logger = LogManager.getLogger();
-    private final PermissionEvaluator permissionEvaluator;
-    private final ApplicationContext applicationContext;
 
-    public GlobalExceptionHandler(PermissionEvaluator permissionEvaluator, ApplicationContext applicationContext) {
-        this.permissionEvaluator = permissionEvaluator;
-        this.applicationContext = applicationContext;
+    public GlobalExceptionHandler() {
     }
 
     @ExceptionHandler(NotFoundException.class)

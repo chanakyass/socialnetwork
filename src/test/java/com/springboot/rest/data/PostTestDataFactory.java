@@ -1,6 +1,7 @@
 package com.springboot.rest.data;
 
 import com.springboot.rest.model.dto.ApiMessageResponse;
+import com.springboot.rest.model.dto.Data;
 import com.springboot.rest.model.dto.PostDto;
 import com.springboot.rest.model.dto.UserDto;
 import com.springboot.rest.service.PostService;
@@ -68,8 +69,7 @@ public class PostTestDataFactory {
     public Long createPostForLoggedInUserAndInsertInDB()
     {
         PostDto postDto = createPostForLoggedInUser();
-        ResponseEntity<ApiMessageResponse> message = postService.addPost(postDto);
-        return Objects.requireNonNull(message.getBody()).getResourceId();
+        return postService.addPost(postDto);
     }
 
     public PostDto getPreExistingPost()
@@ -84,11 +84,10 @@ public class PostTestDataFactory {
                 && post.getOwner().getId().compareTo(user.getId()) == 0).collect(Collectors.toList());
     }
 
-    public PostDto createPostForLoggedInUserAndAddToDB()
+    public Data<PostDto> createPostForLoggedInUserAndAddToDB()
     {
         PostDto post = createPostForLoggedInUser();
-        ResponseEntity<ApiMessageResponse> message = postService.addPost(post);
-        Long postId = Objects.requireNonNull(message.getBody()).getResourceId();
+        Long postId =  postService.addPost(post);
         return postService.getSelectedPost(postId);
     }
 

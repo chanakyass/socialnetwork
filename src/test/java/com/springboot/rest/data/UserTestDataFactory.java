@@ -3,10 +3,7 @@ package com.springboot.rest.data;
 import com.springboot.rest.config.TestBeansConfig;
 import com.springboot.rest.config.TestConfig;
 import com.springboot.rest.config.security.SecurityUtils;
-import com.springboot.rest.model.dto.ApiMessageResponse;
-import com.springboot.rest.model.dto.AuthRequest;
-import com.springboot.rest.model.dto.AuthResponse;
-import com.springboot.rest.model.dto.UserDto;
+import com.springboot.rest.model.dto.*;
 import com.springboot.rest.model.entities.Role;
 import com.springboot.rest.model.entities.User;
 import com.springboot.rest.model.mapper.UserMapper;
@@ -25,6 +22,7 @@ import java.util.Objects;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Service
 public class UserTestDataFactory {
@@ -88,11 +86,10 @@ public class UserTestDataFactory {
     public Long createUserForTestInDB()
     {
         UserDto userDto = createUserForTest();
-        ResponseEntity<ApiMessageResponse> message = userService.createUser(userDto);
-        return Objects.requireNonNull(message.getBody()).getResourceId();
+        return userService.createUser(userDto);
     }
 
-    public UserDto getUserFromDBWithId(Long id)
+    public Data<UserDto> getUserFromDBWithId(Long id)
     {
         return userService.getUser(id);
     }
@@ -106,7 +103,7 @@ public class UserTestDataFactory {
         userDto.setGrantedAuthoritiesList(List.of(Role.roleBuilder().authority("ROLE_USER").build()));
 
 
-        assertEquals(userService.createUser(userDto).getStatusCode(), HttpStatus.OK);
+        assertNotNull(userService.createUser(userDto));
         return userDto;
     }
 
