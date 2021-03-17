@@ -1,19 +1,16 @@
 package com.springboot.rest.data;
 
-import com.springboot.rest.model.dto.ApiMessageResponse;
 import com.springboot.rest.model.dto.CommentDto;
 import com.springboot.rest.model.dto.PostDto;
 import com.springboot.rest.model.dto.UserDto;
 import com.springboot.rest.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service

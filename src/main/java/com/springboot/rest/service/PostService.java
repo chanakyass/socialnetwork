@@ -1,7 +1,10 @@
 package com.springboot.rest.service;
 
 import com.springboot.rest.config.exceptions.ApiSpecificException;
-import com.springboot.rest.model.dto.*;
+import com.springboot.rest.model.dto.Data;
+import com.springboot.rest.model.dto.DataList;
+import com.springboot.rest.model.dto.PostDto;
+import com.springboot.rest.model.dto.PostEditDto;
 import com.springboot.rest.model.entities.Post;
 import com.springboot.rest.model.mapper.PostEditMapper;
 import com.springboot.rest.model.mapper.PostMapper;

@@ -1,7 +1,6 @@
 package com.springboot.rest.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModel;
 
 import java.util.Objects;

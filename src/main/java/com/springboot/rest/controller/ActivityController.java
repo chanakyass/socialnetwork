@@ -4,7 +4,6 @@ import com.springboot.rest.model.dto.*;
 import com.springboot.rest.service.CommentService;
 import com.springboot.rest.service.LikeService;
 import com.springboot.rest.service.PostService;
-import com.springboot.rest.model.dto.DataList;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

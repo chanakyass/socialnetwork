@@ -1,8 +1,6 @@
 package com.springboot.rest.model.dto;
 
-import io.swagger.annotations.ApiKeyAuthDefinition;
 import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiResponse;
 
 @ApiModel(value = "Authentication Request", description = "Contains the username and password not null fields")
 public class AuthRequest {

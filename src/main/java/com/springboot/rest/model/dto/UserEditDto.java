@@ -7,7 +7,6 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import io.swagger.annotations.ApiModel;
 
 import java.time.LocalDate;
-import java.util.Objects;
 
 @ApiModel(value = "User edit", description = "Contains only the additional details of the user", parent = UserProxyDto.class)
 public class UserEditDto extends UserProxyDto implements UserPersonalMarker {

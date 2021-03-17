@@ -1,9 +1,11 @@
 package com.springboot.rest.data;
 
-import com.springboot.rest.config.TestBeansConfig;
 import com.springboot.rest.config.TestConfig;
 import com.springboot.rest.config.security.SecurityUtils;
-import com.springboot.rest.model.dto.*;
+import com.springboot.rest.model.dto.AuthRequest;
+import com.springboot.rest.model.dto.AuthResponse;
+import com.springboot.rest.model.dto.Data;
+import com.springboot.rest.model.dto.UserDto;
 import com.springboot.rest.model.entities.Role;
 import com.springboot.rest.model.entities.User;
 import com.springboot.rest.model.mapper.UserMapper;
@@ -12,7 +14,6 @@ import com.springboot.rest.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +22,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Service

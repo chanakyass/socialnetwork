@@ -1,7 +1,6 @@
 package com.springboot.rest.service;
 
 import com.springboot.rest.config.exceptions.ApiSpecificException;
-import com.springboot.rest.model.dto.ApiMessageResponse;
 import com.springboot.rest.model.dto.Data;
 import com.springboot.rest.model.dto.UserDto;
 import com.springboot.rest.model.dto.UserEditDto;
@@ -10,7 +9,6 @@ import com.springboot.rest.model.mapper.UserEditMapper;
 import com.springboot.rest.model.mapper.UserMapper;
 import com.springboot.rest.repository.UserRepos;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

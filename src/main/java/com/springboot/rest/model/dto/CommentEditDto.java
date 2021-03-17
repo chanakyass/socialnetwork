@@ -8,7 +8,6 @@ import io.swagger.annotations.ApiModel;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 @ApiModel(value = "Comment Edit", description = "This object is used only for edit operation.", parent = CommentProxyDto.class)
 public class CommentEditDto extends CommentProxyDto implements ApiResourceMarker {
