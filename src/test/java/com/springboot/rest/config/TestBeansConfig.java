@@ -9,9 +9,12 @@ import com.springboot.rest.model.dto.LikeCommentDto;
 import com.springboot.rest.model.dto.LikePostDto;
 import com.springboot.rest.model.dto.PostDto;
 import com.springboot.rest.model.entities.User;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 
 import java.io.FileReader;
@@ -20,32 +23,14 @@ import java.util.HashMap;
 import java.util.List;
 
 @TestConfiguration
-@EnableConfigurationProperties
-@TestPropertySource(locations = "classpath:application-test.properties")
 public class TestBeansConfig {
 
-
-    public static User getOtherUserInContext() {
-        return getTestUsersMap().get("ANOTHER_USER");
-    }
-
-    public static User getThirdUserInContext()
-    {
-        return getTestUsersMap().get("THIRD_USER");
-    }
-
-    public static User getUserAsPerChoice(String userKey)
-    {
-        return getTestUsersMap().get(userKey);
-    }
-
     @Bean("testExistingResources")
-    public static HashMap<String, Object> getResourcesMap()
+    public static HashMap<String, Object> getResourcesMap(@Value("${test.config.path_to_posts}") String pathToTestPosts,
+                                                          @Value("${test.config.path_to_comments}") String pathToTestComments,
+                                                          @Value("${test.config.path_to_likePosts}") String pathToTestLikesOnPosts,
+                                                          @Value("${test.config.path_to_likeComments}") String pathToTestLikesOnComments)
     {
-        String pathToTestPosts="src/test/resources/json/write-related/posts.json";
-        String pathToTestComments="src/test/resources/json/write-related/comments.json";
-        String pathToTestLikesOnPosts="src/test/resources/json/write-related/like-post.json";
-        String pathToTestLikesOnComments="src/test/resources/json/write-related/like-comment.json";
 
         ObjectMapper objectMapper = new ObjectMapper();
         HashMap<String, Object> resourcesHashMap = new HashMap<>();
@@ -98,9 +83,8 @@ public class TestBeansConfig {
 
 
     @Bean(name = "testUsers")
-    public static HashMap<String, User> getTestUsersMap(/*@Value("${springboot.test.config.path}"*/)
+    public static HashMap<String, User> getTestUsersMap(@Value("${test.config.path_to_users}") String pathToTestUsers)
     {
-        String pathToTestUsers="src/test/resources/json/user-profiles.json";
         ObjectMapper objectMapper = new ObjectMapper();
         HashMap<String, User> userHashMap = null;
 
@@ -123,9 +107,8 @@ public class TestBeansConfig {
     }
 
     @Bean(name = "testCommentsListForRead")
-    public static List<CommentDto> getTestCommentsList(/*@Value("${springboot.test.config.path}")*/)
+    public static List<CommentDto> getTestCommentsList(@Value("${test.config.path_to_commentsList}") String pathToTestComments)
     {
-        String pathToTestComments="src/test/resources/json/read-related/comments_for_get.json";
         ObjectMapper objectMapper = new ObjectMapper();
         List<CommentDto> commentsList = null;
 
@@ -148,9 +131,8 @@ public class TestBeansConfig {
     }
 
     @Bean(name = "testPostsListForRead")
-    public static List<PostDto> getTestPostsList(/*@Value("${springboot.test.config.path}")*/)
+    public static List<PostDto> getTestPostsList(@Value("${test.config.path_to_postsList}") String pathToTestPosts)
     {
-        String pathToTestPosts="src/test/resources/json/read-related/posts_for_get.json";
         ObjectMapper objectMapper = new ObjectMapper();
         List<PostDto> postsList = null;
 
@@ -173,16 +155,15 @@ public class TestBeansConfig {
     }
 
     @Bean(name = "testLikePostsListForRead")
-    public static List<LikePostDto> getTestLikesOnPostsList(/*@Value("${springboot.test.config.path}")*/)
+    public static List<LikePostDto> getTestLikesOnPostsList(@Value("${test.config.path_to_likePostsList}") String pathToTestLikePosts)
     {
-        String pathToTestPosts="src/test/resources/json/read-related/likes_on_posts_for_get.json";
         ObjectMapper objectMapper = new ObjectMapper();
         List<LikePostDto> likesList = null;
 
         try {
 
             JsonFactory jsonFactory = new JsonFactory();
-            FileReader fileReader = new FileReader(pathToTestPosts);
+            FileReader fileReader = new FileReader(pathToTestLikePosts);
             JsonParser jsonParser = jsonFactory.createParser(fileReader);
             TypeReference<List<LikePostDto>> typeRef
                     = new TypeReference<>() {
@@ -198,9 +179,8 @@ public class TestBeansConfig {
     }
 
     @Bean(name = "testLikeCommentsListForRead")
-    public static List<LikeCommentDto> getTestLikesOnCommentsList(/*@Value("${springboot.test.config.path}")*/)
+    public static List<LikeCommentDto> getTestLikesOnCommentsList(@Value("${test.config.path_to_likeCommentsList}") String pathToTestLikes)
     {
-        String pathToTestLikes="src/test/resources/json/read-related/likes_on_comments_for_get.json";
         ObjectMapper objectMapper = new ObjectMapper();
         List<LikeCommentDto> likesList = null;
 
@@ -221,5 +201,6 @@ public class TestBeansConfig {
         }
         return likesList;
     }
+
 }
 

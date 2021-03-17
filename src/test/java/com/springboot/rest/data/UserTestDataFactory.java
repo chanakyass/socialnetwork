@@ -54,7 +54,7 @@ public class UserTestDataFactory {
 
     public UserDto getOtherThanLoggedInUser()
     {
-        User user = userService.getUserByEmail(TestBeansConfig.getOtherUserInContext().getEmail());
+        User user = userService.getUserByEmail(userHashMap.get("ANOTHER_USER").getEmail());
         UserDto userDto = new UserDto();
         userMapper.toUserDto(user, userDto);
         return userDto;
