@@ -7,6 +7,7 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.springboot.rest.model.entities.Role;
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import java.time.LocalDate;
 import java.time.Period;
@@ -20,6 +21,7 @@ public class UserDto extends UserProxyDto implements UserPersonalMarker {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     String password;
 
+    @ApiModelProperty(readOnly = true)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     Integer age;
 

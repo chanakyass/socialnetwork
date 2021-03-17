@@ -1,7 +1,7 @@
 package com.springboot.rest.model.dto;
 
 public class Data<T> {
-    T data;
+    private T data;
 
     public Data(T data) {
         this.data = data;
