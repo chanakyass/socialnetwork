@@ -1,25 +1,25 @@
 package com.springboot.rest.service;
 
 import com.springboot.rest.config.exceptions.ApiSpecificException;
-import com.springboot.rest.model.dto.Data;
-import com.springboot.rest.model.dto.DataList;
-import com.springboot.rest.model.dto.PostDto;
-import com.springboot.rest.model.dto.PostEditDto;
+import com.springboot.rest.config.security.SecurityUtils;
+import com.springboot.rest.model.dto.post.PostDto;
+import com.springboot.rest.model.dto.post.PostEditDto;
+import com.springboot.rest.model.dto.response.DataList;
 import com.springboot.rest.model.entities.Post;
 import com.springboot.rest.model.mapper.PostEditMapper;
 import com.springboot.rest.model.mapper.PostMapper;
+import com.springboot.rest.repository.LikePostRepos;
 import com.springboot.rest.repository.PostRepos;
 import com.springboot.rest.repository.UserRepos;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -31,15 +31,15 @@ public class PostService {
     private final UserRepos userRepos;
     private final PostEditMapper postEditMapper;
     private final PostMapper postMapper;
-    private final CommentService commentService;
+    private final LikeService likeService;
 
     @Autowired
-    public PostService(PostRepos postRepos, UserRepos userRepos, PostEditMapper postEditMapper, PostMapper postMapper, CommentService commentService) {
+    public PostService(PostRepos postRepos, UserRepos userRepos, PostEditMapper postEditMapper, PostMapper postMapper, LikeService likeService) {
         this.postRepos = postRepos;
         this.userRepos = userRepos;
         this.postEditMapper = postEditMapper;
-        this.commentService = commentService;
         this.postMapper = postMapper;
+        this.likeService = likeService;
 
     }
 
@@ -55,36 +55,34 @@ public class PostService {
     }
 
     public DataList<PostDto> getPosts(int pageNo) {
+
         Page<Post> page = postRepos.findPostsForUserFeedBy(
-                (Pageable) PageRequest.of(pageNo, 10, Sort.by("noOfLikes").descending()))
+                PageRequest.of(pageNo, 10, Sort.by("noOfLikes").descending()))
                 .orElseThrow(() -> new ApiSpecificException("There are no posts to show"));
 
-        PostDto postDto = new PostDto();
 
+        List<Post> posts = page.getContent();
+        return new DataList<>(postMapper.toPostDtoList(posts), page.getTotalPages(), pageNo);
 
-        if (page.getTotalElements() > 0) {
-            List<Post> posts = page.getContent();
-            return new DataList<PostDto>(postMapper.toPostDtoList(posts), page.getTotalPages(), pageNo);
-        }
-        else throw new ApiSpecificException("No more pages to show");
     }
 
-    public Data<PostDto> getSelectedPost(Long Id) {
+    public PostDto getSelectedPost(Long Id) {
         Post post =  postRepos.findPostById(Id).orElseThrow(() -> new ApiSpecificException(("The post is not present")));
-        return new Data<PostDto>(postMapper.toPostDto(post));
+
+        return postMapper.toPostDto(post);
+
     }
+
 
     public DataList<PostDto> getPostsOfUser(Long userId, int pageNo) {
         userRepos.findById(userId).orElseThrow(() -> new ApiSpecificException("User is not present"));
         Page<Post> page = postRepos.findPostsByOwner_Id(userId,
                 PageRequest.of(pageNo, 10, Sort.by("noOfLikes").descending()))
                 .orElseThrow(() -> new ApiSpecificException(("No posts by user")));
-        if (page.getTotalElements() > 0)
-        {
-            List<PostDto> listOfPosts =  postMapper.toPostDtoList(page.getContent());
-            return new DataList<PostDto>(listOfPosts, page.getTotalPages(), pageNo);
-        }
-        else throw new ApiSpecificException("No more pages to show");
+
+        List<PostDto> listOfPosts =  postMapper.toPostDtoList(page.getContent());
+        return new DataList<>(listOfPosts, page.getTotalPages(), pageNo);
+
 
     }
 
@@ -92,15 +90,14 @@ public class PostService {
     @PreAuthorize(value = "hasPermission(#postEditDto, null)")
     public Long updatePost(PostEditDto postEditDto) {
         Post postToUpdate = postRepos.findById(postEditDto.getId()).orElseThrow(() -> new ApiSpecificException("Post is not present"));
-
-        postEditDto.setModifiedAtTime(LocalDateTime.now());
         postEditMapper.toPost(postEditDto, postToUpdate);
         return postEditDto.getId();
 
     }
 
     @Transactional
-    @PreAuthorize(value = "hasPermission(#postId, \"ApiResourceMarker\", null)")
+    @PreAuthorize(value = "hasPermission(#postId, \"Post\", null)")
+    @PostAuthorize(value = "@authorizationService.deleteSecureResource(returnObject, 'P')")
     public Long deletePost(Long postId) {
         postRepos.findById(postId).orElseThrow(() -> new ApiSpecificException("Post is not present"));
 

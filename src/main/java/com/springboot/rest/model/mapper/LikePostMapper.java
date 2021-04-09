@@ -1,8 +1,9 @@
 package com.springboot.rest.model.mapper;
 
-import com.springboot.rest.model.dto.LikePostDto;
+import com.springboot.rest.model.dto.likes.LikePostDto;
 import com.springboot.rest.model.entities.LikePost;
-import org.mapstruct.Mapper;
+import org.mapstruct.*;
+
 
 import java.util.List;
 
@@ -14,5 +15,8 @@ public abstract class LikePostMapper {
     public abstract LikePostDto toLikePostDto(LikePost likePost);
 
     public abstract List<LikePostDto> toLikePostDtoList(List<LikePost> likes);
+
+
+
 
 }

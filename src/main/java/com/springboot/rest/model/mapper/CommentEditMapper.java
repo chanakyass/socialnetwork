@@ -1,7 +1,7 @@
 package com.springboot.rest.model.mapper;
 
-import com.springboot.rest.model.dto.CommentDto;
-import com.springboot.rest.model.dto.CommentEditDto;
+import com.springboot.rest.model.dto.comment.CommentDto;
+import com.springboot.rest.model.dto.comment.CommentEditDto;
 import com.springboot.rest.model.entities.Comment;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;

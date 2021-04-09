@@ -1,8 +1,14 @@
 package com.springboot.rest.config.security;
 
-import com.springboot.rest.config.exceptions.ApiAccessException;
+import com.springboot.rest.model.dto.ApiReactionMarker;
 import com.springboot.rest.model.dto.ApiResourceMarker;
 import com.springboot.rest.model.dto.UserPersonalMarker;
+import com.springboot.rest.model.dto.comment.CommentDto;
+import com.springboot.rest.model.dto.comment.CommentEditDto;
+import com.springboot.rest.model.dto.likes.LikeCommentDto;
+import com.springboot.rest.model.dto.likes.LikePostDto;
+import com.springboot.rest.model.dto.post.PostDto;
+import com.springboot.rest.model.dto.post.PostEditDto;
 import com.springboot.rest.model.entities.SecureResource;
 import com.springboot.rest.model.entities.User;
 import com.springboot.rest.repository.SecureResourceRepos;
@@ -43,7 +49,8 @@ public class PermissionEvaluatorImpl implements PermissionEvaluator {
                 //Gathering user details and user id of the logged in user
                 //access denied if user not logged in
 
-                Long loggedInUserId = null;
+                Long loggedInUserId;
+                SecureResource secureResource = null;
 
                 if (loggedUserDetails == null || targetDomainObject == null)
                     throw new AccessDeniedException("Access is denied");
@@ -64,21 +71,53 @@ public class PermissionEvaluatorImpl implements PermissionEvaluator {
                         throw new AccessDeniedException("Access is denied");
                     }
 
+
+
                     if (resource.getId() != null) {
 
                         //Get the secured resource details like id, owner, etc from the secure_resource table
+                        if(targetDomainObject instanceof PostDto || targetDomainObject instanceof PostEditDto)
+                            secureResource = secureResourceRepos.findByPost_Id(resource.getId()).orElse(null);
+                        else if (targetDomainObject instanceof CommentDto || targetDomainObject instanceof CommentEditDto)
+                            secureResource = secureResourceRepos.findByComment_Id(resource.getId()).orElse(null);
 
-                        SecureResource secureResource = secureResourceRepos.findByResourceTypeAndId(resource.getId()).orElse(null);
 
                         if (secureResource != null)
                             //check if the resource belongs to the logged in user
                             if( secureResource.getOwner().getId().compareTo(loggedInUserId) != 0)
                                 throw new AccessDeniedException("Access is denied");
                             else return true;
-                        return true;
                     }
                     return true;
-                } else if (targetDomainObject instanceof UserPersonalMarker) {
+                }
+
+                else if (targetDomainObject instanceof ApiReactionMarker){
+
+
+                    ApiReactionMarker resource = (ApiReactionMarker) targetDomainObject;
+                    Optional<User> optionalUser = userRepos.findById(resource.getOwnerId());
+
+                    if (optionalUser.isEmpty() || loggedInUserId.compareTo(optionalUser.get().getId()) != 0) {
+                        throw new AccessDeniedException("Access is denied");
+                    }
+
+                    if(permission!=null && !permission.toString().equals("CREATE")) {
+
+                        if (targetDomainObject instanceof LikePostDto)
+                            secureResource = secureResourceRepos.findByLikePost_IdAndOwner_Id(resource.getResourceIdForReaction(), loggedInUserId).orElse(null);
+                        else if (targetDomainObject instanceof LikeCommentDto)
+                            secureResource = secureResourceRepos.findByLikeComment_IdAndOwner_Id(resource.getResourceIdForReaction(), loggedInUserId).orElse(null);
+
+                        if (secureResource == null)
+                            //check if the resource belongs to the logged in user
+                            throw new AccessDeniedException("Access is denied");
+                    }
+
+
+                    return true;
+                }
+
+                else if (targetDomainObject instanceof UserPersonalMarker) {
 
                     //If object is user profile then we only need to check if logged in user is trying to change the owner of the resource
 
@@ -121,25 +160,36 @@ public class PermissionEvaluatorImpl implements PermissionEvaluator {
             } else loggedInUserId = loggedUser.getId();
 
 
-            if(targetType.equals("ApiResourceMarker"))
+            if(!targetType.equals("User"))
             {
-                SecureResource secureResource = secureResourceRepos.findByResourceTypeAndId(resourceId).orElse(null);
+                SecureResource secureResource = null;
+                switch (targetType) {
+                    case ("Post"):
+                        secureResource = secureResourceRepos.findByPost_Id(resourceId).orElse(null);
+                        break;
+                    case ("Comment"):
+                        secureResource = secureResourceRepos.findByComment_Id(resourceId).orElse(null);
+                        break;
+                    case ("LikePost"):
+                        secureResource = secureResourceRepos.findByLikePost_IdAndOwner_Id(resourceId, loggedInUserId).orElse(null);
+                        break;
+                    case ("LikeComment"):
+                        secureResource = secureResourceRepos.findByLikeComment_IdAndOwner_Id(resourceId, loggedInUserId).orElse(null);
+                        break;
+                }
 
-                if (secureResource != null)
+                if (secureResource == null)
                     //check if the resource belongs to the logged in user
-                    if( secureResource.getOwner().getId().compareTo(loggedInUserId) != 0)
-                        throw new AccessDeniedException("Access is denied");
-                    else return true;
+                    throw new AccessDeniedException("Access is denied");
                 return true;
             }
-            else if(targetType.equals("UserPersonalMarker")){
+            else {
                 if(resourceId.compareTo(loggedInUserId) != 0)
                 {
                     throw new AccessDeniedException("Access is denied");
                 }
                 else return true;
             }
-            else throw new ApiAccessException("Access is denied");
         }
         return false;
     }

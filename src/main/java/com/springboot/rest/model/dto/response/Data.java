@@ -1,4 +1,4 @@
-package com.springboot.rest.model.dto;
+package com.springboot.rest.model.dto.response;
 
 public class Data<T> {
     private T data;

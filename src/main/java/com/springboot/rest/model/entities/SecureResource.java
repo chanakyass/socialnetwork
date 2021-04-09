@@ -16,6 +16,8 @@ public class SecureResource {
             generator = "secure_resource_seq")
     Long id;
 
+    Character type;
+
     @OneToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "post_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_post_id"))
@@ -31,19 +33,20 @@ public class SecureResource {
     @OneToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "like_post_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_like_post_id"))
-    LikePost likePost;
+    Post likePost;
 
     @OneToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "like_comment_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_like_comment_id"))
-    LikeComment likeComment;
+    Comment likeComment;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "owner_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_resource_owner_id"))
     User owner;
 
-    public SecureResource(Long id, Post post, Comment comment, LikePost likePost, LikeComment likeComment, User owner) {
+    public SecureResource(Long id, Character type , Post post, Comment comment, Post likePost, Comment likeComment, User owner) {
+        this.type = type;
         this.post = post;
         this.comment = comment;
         this.likePost = likePost;
@@ -64,6 +67,14 @@ public class SecureResource {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Character getType() {
+        return type;
+    }
+
+    public void setType(Character type) {
+        this.type = type;
     }
 
     public User getOwner() {
@@ -90,28 +101,29 @@ public class SecureResource {
         this.comment = comment;
     }
 
-    public LikePost getLikePost() {
+    public Post getLikePost() {
         return likePost;
     }
 
-    public void setLikePost(LikePost likePost) {
+    public void setLikePost(Post likePost) {
         this.likePost = likePost;
     }
 
-    public LikeComment getLikeComment() {
+    public Comment getLikeComment() {
         return likeComment;
     }
 
-    public void setLikeComment(LikeComment likeComment) {
+    public void setLikeComment(Comment likeComment) {
         this.likeComment = likeComment;
     }
 
     public static class SecureResourceBuilder {
         private Long id;
+        private Character type;
         private Post post;
         private Comment comment;
-        private LikePost likePost;
-        private LikeComment likeComment;
+        private Post likePost;
+        private Comment likeComment;
         private User owner;
 
         SecureResourceBuilder() {
@@ -119,6 +131,11 @@ public class SecureResource {
 
         public SecureResourceBuilder id(Long id) {
             this.id = id;
+            return this;
+        }
+
+        public SecureResourceBuilder type(Character type) {
+            this.type = type;
             return this;
         }
 
@@ -132,12 +149,12 @@ public class SecureResource {
             return this;
         }
 
-        public SecureResourceBuilder likePost(LikePost likePost) {
+        public SecureResourceBuilder likePost(Post likePost) {
             this.likePost = likePost;
             return this;
         }
 
-        public SecureResourceBuilder likeComment(LikeComment likeComment) {
+        public SecureResourceBuilder likeComment(Comment likeComment) {
             this.likeComment = likeComment;
             return this;
         }
@@ -148,11 +165,11 @@ public class SecureResource {
         }
 
         public SecureResource build() {
-            return new SecureResource(id, post, comment, likePost, likeComment, owner);
+            return new SecureResource(id, type, post, comment, likePost, likeComment, owner);
         }
 
         public String toString() {
-            return "SecureResource.SecureResourceBuilder(id=" + this.id + ", post=" + this.post + ", comment=" + this.comment + ", likePost=" + this.likePost + ", likeComment=" + this.likeComment + ", owner=" + this.owner + ")";
+            return "SecureResource.SecureResourceBuilder(id=" + this.id + ", type=" + this.type + ", post=" + this.post + ", comment=" + this.comment + ", likePost=" + this.likePost + ", likeComment=" + this.likeComment + ", owner=" + this.owner + ")";
         }
     }
 }

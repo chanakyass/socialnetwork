@@ -3,15 +3,14 @@ package com.springboot.rest.service;
 import com.springboot.rest.config.exceptions.ApiAccessException;
 import com.springboot.rest.config.security.SecurityUtils;
 import com.springboot.rest.config.security.jwt.JwtTokenUtil;
-import com.springboot.rest.model.dto.ApiMessageResponse;
-import com.springboot.rest.model.dto.AuthRequest;
-import com.springboot.rest.model.dto.AuthResponse;
+import com.springboot.rest.model.dto.auth.AuthRequest;
+import com.springboot.rest.model.dto.auth.AuthResponse;
+import com.springboot.rest.model.dto.response.ApiMessageResponse;
 import com.springboot.rest.model.entities.*;
 import com.springboot.rest.repository.SecureResourceRepos;
 import com.springboot.rest.repository.UserRepos;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -21,6 +20,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AuthorizationService implements UserDetailsService {
@@ -76,16 +76,12 @@ public class AuthorizationService implements UserDetailsService {
         this.securityUtils = securityUtils;
     }
 
-    public ResponseEntity<AuthResponse> login(AuthRequest authRequest) {
+    public AuthResponse login(AuthRequest authRequest) {
         try {
             Authentication authentication = authenticationManager.authenticate
                     (new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
             UserAdapter userAdapter = (UserAdapter) authentication.getPrincipal();
-
-            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
-                    .header(HttpHeaders.AUTHORIZATION, jwtTokenUtil.generateToken(userAdapter))
-                    .body(AuthResponse.mapUserToAuthResponse(userAdapter));
-
+            return AuthResponse.mapUserToAuthResponse(userAdapter, jwtTokenUtil.generateToken(userAdapter));
 
         } catch (BadCredentialsException badCredentialsException) {
             throw new ApiAccessException("Incorrect credentials.");
@@ -96,10 +92,11 @@ public class AuthorizationService implements UserDetailsService {
         return ResponseEntity.ok().body(new ApiMessageResponse("Thank you for using our services. Visit again!"));
     }
 
+    @Transactional
     public boolean saveSecureResource(Long id, char type)
     {
         User user = securityUtils.getUserFromSubject();
-        SecureResource.SecureResourceBuilder secureResourceBuilder = SecureResource.builder().id(null).owner(user);
+        SecureResource.SecureResourceBuilder secureResourceBuilder = SecureResource.builder().id(null).owner(user).type(type);
         switch (type)
         {
             case 'P': {
@@ -115,15 +112,17 @@ public class AuthorizationService implements UserDetailsService {
                 break;
             }
             case 'L':{
-                LikePost likePost = new LikePost();
-                likePost.setId(id);
-                secureResourceBuilder.likePost(likePost).build();
+
+                Post post = new Post();
+                post.setId(id);
+                secureResourceBuilder.likePost(post).build();
                 break;
             }
             case 'Q': {
-                LikeComment likeComment = new LikeComment();
-                likeComment.setId(id);
-                secureResourceBuilder.likeComment(likeComment).build();
+
+                Comment comment = new Comment();
+                comment.setId(id);
+                secureResourceBuilder.likeComment(comment).build();
                 break;
             }
             default: {
@@ -135,6 +134,44 @@ public class AuthorizationService implements UserDetailsService {
         secureResourceRepos.save(secureResourceBuilder.build());
         return true;
     }
+
+    @Transactional
+    public boolean deleteSecureResource(Long id, char type) {
+        User user = securityUtils.getUserFromSubject();
+        SecureResource secureResource = null;
+
+        try {
+            switch (type) {
+                case 'P': {
+                    secureResourceRepos.deleteDistinctByPost_Id(id);
+                    break;
+                }
+                case 'C': {
+                    secureResourceRepos.deleteDistinctByComment_Id(id);
+                    break;
+                }
+                case 'L': {
+                    secureResourceRepos.deleteDistinctByLikePost_IdAndOwner_Id(id, user.getId());
+                    break;
+                }
+                case 'Q': {
+                    secureResourceRepos.deleteDistinctByLikeComment_IdAndOwner_Id(id, user.getId());
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
+    }
+
+
 
     @Override
     public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {

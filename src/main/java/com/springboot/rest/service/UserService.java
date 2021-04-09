@@ -1,18 +1,17 @@
 package com.springboot.rest.service;
 
 import com.springboot.rest.config.exceptions.ApiSpecificException;
-import com.springboot.rest.model.dto.Data;
-import com.springboot.rest.model.dto.UserDto;
-import com.springboot.rest.model.dto.UserEditDto;
+import com.springboot.rest.model.dto.user.UserDto;
+import com.springboot.rest.model.dto.user.UserEditDto;
 import com.springboot.rest.model.entities.User;
 import com.springboot.rest.model.mapper.UserEditMapper;
 import com.springboot.rest.model.mapper.UserMapper;
 import com.springboot.rest.repository.UserRepos;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.annotation.security.RolesAllowed;
 import javax.transaction.Transactional;
@@ -34,12 +33,11 @@ public class UserService {
     }
 
     @RolesAllowed("ROLE_USER")
-    @GetMapping(path = "api/v1/profile/{profileName}")
-    public Data<UserDto> getUser(Long userId) {
+    public UserDto getUser(Long userId) {
         User user = userRepos.findUserById(userId).orElseThrow(() -> new ApiSpecificException("User is not present"));
         UserDto userDto = new UserDto();
         userMapper.toUserDto(user, userDto);
-        return new Data<>(userDto);
+        return userDto;
     }
 
     public User getUserByEmail(String email) {
@@ -57,13 +55,14 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         User responseUser = userRepos.save(user);
+
         return responseUser.getId();
 
     }
 
     @Transactional
     @RolesAllowed("ROLE_USER")
-    @PreAuthorize(value = "hasPermission(#profileId, \"UserPersonalMarker\", null)")
+    @PreAuthorize(value = "hasPermission(#profileId, \"User\", null)")
     public Long delUser(Long profileId) {
 
 
@@ -80,7 +79,7 @@ public class UserService {
 
         User user = userRepos.findById(userEditDto.getId()).orElseThrow(() -> new ApiSpecificException("User is not present"));
         userEditMapper.update(userEditDto, user);
-        return userEditDto.getId();
+        return user.getId();
     }
 
     @Transactional

@@ -1,10 +1,12 @@
-package com.springboot.rest.model.dto;
+package com.springboot.rest.model.dto.post;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import com.springboot.rest.model.dto.ApiResourceMarker;
+import com.springboot.rest.model.dto.user.UserProxyDto;
 import io.swagger.annotations.ApiModel;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -18,20 +20,27 @@ public class PostDto extends PostProxyDto implements ApiResourceMarker {
 
     String postBody;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    Long noOfLikes;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    Long noOfComments;
+
+    Boolean isPostLikedByCurrentUser;
+
     LocalDateTime postedAtTime;
 
     LocalDateTime modifiedAtTime;
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    Long noOfLikes;
-
-    public PostDto(Long id, UserProxyDto owner, String postHeading, String postBody, LocalDateTime postedAtTime, LocalDateTime modifiedAtTime, Long noOfLikes) {
+    public PostDto(Long id, UserProxyDto owner, String postHeading, String postBody, LocalDateTime postedAtTime, LocalDateTime modifiedAtTime, Long noOfLikes, Long noOfComments, Boolean isPostLikedByCurrentUser) {
         super(id, owner);
         this.postHeading = postHeading;
         this.postBody = postBody;
         this.postedAtTime = postedAtTime;
         this.modifiedAtTime = modifiedAtTime;
         this.noOfLikes = noOfLikes;
+        this.noOfComments = noOfComments;
+        this.isPostLikedByCurrentUser = isPostLikedByCurrentUser;
     }
 
     public PostDto() {
@@ -86,6 +95,14 @@ public class PostDto extends PostProxyDto implements ApiResourceMarker {
         this.noOfLikes = Objects.requireNonNullElse(noOfLikes, 0L);
     }
 
+    public Long getNoOfComments() {
+        return Objects.requireNonNullElse(noOfComments, 0L);
+    }
+
+    public void setNoOfComments(Long noOfComments) {
+        this.noOfComments = Objects.requireNonNullElse(noOfComments, 0L);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -102,5 +119,13 @@ public class PostDto extends PostProxyDto implements ApiResourceMarker {
     @Override
     public Long getOwnerId() {
         return owner.getId();
+    }
+
+    public Boolean getPostLikedByCurrentUser() {
+        return isPostLikedByCurrentUser;
+    }
+
+    public void setPostLikedByCurrentUser(Boolean postLikedByCurrentUser) {
+        isPostLikedByCurrentUser = postLikedByCurrentUser;
     }
 }

@@ -1,6 +1,7 @@
-package com.springboot.rest.model.dto;
+package com.springboot.rest.model.dto.comment;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.springboot.rest.model.dto.user.UserProxyDto;
 import io.swagger.annotations.ApiModel;
 
 import java.util.Objects;

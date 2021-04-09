@@ -1,4 +1,4 @@
-package com.springboot.rest.model.dto;
+package com.springboot.rest.model.dto.response;
 
 import java.util.List;
 

@@ -1,6 +1,9 @@
-package com.springboot.rest.model.dto;
+package com.springboot.rest.model.dto.post;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.springboot.rest.model.dto.user.UserProxyDto;
 import io.swagger.annotations.ApiModel;
 
 import java.util.Objects;
@@ -20,10 +23,12 @@ public class  PostProxyDto {
     public PostProxyDto() {
     }
 
+    @JsonSerialize(as = Long.class)
     public Long getId() {
         return id;
     }
 
+    @JsonDeserialize(as = Long.class)
     public void setId(Long id) {
         this.id = id;
     }

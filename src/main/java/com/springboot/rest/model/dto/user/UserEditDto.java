@@ -1,9 +1,10 @@
-package com.springboot.rest.model.dto;
+package com.springboot.rest.model.dto.user;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+import com.springboot.rest.model.dto.UserPersonalMarker;
 import io.swagger.annotations.ApiModel;
 
 import java.time.LocalDate;
@@ -13,12 +14,9 @@ public class UserEditDto extends UserProxyDto implements UserPersonalMarker {
 
     LocalDate DOB;
 
-    String userSummary;
-
-    public UserEditDto(Long id, String name, String email, LocalDate DOB, String userSummary) {
-        super(id, name, email);
+    public UserEditDto(Long id, String name,  String profileName, String email, LocalDate DOB, String userSummary) {
+        super(id, name, email, profileName, userSummary);
         this.DOB = DOB;
-        this.userSummary = userSummary;
     }
 
     public UserEditDto() {
@@ -33,14 +31,6 @@ public class UserEditDto extends UserProxyDto implements UserPersonalMarker {
     @JsonDeserialize(using = LocalDateDeserializer.class)
     public void setDOB(LocalDate DOB) {
         this.DOB = DOB;
-    }
-
-    public String getUserSummary() {
-        return userSummary;
-    }
-
-    public void setUserSummary(String userSummary) {
-        this.userSummary = userSummary;
     }
 
 }

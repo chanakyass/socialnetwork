@@ -1,8 +1,8 @@
 package com.springboot.rest.data;
 
-import com.springboot.rest.model.dto.Data;
-import com.springboot.rest.model.dto.PostDto;
-import com.springboot.rest.model.dto.UserDto;
+import com.springboot.rest.model.dto.post.PostDto;
+import com.springboot.rest.model.dto.response.Data;
+import com.springboot.rest.model.dto.user.UserDto;
 import com.springboot.rest.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -85,7 +85,7 @@ public class PostTestDataFactory {
     {
         PostDto post = createPostForLoggedInUser();
         Long postId =  postService.addPost(post);
-        return postService.getSelectedPost(postId);
+        return new Data<>(postService.getSelectedPost(postId));
     }
 
     public void cleanUpPosts()

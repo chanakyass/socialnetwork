@@ -38,15 +38,18 @@ public class Comment {
     private LocalDateTime commentedAtTime;
     private LocalDateTime modifiedAtTime;
     private Long noOfLikes;
+    private Long noOfReplies;
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "commented_on_post", foreignKey = @ForeignKey(name = "fk_parent_post_id"), nullable = false)
     private Post commentedOn;
 
+
+
     public Comment() {
     }
 
-    public Comment(Long id, User owner, Comment parentComment, String commentContent, LocalDateTime commentedAtTime, LocalDateTime modifiedAtTime, Long noOfLikes, Post commentedOn) {
+    public Comment(Long id, User owner, Comment parentComment, String commentContent, LocalDateTime commentedAtTime, LocalDateTime modifiedAtTime, Long noOfLikes, Long noOfReplies, Post commentedOn) {
         this.id = id;
         this.owner = owner;
         this.parentComment = parentComment;
@@ -54,6 +57,7 @@ public class Comment {
         this.commentedAtTime = commentedAtTime;
         this.modifiedAtTime = modifiedAtTime;
         this.noOfLikes = noOfLikes;
+        this.noOfReplies = noOfReplies;
         this.commentedOn = commentedOn;
     }
 
@@ -115,6 +119,14 @@ public class Comment {
 
     public void setNoOfLikes(Long noOfLikes) {
         this.noOfLikes = Objects.requireNonNullElse(noOfLikes, 0L);
+    }
+
+    public Long getNoOfReplies() {
+        return Objects.requireNonNullElse(noOfReplies, 0L);
+    }
+
+    public void setNoOfReplies(Long noOfReplies) {
+        this.noOfReplies = Objects.requireNonNullElse(noOfReplies, 0L);
     }
 
     public Post getCommentedOn() {

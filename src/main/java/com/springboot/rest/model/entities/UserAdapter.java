@@ -55,4 +55,12 @@ public class UserAdapter implements UserDetails {
     public Long getUserUniqueId() {
         return user.getId();
     }
+
+    public String getUserName(){
+        return user.getName();
+    }
+
+    public String getProfileName(){
+        return user.getProfileName();
+    }
 }

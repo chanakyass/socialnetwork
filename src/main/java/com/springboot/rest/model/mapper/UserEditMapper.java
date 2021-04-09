@@ -1,7 +1,7 @@
 package com.springboot.rest.model.mapper;
 
-import com.springboot.rest.model.dto.UserDto;
-import com.springboot.rest.model.dto.UserEditDto;
+import com.springboot.rest.model.dto.user.UserDto;
+import com.springboot.rest.model.dto.user.UserEditDto;
 import com.springboot.rest.model.entities.User;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;

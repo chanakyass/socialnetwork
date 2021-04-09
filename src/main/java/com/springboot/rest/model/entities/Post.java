@@ -42,12 +42,13 @@ public class Post {
 
     private LocalDateTime modifiedAtTime;
     private Long noOfLikes;
+    private Long noOfComments;
 
     public Post() {
 
     }
 
-    public Post(Long id, User owner, String postHeading, String postBody, LocalDateTime postedAtTime, LocalDateTime modifiedAtTime, Long noOfLikes) {
+    public Post(Long id, User owner, String postHeading, String postBody, LocalDateTime postedAtTime, LocalDateTime modifiedAtTime, Long noOfLikes, Long noOfComments) {
         this.id = id;
         this.owner = owner;
         this.postHeading = postHeading;
@@ -55,6 +56,7 @@ public class Post {
         this.postedAtTime = postedAtTime;
         this.modifiedAtTime = modifiedAtTime;
         this.noOfLikes = noOfLikes;
+        this.noOfComments = noOfComments;
     }
 
     public Long getId() {
@@ -116,6 +118,14 @@ public class Post {
 
     public void setNoOfLikes(Long noOfLikes) {
         this.noOfLikes = Objects.requireNonNullElse(noOfLikes, 0L);
+    }
+
+    public Long getNoOfComments() {
+        return  Objects.requireNonNullElse(noOfComments, 0L);
+    }
+
+    public void setNoOfComments(Long noOfComments) {
+        this.noOfComments = Objects.requireNonNullElse(noOfComments, 0L);
     }
 
     @Override

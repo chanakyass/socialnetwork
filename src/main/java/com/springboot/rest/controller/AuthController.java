@@ -1,11 +1,15 @@
 package com.springboot.rest.controller;
 
-import com.springboot.rest.model.dto.ApiMessageResponse;
-import com.springboot.rest.model.dto.AuthRequest;
-import com.springboot.rest.model.dto.AuthResponse;
+import com.springboot.rest.model.dto.auth.AuthRequest;
+import com.springboot.rest.model.dto.auth.AuthResponse;
+import com.springboot.rest.model.dto.response.ApiMessageResponse;
+import com.springboot.rest.model.dto.response.Data;
+import com.springboot.rest.model.dto.user.UserProxyDto;
 import com.springboot.rest.service.AuthorizationService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,8 +30,13 @@ public class AuthController {
 
     @PostMapping("/api/v1/public/login")
     @ApiOperation(value = "Login", notes = "Email ID and password required",responseContainer = "ResponseEntity", response = AuthResponse.class)
-    public ResponseEntity<AuthResponse> loginUser(@RequestBody AuthRequest authRequest) {
-        return authorizationService.login(authRequest);
+    public ResponseEntity<Data<UserProxyDto>> loginUser(@RequestBody AuthRequest authRequest) {
+        AuthResponse authResponse = authorizationService.login(authRequest);
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, authResponse.getJwtToken())
+                .header(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, "*", HttpHeaders.AUTHORIZATION)
+                .body(new Data<>(authResponse.getUserProxyDto()));
+        //return new Data<>(authorizationService.login(authRequest));
     }
 
     @RolesAllowed("ROLE_USER")

@@ -1,6 +1,8 @@
-package com.springboot.rest.model.dto;
+package com.springboot.rest.model.dto.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.swagger.annotations.ApiModel;
 
 import java.util.Objects;
@@ -12,19 +14,26 @@ public class UserProxyDto {
     Long id;
     String name;
     String email;
+    String userSummary;
+    String profileName;
 
-    public UserProxyDto(Long id, String name, String email) {
+    public UserProxyDto(Long id, String name, String email, String profileName, String userSummary) {
         this.id = id;
         this.name = name;
         this.email = email;
+        this.userSummary = userSummary;
+        this.profileName = profileName;
     }
 
     public UserProxyDto() {
     }
 
+    @JsonSerialize(as = Long.class)
     public Long getId() {
         return id;
     }
+
+    @JsonDeserialize(as=Long.class)
 
     public void setId(Long id) {
         this.id = id;
@@ -46,6 +55,22 @@ public class UserProxyDto {
         this.email = email;
     }
 
+    public String getUserSummary() {
+        return userSummary;
+    }
+
+    public void setUserSummary(String userSummary) {
+        this.userSummary = userSummary;
+    }
+
+    public String getProfileName() {
+        return profileName;
+    }
+
+    public void setProfileName(String profileName) {
+        this.profileName = profileName;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -56,6 +81,6 @@ public class UserProxyDto {
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getName(), getEmail());
+        return Objects.hash(getId(), getName(), getEmail(), getUserSummary());
     }
 }

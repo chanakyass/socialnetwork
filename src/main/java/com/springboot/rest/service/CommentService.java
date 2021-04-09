@@ -1,10 +1,11 @@
 package com.springboot.rest.service;
 
 import com.springboot.rest.config.exceptions.ApiSpecificException;
-import com.springboot.rest.model.dto.CommentDto;
-import com.springboot.rest.model.dto.CommentEditDto;
-import com.springboot.rest.model.dto.DataList;
+import com.springboot.rest.model.dto.comment.CommentDto;
+import com.springboot.rest.model.dto.comment.CommentEditDto;
+import com.springboot.rest.model.dto.response.DataList;
 import com.springboot.rest.model.entities.Comment;
+import com.springboot.rest.model.entities.Post;
 import com.springboot.rest.model.mapper.CommentEditMapper;
 import com.springboot.rest.model.mapper.CommentMapper;
 import com.springboot.rest.repository.CommentRepos;
@@ -12,14 +13,12 @@ import com.springboot.rest.repository.PostRepos;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -46,10 +45,13 @@ public class CommentService {
         Optional.ofNullable(commentDto).orElseThrow(() -> new ApiSpecificException("Some issue with your comment. Please check again"));
 
         Comment comment = commentMapper.toComment(commentDto);
-
-        postRepos.findById(comment.getCommentedOn().getId()).orElseThrow(() -> new ApiSpecificException("Post is not present"));
-        if (comment.getParentComment() != null) {
-            commentRepos.findById(comment.getParentComment().getId()).orElseThrow(() -> new ApiSpecificException("Parent Comment is not present"));
+        Post parentPost = postRepos.findById(commentDto.getCommentedOn().getId()).orElseThrow(() -> new ApiSpecificException("Post is not present"));
+        if (commentDto.getParentComment() != null) {
+            Comment parentComment = commentRepos.findById(commentDto.getParentComment().getId()).orElseThrow(() -> new ApiSpecificException("Parent Comment is not present"));
+            parentComment.setNoOfReplies(parentComment.getNoOfReplies()+1);
+        }
+        else{
+            parentPost.setNoOfComments(parentPost.getNoOfComments()+1);
         }
         Comment responseComment = commentRepos.save(comment);
         return responseComment.getId();
@@ -57,34 +59,42 @@ public class CommentService {
 
     public DataList<CommentDto> getCommentsOnPost(Long postId, int pageNo) {
         Page<Comment> page = commentRepos.findCommentsByCommentedOn_IdAndParentCommentIsNull(postId,
-                (Pageable) PageRequest.of(pageNo, 10, Sort.by("noOfLikes").descending()))
+                 PageRequest.of(pageNo, 10, Sort.by("noOfLikes").descending()))
                 .orElseThrow(() -> new ApiSpecificException("Post is not present"));
-        if (page.getTotalElements() > 0) {
-            return new DataList<CommentDto>(commentMapper.toCommentDtoList(page.getContent()), page.getTotalPages(), pageNo);
-        }
-        else throw new ApiSpecificException("No more comments to show");
+
+        return new DataList<>(commentMapper.toCommentDtoList(page.getContent()), page.getTotalPages(), pageNo);
+
+
     }
 
     public DataList<CommentDto> getRepliesOnComment(Long commentId, int pageNo) {
         commentRepos.findById(commentId).orElseThrow(() -> new ApiSpecificException("Parent Comment is not present"));
         Page<Comment> page = commentRepos.findCommentsByParentComment_Id(commentId,
-                (Pageable) PageRequest.of(pageNo, 10, Sort.by("noOfLikes")))
+                 PageRequest.of(pageNo, 10, Sort.by("noOfLikes")))
                 .orElseThrow(() -> new ApiSpecificException("No replies on comment"));
-        if (page.getTotalElements() > 0) {
-            return new DataList<CommentDto>(commentMapper.toCommentDtoList(page.getContent()), page.getTotalPages(), pageNo);
-        }
-        else throw new ApiSpecificException("No more comments to show");
+
+        return new DataList<>(commentMapper.toCommentDtoList(page.getContent()), page.getTotalPages(), pageNo);
+
     }
 
     @Transactional
-    @PreAuthorize(value = "hasPermission(#commentId, \"ApiResourceMarker\", null)")
+    @PreAuthorize(value = "hasPermission(#commentId, \"Comment\", null)")
+    @PostAuthorize(value = "@authorizationService.deleteSecureResource(returnObject, 'C')")
     public Long delCommentOnActivity(Long commentId) {
-        commentRepos.findById(commentId).orElseThrow(() -> new ApiSpecificException("Comment is not present"));
-
+        Comment comment = commentRepos.findById(commentId).orElseThrow(() -> new ApiSpecificException("Comment is not present"));
+        Comment parentComment = comment.getParentComment();
+        if(parentComment != null) {
+            parentComment.setNoOfReplies(parentComment.getNoOfReplies() - 1);
+        }
+        else{
+            Post post = comment.getCommentedOn();
+            post.setNoOfComments(post.getNoOfComments() - 1);
+        }
         commentRepos.deleteById(commentId);
 
         return commentId;
     }
+
 
 
     @Transactional
@@ -95,8 +105,6 @@ public class CommentService {
         }
 
         Comment comment = commentRepos.findById(commentEditDto.getId()).orElseThrow(() -> new ApiSpecificException("Comment is not present"));
-
-        commentEditDto.setModifiedAtTime(LocalDateTime.now());
         commentEditMapper.update(commentEditDto, comment);
         return commentEditDto.getId();
     }

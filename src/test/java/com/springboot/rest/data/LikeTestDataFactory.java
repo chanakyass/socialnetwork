@@ -1,9 +1,9 @@
 package com.springboot.rest.data;
 
-import com.springboot.rest.model.dto.CommentDto;
-import com.springboot.rest.model.dto.LikeCommentDto;
-import com.springboot.rest.model.dto.LikePostDto;
-import com.springboot.rest.model.dto.PostDto;
+import com.springboot.rest.model.dto.comment.CommentDto;
+import com.springboot.rest.model.dto.likes.LikeCommentDto;
+import com.springboot.rest.model.dto.likes.LikePostDto;
+import com.springboot.rest.model.dto.post.PostDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;

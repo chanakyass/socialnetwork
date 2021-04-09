@@ -1,8 +1,8 @@
 package com.springboot.rest.data;
 
-import com.springboot.rest.model.dto.CommentDto;
-import com.springboot.rest.model.dto.PostDto;
-import com.springboot.rest.model.dto.UserDto;
+import com.springboot.rest.model.dto.comment.CommentDto;
+import com.springboot.rest.model.dto.post.PostDto;
+import com.springboot.rest.model.dto.user.UserDto;
 import com.springboot.rest.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

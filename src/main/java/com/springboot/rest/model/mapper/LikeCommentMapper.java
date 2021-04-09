@@ -1,6 +1,6 @@
 package com.springboot.rest.model.mapper;
 
-import com.springboot.rest.model.dto.LikeCommentDto;
+import com.springboot.rest.model.dto.likes.LikeCommentDto;
 import com.springboot.rest.model.entities.LikeComment;
 import org.mapstruct.Mapper;
 

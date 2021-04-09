@@ -1,6 +1,15 @@
 package com.springboot.rest.controller;
 
-import com.springboot.rest.model.dto.*;
+import com.springboot.rest.model.dto.comment.CommentDto;
+import com.springboot.rest.model.dto.comment.CommentEditDto;
+import com.springboot.rest.model.dto.likes.LikeCommentDto;
+import com.springboot.rest.model.dto.likes.LikePostDto;
+import com.springboot.rest.model.dto.post.PostDto;
+import com.springboot.rest.model.dto.post.PostEditDto;
+import com.springboot.rest.model.dto.response.ApiMessageResponse;
+import com.springboot.rest.model.dto.response.Data;
+import com.springboot.rest.model.dto.response.DataAndList;
+import com.springboot.rest.model.dto.response.DataList;
 import com.springboot.rest.service.CommentService;
 import com.springboot.rest.service.LikeService;
 import com.springboot.rest.service.PostService;
@@ -36,16 +45,18 @@ public class ActivityController {
     @PostMapping("post")
     @ApiOperation(value = "Add a post", notes = "User id should be provided in request payload", response = ApiMessageResponse.class)
 
-    public ResponseEntity<ApiMessageResponse> addUserPost(@RequestBody PostDto post) {
-       return  ResponseEntity.ok().body(new ApiMessageResponse(postService.addPost(post)));
+    public ResponseEntity<Data<ApiMessageResponse>> addUserPost(@RequestBody PostDto post) {
+        ApiMessageResponse apiMessageResponse = new ApiMessageResponse(postService.addPost(post));
+       return  ResponseEntity.ok().body(new Data<>(apiMessageResponse));
     }
 
 
     @PutMapping("post")
     @ApiOperation(value = "Update a post", response = ApiMessageResponse.class)
 
-    public ResponseEntity<ApiMessageResponse> updateUserPost(@RequestBody PostEditDto postEditDto) {
-        return ResponseEntity.ok().body(new ApiMessageResponse(postService.updatePost(postEditDto)));
+    public ResponseEntity<Data<ApiMessageResponse>> updateUserPost(@RequestBody PostEditDto postEditDto) {
+        ApiMessageResponse apiMessageResponse = new ApiMessageResponse(postService.updatePost(postEditDto));
+        return ResponseEntity.ok().body(new Data<>(apiMessageResponse));
     }
 
     @GetMapping("profile/{userId}/posts/{pageNo}")
@@ -65,7 +76,8 @@ public class ActivityController {
     @ApiOperation(value = "Get specified post of specified user",
             notes = "Post id should be specified as path variable", response = PostDto.class, responseContainer = "Data")
     public ResponseEntity<Data<PostDto>> getRequiredPost(@PathVariable("postId") Long postId) {
-        return ResponseEntity.ok().body(postService.getSelectedPost(postId));
+        PostDto postDto = postService.getSelectedPost(postId);
+        return ResponseEntity.ok().body(new Data<>(postDto));
     }
 
     @GetMapping("posts/{pageNo}")
@@ -73,15 +85,27 @@ public class ActivityController {
             notes = "Pagination provided for which path variable should contain page no", response = PostDto.class,
             responseContainer = "DataList")
     public ResponseEntity<DataList<PostDto>> getPostsForFeed(@PathVariable int pageNo) {
-        postService.getPosts(pageNo);
         return ResponseEntity.ok().body(postService.getPosts(pageNo));
     }
 
     @DeleteMapping("post/{postId}")
     @ApiOperation(value = "Delete the specified post",
             notes = "Post id should be provided as path variable", response = ApiMessageResponse.class)
-    public ResponseEntity<ApiMessageResponse> deletePostOfUser(@PathVariable Long postId) {
-        return ResponseEntity.ok().body(new ApiMessageResponse(postService.deletePost(postId)));
+    public ResponseEntity<Data<ApiMessageResponse>> deletePostOfUser(@PathVariable Long postId) {
+        ApiMessageResponse apiMessageResponse = new ApiMessageResponse(postService.deletePost(postId));
+        return ResponseEntity.ok().body(new Data<>(apiMessageResponse));
+    }
+
+    @GetMapping("post&comments/{postId}/comments/{pageNo}")
+    @ApiOperation(value = "Get the specified post along with comments",
+            notes = "Post id should be provided as path variable along with page no for comments", response = ApiMessageResponse.class)
+    public ResponseEntity<DataAndList<PostDto, CommentDto>> getSelectedPostAndComments(@PathVariable Long postId,
+                                                                                       @PathVariable int pageNo)
+    {
+        PostDto selectedPost = postService.getSelectedPost(postId);
+        Data<PostDto> data = new Data<>(selectedPost);
+        DataList<CommentDto> comments = commentService.getCommentsOnPost(postId, pageNo);
+        return ResponseEntity.ok().body(new DataAndList<>(data, comments));
     }
 
     /*
@@ -97,22 +121,25 @@ public class ActivityController {
     @PostMapping("comment")
     @ApiOperation(value = "Add a comment to a post",
             notes = "Post id and User id should be provided as part of the request payload", response = ApiMessageResponse.class)
-    public ResponseEntity<ApiMessageResponse> addComment(@RequestBody CommentDto comment) {
-        return ResponseEntity.ok().body(new ApiMessageResponse(commentService.addCommentOnActivity(comment)));
+    public ResponseEntity<Data<ApiMessageResponse>> addComment(@RequestBody CommentDto comment) {
+        ApiMessageResponse apiMessageResponse = new ApiMessageResponse(commentService.addCommentOnActivity(comment));
+        return ResponseEntity.ok().body(new Data<>(apiMessageResponse));
     }
 
     @PutMapping("comment")
     @ApiOperation(value = "Update comment on a post",
             notes = "Comment id is sufficient along with the required changes", response = ApiMessageResponse.class)
-    public ResponseEntity<ApiMessageResponse> updateComment(@RequestBody CommentEditDto commentEditDto) {
-        return ResponseEntity.ok().body(new ApiMessageResponse(commentService.changeCommentOnActivity(commentEditDto)));
+    public ResponseEntity<Data<ApiMessageResponse>> updateComment(@RequestBody CommentEditDto commentEditDto) {
+        ApiMessageResponse apiMessageResponse = new ApiMessageResponse(commentService.changeCommentOnActivity(commentEditDto));
+        return ResponseEntity.ok().body(new Data<>(apiMessageResponse));
     }
 
     @ApiOperation(value = "Delete comment on post",
             notes = "Comment id is to be provided as a path variable", response = ApiMessageResponse.class)
     @DeleteMapping("comment/{commentId}")
-    public ResponseEntity<ApiMessageResponse> deleteComment(@PathVariable Long commentId) {
-        return ResponseEntity.ok().body(new ApiMessageResponse(commentService.delCommentOnActivity(commentId)));
+    public ResponseEntity<Data<ApiMessageResponse>> deleteComment(@PathVariable Long commentId) {
+        ApiMessageResponse apiMessageResponse = new ApiMessageResponse(commentService.delCommentOnActivity(commentId));
+        return ResponseEntity.ok().body(new Data<>(apiMessageResponse));
     }
 
     @GetMapping("post/{postId}/comments/{pageNo}")
@@ -147,29 +174,33 @@ public class ActivityController {
     @PostMapping("post/{postId}/like")
     @ApiOperation(value = "Add like on a post",
             notes = "Post id and user id to be provided in request payload", response = ApiMessageResponse.class)
-    public ResponseEntity<ApiMessageResponse> addLikeOnPost(@RequestBody LikePostDto like) {
-        return ResponseEntity.ok().body(new ApiMessageResponse(likeService.likeAPost(like)));
+    public ResponseEntity<Data<ApiMessageResponse>> addLikeOnPost(@RequestBody LikePostDto like) {
+        ApiMessageResponse apiMessageResponse = new ApiMessageResponse(likeService.likeAPost(like));
+        return ResponseEntity.ok().body(new Data<>(apiMessageResponse));
     }
 
     @PostMapping("comment/{commentId}/like")
     @ApiOperation(value = "Add like on a comment",
             notes = "Comment id and user id to be provided in request payload", response = ApiMessageResponse.class)
-    public ResponseEntity<ApiMessageResponse> addLikeOnComment(@RequestBody LikeCommentDto like) {
-        return ResponseEntity.ok().body(new ApiMessageResponse(likeService.likeComment(like)));
+    public ResponseEntity<Data<ApiMessageResponse>> addLikeOnComment(@RequestBody LikeCommentDto like) {
+        ApiMessageResponse apiMessageResponse = new ApiMessageResponse(likeService.likeComment(like));
+        return ResponseEntity.ok().body(new Data<>(apiMessageResponse));
     }
 
     @DeleteMapping("post/{postId}/unlike")
     @ApiOperation(value = "Delete like on a post",
             notes = "Post id and user id to be provided in request payload", response = ApiMessageResponse.class)
-    public ResponseEntity<ApiMessageResponse> removeLikeOnPost(@RequestBody LikePostDto like) {
-        return ResponseEntity.ok().body(new ApiMessageResponse(likeService.unlikePost(like)));
+    public ResponseEntity<Data<ApiMessageResponse>> removeLikeOnPost(@RequestBody LikePostDto like) {
+        ApiMessageResponse apiMessageResponse = new ApiMessageResponse(likeService.unlikePost(like));
+        return ResponseEntity.ok().body(new Data<>(apiMessageResponse));
     }
 
     @DeleteMapping("comment/{commentId}/unlike")
     @ApiOperation(value = "Delete like on a comment",
             notes = "Comment id and user id to be provided in request payload", response = ApiMessageResponse.class)
-    public ResponseEntity<ApiMessageResponse> removeLikeOnComment(@RequestBody LikeCommentDto like) {
-        return ResponseEntity.ok().body(new ApiMessageResponse(likeService.unlikeComment(like)));
+    public ResponseEntity<Data<ApiMessageResponse>> removeLikeOnComment(@RequestBody LikeCommentDto like) {
+        ApiMessageResponse apiMessageResponse = new ApiMessageResponse(likeService.unlikeComment(like));
+        return ResponseEntity.ok().body(new Data<>(apiMessageResponse));
     }
 
     @ApiOperation(value = "Get likes on a post",

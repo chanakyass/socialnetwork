@@ -1,7 +1,7 @@
 package com.springboot.rest.model.mapper;
 
-import com.springboot.rest.model.dto.PostDto;
-import com.springboot.rest.model.dto.PostEditDto;
+import com.springboot.rest.model.dto.post.PostDto;
+import com.springboot.rest.model.dto.post.PostEditDto;
 import com.springboot.rest.model.entities.Post;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;

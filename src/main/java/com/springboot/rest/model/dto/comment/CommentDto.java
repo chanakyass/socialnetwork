@@ -1,10 +1,13 @@
-package com.springboot.rest.model.dto;
+package com.springboot.rest.model.dto.comment;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import com.springboot.rest.model.dto.ApiResourceMarker;
+import com.springboot.rest.model.dto.post.PostProxyDto;
+import com.springboot.rest.model.dto.user.UserProxyDto;
 import io.swagger.annotations.ApiModel;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -21,8 +24,12 @@ public class CommentDto extends CommentProxyDto implements ApiResourceMarker {
     String commentContent;
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     Long noOfLikes;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    Long noOfReplies;
 
-    public CommentDto(Long id, UserProxyDto owner, LocalDateTime commentedAtTime, LocalDateTime modifiedAtTime, PostProxyDto commentedOn, CommentProxyDto parentComment, String commentContent, Long noOfLikes) {
+    Boolean isCommentLikedByCurrentUser;
+
+    public CommentDto(Long id, UserProxyDto owner, LocalDateTime commentedAtTime, LocalDateTime modifiedAtTime, PostProxyDto commentedOn, CommentProxyDto parentComment, String commentContent, Long noOfLikes, Long noOfReplies, Boolean isCommentLikedByCurrentUser) {
         super(id, owner);
         this.commentedAtTime = commentedAtTime;
         this.modifiedAtTime = modifiedAtTime;
@@ -30,6 +37,8 @@ public class CommentDto extends CommentProxyDto implements ApiResourceMarker {
         this.parentComment = parentComment;
         this.commentContent = commentContent;
         this.noOfLikes = noOfLikes;
+        this.noOfReplies = noOfReplies;
+        this.isCommentLikedByCurrentUser = isCommentLikedByCurrentUser;
     }
 
     public CommentDto()
@@ -93,6 +102,22 @@ public class CommentDto extends CommentProxyDto implements ApiResourceMarker {
         this.noOfLikes = Objects.requireNonNullElse(noOfLikes, 0L);
     }
 
+    public Long getNoOfReplies() {
+        return Objects.requireNonNullElse(noOfReplies, 0L);
+    }
+
+    public void setNoOfReplies(Long noOfReplies) {
+        this.noOfReplies = Objects.requireNonNullElse(noOfReplies, 0L);
+    }
+
+    public Boolean getCommentLikedByCurrentUser() {
+        return isCommentLikedByCurrentUser;
+    }
+
+    public void setCommentLikedByCurrentUser(Boolean commentLikedByCurrentUser) {
+        isCommentLikedByCurrentUser = commentLikedByCurrentUser;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -110,4 +135,5 @@ public class CommentDto extends CommentProxyDto implements ApiResourceMarker {
     public Long getOwnerId() {
         return owner.getId();
     }
+
 }

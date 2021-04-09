@@ -1,37 +1,50 @@
-package com.springboot.rest.model.dto;
+package com.springboot.rest.model.dto.post;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import com.springboot.rest.model.dto.ApiResourceMarker;
+import com.springboot.rest.model.dto.user.UserProxyDto;
 import io.swagger.annotations.ApiModel;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 
-@ApiModel(value = "Comment Edit", description = "This object is used only for edit operation.", parent = CommentProxyDto.class)
-public class CommentEditDto extends CommentProxyDto implements ApiResourceMarker {
+@ApiModel(value = "Post Edit",  description = "Contains the actual details of the post. Only used for editing a post",  parent = PostProxyDto.class)
+public class PostEditDto extends PostProxyDto implements ApiResourceMarker {
 
-    String commentContent;
+    String postHeading;
+
+    String postBody;
 
     LocalDateTime modifiedAtTime;
 
-    public CommentEditDto(Long id, UserProxyDto owner, String commentContent, LocalDateTime modifiedAtTime) {
+    public PostEditDto(Long id, UserProxyDto owner, String postHeading, String postBody, LocalDateTime modifiedAtTime) {
         super(id, owner);
-        this.commentContent = commentContent;
+        this.postHeading = postHeading;
+        this.postBody = postBody;
         this.modifiedAtTime = modifiedAtTime;
     }
 
-    public CommentEditDto() {
+    public PostEditDto() {
         super();
     }
 
-    public String getCommentContent() {
-        return commentContent;
+    public String getPostHeading() {
+        return postHeading;
     }
 
-    public void setCommentContent(String commentContent) {
-        this.commentContent = commentContent;
+    public void setPostHeading(String postHeading) {
+        this.postHeading = postHeading;
+    }
+
+    public String getPostBody() {
+        return postBody;
+    }
+
+    public void setPostBody(String postBody) {
+        this.postBody = postBody;
     }
 
     @JsonSerialize(using = LocalDateTimeSerializer.class)
