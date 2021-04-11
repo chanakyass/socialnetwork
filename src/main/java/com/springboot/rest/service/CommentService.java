@@ -59,7 +59,7 @@ public class CommentService {
 
     public DataList<CommentDto> getCommentsOnPost(Long postId, int pageNo) {
         Page<Comment> page = commentRepos.findCommentsByCommentedOn_IdAndParentCommentIsNull(postId,
-                 PageRequest.of(pageNo, 10, Sort.by("noOfLikes").descending()))
+                 PageRequest.of(pageNo, 5, Sort.by("noOfLikes").descending()))
                 .orElseThrow(() -> new ApiSpecificException("Post is not present"));
 
         return new DataList<>(commentMapper.toCommentDtoList(page.getContent()), page.getTotalPages(), pageNo);
@@ -70,7 +70,7 @@ public class CommentService {
     public DataList<CommentDto> getRepliesOnComment(Long commentId, int pageNo) {
         commentRepos.findById(commentId).orElseThrow(() -> new ApiSpecificException("Parent Comment is not present"));
         Page<Comment> page = commentRepos.findCommentsByParentComment_Id(commentId,
-                 PageRequest.of(pageNo, 10, Sort.by("noOfLikes")))
+                 PageRequest.of(pageNo, 5, Sort.by("noOfLikes")))
                 .orElseThrow(() -> new ApiSpecificException("No replies on comment"));
 
         return new DataList<>(commentMapper.toCommentDtoList(page.getContent()), page.getTotalPages(), pageNo);

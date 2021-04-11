@@ -26,6 +26,8 @@ public class UserDto extends UserProxyDto implements UserPersonalMarker {
     Integer age;
 
     LocalDate DOB;
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     List<Role> grantedAuthoritiesList;
 
     public UserDto(Long id, String name, String profileName, String email, String password, LocalDate DOB, String userSummary, List<Role> grantedAuthoritiesList) {
