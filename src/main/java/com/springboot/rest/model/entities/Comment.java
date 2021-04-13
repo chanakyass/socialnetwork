@@ -33,7 +33,7 @@ public class Comment {
     @JoinColumn(name = "parent_comment", foreignKey = @ForeignKey(name = "fk_parent_comment_id"))
     Comment parentComment;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 5000)
     private String commentContent;
     private LocalDateTime commentedAtTime;
     private LocalDateTime modifiedAtTime;
