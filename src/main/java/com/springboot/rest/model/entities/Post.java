@@ -11,7 +11,6 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
-import java.sql.Blob;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -36,7 +35,8 @@ public class Post {
     @Column(nullable = false)
     private String postHeading;
 
-    @Column(nullable = false, length = 65536)
+    @Lob
+    @Column(nullable = false)
     private String postBody;
 
     private LocalDateTime postedAtTime;
