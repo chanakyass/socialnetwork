@@ -35,6 +35,7 @@ public class Post {
     @Column(nullable = false)
     private String postHeading;
 
+    @Lob
     @Column(nullable = false)
     private String postBody;
 
