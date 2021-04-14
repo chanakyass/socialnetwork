@@ -29,14 +29,13 @@ public class Post {
 
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "owned_by_user", foreignKey = @ForeignKey(name = "fk_owner_user_id"), nullable = false)
+    @JoinColumn(name = "owned_by_user", foreignKey = @ForeignKey(name = "fk_post_owner_id"), nullable = false)
     private User owner;
 
     @Column(nullable = false)
     private String postHeading;
 
-    @Lob
-    @Column(nullable = false)
+    @Column(nullable = false, length = 65536)
     private String postBody;
 
     private LocalDateTime postedAtTime;

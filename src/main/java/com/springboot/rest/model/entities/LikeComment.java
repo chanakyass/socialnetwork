@@ -23,7 +23,7 @@ public class LikeComment {
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
     @NotNull
-    @JoinColumn(name = "owned_by_user", foreignKey = @ForeignKey(name = "fk_owner_user_id"))
+    @JoinColumn(name = "owned_by_user", foreignKey = @ForeignKey(name = "fk_like_comment_owner_id"))
     private User owner;
 
     private LocalDateTime likedAtTime;

@@ -32,12 +32,12 @@ public class SecureResource {
 
     @OneToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "like_post_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_like_post_id"))
+    @JoinColumn(name = "like_post_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_liked_post_id"))
     Post likePost;
 
     @OneToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "like_comment_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_like_comment_id"))
+    @JoinColumn(name = "like_comment_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_liked_comment_id"))
     Comment likeComment;
 
     @ManyToOne(fetch = FetchType.LAZY)

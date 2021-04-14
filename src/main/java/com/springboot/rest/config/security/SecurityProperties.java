@@ -13,7 +13,7 @@ public class SecurityProperties {
     String issuer;
     Strategy strategy;
 
-    @Bean
+    @Bean("securityProperties")
     public static PropertySourcesPlaceholderConfigurer properties() {
         return new PropertySourcesPlaceholderConfigurer();
     }

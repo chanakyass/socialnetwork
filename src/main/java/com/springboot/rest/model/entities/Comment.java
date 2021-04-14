@@ -25,7 +25,7 @@ public class Comment {
 
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "owned_by_user", foreignKey = @ForeignKey(name = "fk_owner_user_id"), nullable = false)
+    @JoinColumn(name = "owned_by_user", foreignKey = @ForeignKey(name = "fk_comment_owner_id"), nullable = false)
     private User owner;
 
     @ManyToOne
