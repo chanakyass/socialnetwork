@@ -17,7 +17,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @AutoConfigureMockMvc
 @Import({TestBeansConfig.class, SpringSecurityWebAuxTestConfig.class, TestConfig.class})
 @TestPropertySource(locations = "classpath:test.properties")
-public class DemoApplicationTests {
+public class SocialNetworkApplicationTests {
 
 	@Test
 	public void contextLoads() {

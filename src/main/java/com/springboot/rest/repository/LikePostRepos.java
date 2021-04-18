@@ -14,8 +14,6 @@ public interface LikePostRepos extends JpaRepository<LikePost, Long> {
 
     Optional<LikePost> findLikeByLikedPost_IdAndOwner_Id(long postId, long userId);
 
-
-
-
+    Optional<List<LikePost>> findByOwner_Id(Long userId);
 
 }

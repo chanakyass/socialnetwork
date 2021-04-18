@@ -48,7 +48,9 @@ public class JwtTokenUtilImpl implements JwtTokenUtil {
         String token = "";
         try {
             token = JWT.create()
-                    .withSubject(userAdapter.getUsername())
+                    .withSubject(+userAdapter.getUserUniqueId()+":"
+                            +userAdapter.getUsername()+":"
+                            +userAdapter.getProfileName())
                     .withIssuer(securityProperties.getIssuer())
                     .sign(AlgorithmStrategy.getAlgorithm(securityProperties.getStrategy()));
         } catch (JWTCreationException exception) {

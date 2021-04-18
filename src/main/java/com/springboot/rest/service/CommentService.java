@@ -1,5 +1,6 @@
 package com.springboot.rest.service;
 
+import com.springboot.rest.config.exceptions.ApiResourceNotFoundException;
 import com.springboot.rest.config.exceptions.ApiSpecificException;
 import com.springboot.rest.model.dto.comment.CommentDto;
 import com.springboot.rest.model.dto.comment.CommentEditDto;
@@ -45,14 +46,16 @@ public class CommentService {
         Optional.ofNullable(commentDto).orElseThrow(() -> new ApiSpecificException("Some issue with your comment. Please check again"));
 
         Comment comment = commentMapper.toComment(commentDto);
-        Post parentPost = postRepos.findById(commentDto.getCommentedOn().getId()).orElseThrow(() -> new ApiSpecificException("Post is not present"));
+        Post parentPost = postRepos.findById(commentDto.getCommentedOn().getId())
+                .orElseThrow(() -> new ApiResourceNotFoundException("Parent post doesn't exist"));
         if (commentDto.getParentComment() != null) {
-            Comment parentComment = commentRepos.findById(commentDto.getParentComment().getId()).orElseThrow(() -> new ApiSpecificException("Parent Comment is not present"));
+            Comment parentComment = commentRepos.findById(commentDto.getParentComment().getId())
+                    .orElseThrow(() -> new ApiResourceNotFoundException("Parent comment doesn't exist"));
             parentComment.setNoOfReplies(parentComment.getNoOfReplies()+1);
         }
-        else{
-            parentPost.setNoOfComments(parentPost.getNoOfComments()+1);
-        }
+
+        parentPost.setNoOfComments(parentPost.getNoOfComments()+1);
+
         Comment responseComment = commentRepos.save(comment);
         return responseComment.getId();
     }
@@ -60,7 +63,7 @@ public class CommentService {
     public DataList<CommentDto> getCommentsOnPost(Long postId, int pageNo) {
         Page<Comment> page = commentRepos.findCommentsByCommentedOn_IdAndParentCommentIsNull(postId,
                  PageRequest.of(pageNo, 5, Sort.by("noOfLikes").descending()))
-                .orElseThrow(() -> new ApiSpecificException("Post is not present"));
+                .orElseThrow(ApiResourceNotFoundException::new);
 
         return new DataList<>(commentMapper.toCommentDtoList(page.getContent()), page.getTotalPages(), pageNo);
 
@@ -68,7 +71,7 @@ public class CommentService {
     }
 
     public DataList<CommentDto> getRepliesOnComment(Long commentId, int pageNo) {
-        commentRepos.findById(commentId).orElseThrow(() -> new ApiSpecificException("Parent Comment is not present"));
+        commentRepos.findById(commentId).orElseThrow(ApiResourceNotFoundException::new);
         Page<Comment> page = commentRepos.findCommentsByParentComment_Id(commentId,
                  PageRequest.of(pageNo, 5, Sort.by("noOfLikes")))
                 .orElseThrow(() -> new ApiSpecificException("No replies on comment"));
@@ -81,15 +84,15 @@ public class CommentService {
     @PreAuthorize(value = "hasPermission(#commentId, \"Comment\", null)")
     @PostAuthorize(value = "@authorizationService.deleteSecureResource(returnObject, 'C')")
     public Long delCommentOnActivity(Long commentId) {
-        Comment comment = commentRepos.findById(commentId).orElseThrow(() -> new ApiSpecificException("Comment is not present"));
+        Comment comment = commentRepos.findById(commentId).orElseThrow(ApiResourceNotFoundException::new);
         Comment parentComment = comment.getParentComment();
         if(parentComment != null) {
             parentComment.setNoOfReplies(parentComment.getNoOfReplies() - 1);
         }
-        else{
-            Post post = comment.getCommentedOn();
-            post.setNoOfComments(post.getNoOfComments() - 1);
-        }
+
+        Post post = comment.getCommentedOn();
+        post.setNoOfComments(post.getNoOfComments() - 1);
+
         commentRepos.deleteById(commentId);
 
         return commentId;
@@ -104,7 +107,7 @@ public class CommentService {
             throw new ApiSpecificException("Please add some comment content");
         }
 
-        Comment comment = commentRepos.findById(commentEditDto.getId()).orElseThrow(() -> new ApiSpecificException("Comment is not present"));
+        Comment comment = commentRepos.findById(commentEditDto.getId()).orElseThrow(ApiResourceNotFoundException::new);
         commentEditMapper.update(commentEditDto, comment);
         return commentEditDto.getId();
     }

@@ -1,14 +1,13 @@
 package com.springboot.rest.service;
 
+import com.springboot.rest.config.exceptions.ApiResourceNotFoundException;
 import com.springboot.rest.config.exceptions.ApiSpecificException;
-import com.springboot.rest.config.security.SecurityUtils;
 import com.springboot.rest.model.dto.post.PostDto;
 import com.springboot.rest.model.dto.post.PostEditDto;
 import com.springboot.rest.model.dto.response.DataList;
 import com.springboot.rest.model.entities.Post;
 import com.springboot.rest.model.mapper.PostEditMapper;
 import com.springboot.rest.model.mapper.PostMapper;
-import com.springboot.rest.repository.LikePostRepos;
 import com.springboot.rest.repository.PostRepos;
 import com.springboot.rest.repository.UserRepos;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +19,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -67,15 +65,14 @@ public class PostService {
     }
 
     public PostDto getSelectedPost(Long Id) {
-        Post post =  postRepos.findPostById(Id).orElseThrow(() -> new ApiSpecificException(("The post is not present")));
-
+        Post post =  postRepos.findPostById(Id).orElseThrow(ApiResourceNotFoundException::new);
         return postMapper.toPostDto(post);
 
     }
 
 
     public DataList<PostDto> getPostsOfUser(Long userId, int pageNo) {
-        userRepos.findById(userId).orElseThrow(() -> new ApiSpecificException("User is not present"));
+        userRepos.findById(userId).orElseThrow(ApiResourceNotFoundException::new);
         Page<Post> page = postRepos.findPostsByOwner_Id(userId,
                 PageRequest.of(pageNo, 10, Sort.by("noOfLikes").descending()))
                 .orElseThrow(() -> new ApiSpecificException(("No posts by user")));
@@ -89,7 +86,7 @@ public class PostService {
     @Transactional
     @PreAuthorize(value = "hasPermission(#postEditDto, null)")
     public Long updatePost(PostEditDto postEditDto) {
-        Post postToUpdate = postRepos.findById(postEditDto.getId()).orElseThrow(() -> new ApiSpecificException("Post is not present"));
+        Post postToUpdate = postRepos.findById(postEditDto.getId()).orElseThrow(ApiResourceNotFoundException::new);
         postEditMapper.toPost(postEditDto, postToUpdate);
         return postEditDto.getId();
 
@@ -99,9 +96,7 @@ public class PostService {
     @PreAuthorize(value = "hasPermission(#postId, \"Post\", null)")
     @PostAuthorize(value = "@authorizationService.deleteSecureResource(returnObject, 'P')")
     public Long deletePost(Long postId) {
-        postRepos.findById(postId).orElseThrow(() -> new ApiSpecificException("Post is not present"));
-
-
+        postRepos.findById(postId).orElseThrow(ApiResourceNotFoundException::new);
         postRepos.deleteById(postId);
         return postId;
     }

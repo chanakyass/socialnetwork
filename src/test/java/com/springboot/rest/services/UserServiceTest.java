@@ -1,7 +1,7 @@
 package com.springboot.rest.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.springboot.rest.DemoApplicationTests;
+import com.springboot.rest.SocialNetworkApplicationTests;
 import com.springboot.rest.data.UserTestDataFactory;
 import com.springboot.rest.model.dto.auth.AuthRequest;
 import com.springboot.rest.model.dto.user.UserDto;
@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class UserServiceTest extends DemoApplicationTests {
+public class UserServiceTest extends SocialNetworkApplicationTests {
 
 
     private final MockMvc mockMvc;
@@ -130,7 +130,7 @@ public class UserServiceTest extends DemoApplicationTests {
 
         MvcResult createResult = this.mockMvc.perform(put("/api/v1/profile/my-profile").contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(userEdit)))
-                .andExpect(status().isInternalServerError())
+                .andExpect(status().isForbidden())
                 .andReturn();
 
     }
@@ -156,7 +156,7 @@ public class UserServiceTest extends DemoApplicationTests {
 
         MvcResult createResult = this.mockMvc.perform(post("/api/v1/public/login").contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(authRequest)))
-                .andExpect(status().isForbidden())
+                .andExpect(status().isUnauthorized())
                 .andReturn();
 
     }

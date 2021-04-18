@@ -81,12 +81,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .cors().and().csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .exceptionHandling()
-                .authenticationEntryPoint(
-                        (request, response, ex) -> {
-                            exceptionHandler.resolveException(request, response, null, ex);
-                        }
-                )
-                .accessDeniedHandler((httpServletRequest, httpServletResponse, e) -> exceptionHandler.resolveException(httpServletRequest, httpServletResponse, null, e))
                 .and().anonymous().and()
                 .authorizeRequests()
                 //.antMatchers("api/v1/resource/**", "api/v1/profile/**")

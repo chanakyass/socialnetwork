@@ -1,5 +1,6 @@
 package com.springboot.rest.service;
 
+import com.springboot.rest.config.exceptions.ApiResourceNotFoundException;
 import com.springboot.rest.config.exceptions.ApiSpecificException;
 import com.springboot.rest.config.security.SecurityUtils;
 import com.springboot.rest.model.dto.likes.LikeCommentDto;
@@ -21,7 +22,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -57,7 +57,7 @@ public class LikeService {
         LikePost like = likePostMapper.toLikePost(likePostDto);
 
         Optional.ofNullable(like).orElseThrow(() -> new ApiSpecificException("Something is wrong"));
-        Post post = postRepos.findById(like.getLikedPost().getId()).orElseThrow(() -> new ApiSpecificException("Post is not present"));
+        Post post = postRepos.findById(like.getLikedPost().getId()).orElseThrow(() -> new ApiResourceNotFoundException("Post doesn't exist"));
 
         LikePost likePost = likePostRepos.findLikeByLikedPost_IdAndOwner_Id(likePostDto.getLikedPost().getId(), likePostDto.getOwnerId()).orElse(null);
 
@@ -79,7 +79,7 @@ public class LikeService {
         LikeComment like = likeCommentMapper.toLikeComment(likeCommentDto);
 
         Optional.ofNullable(like).orElseThrow(() -> new ApiSpecificException("Something is wrong"));
-        Comment comment = commentRepos.findById(like.getLikedComment().getId()).orElseThrow(() -> new ApiSpecificException("Comment is not present"));
+        Comment comment = commentRepos.findById(like.getLikedComment().getId()).orElseThrow(() -> new ApiResourceNotFoundException("Comment doesn't exist"));
 
         LikeComment likeComment = likeCommentRepos.findLikeByLikedComment_IdAndOwner_Id(like.getLikedComment().getId(),
                 like.getOwner().getId()).orElse(null);
@@ -100,7 +100,7 @@ public class LikeService {
         LikePost like = likePostMapper.toLikePost(likePostDto);
 
         Optional.ofNullable(like).orElseThrow(() -> new ApiSpecificException("Something is wrong"));
-        Post post = postRepos.findById(like.getLikedPost().getId()).orElseThrow(() -> new ApiSpecificException("Post is not present"));
+        Post post = postRepos.findById(like.getLikedPost().getId()).orElseThrow(() -> new ApiResourceNotFoundException("Post doesn't exist"));
         post.setNoOfLikes(post.getNoOfLikes() - 1);
         LikePost likePost = likePostRepos.findLikeByLikedPost_IdAndOwner_Id(like.getLikedPost().getId(), like.getOwner().getId()).orElseThrow(() ->
                 new ApiSpecificException("Nothing to unlike"));
@@ -120,7 +120,7 @@ public class LikeService {
 
         LikeComment likeComment = likeCommentRepos.findLikeByLikedComment_IdAndOwner_Id(like.getLikedComment().getId(),
                 like.getOwner().getId()).orElseThrow(() -> new ApiSpecificException("Nothing to unlike"));
-        Comment comment = commentRepos.findById(like.getLikedComment().getId()).orElseThrow(() -> new ApiSpecificException("Comment is not present"));
+        Comment comment = commentRepos.findById(like.getLikedComment().getId()).orElseThrow(() -> new ApiResourceNotFoundException("Comment doesn't exist"));
         comment.setNoOfLikes(comment.getNoOfLikes() - 1);
         likeCommentRepos.deleteById(likeComment.getId());
         return likeComment.getLikedComment().getId();
@@ -128,11 +128,13 @@ public class LikeService {
     }
 
     public DataList<LikePostDto> getLikesOnPost(long postId) {
+        postRepos.findPostById(postId).orElseThrow(() -> new ApiResourceNotFoundException("Post doesn't exist"));
         List<LikePost> likes =  likePostRepos.findLikesByLikedPost_Id(postId).orElseThrow(() -> new ApiSpecificException("No likes on post"));
         return new DataList<>(likePostMapper.toLikePostDtoList(likes));
     }
 
     public DataList<LikeCommentDto> getLikesOnComment(long commentId) {
+        commentRepos.findById(commentId).orElseThrow(() -> new ApiResourceNotFoundException("Comment doesn't exist"));
         List<LikeComment> likes = likeCommentRepos.findLikesByLikedComment_Id(commentId).orElseThrow(() -> new ApiSpecificException("No likes on comment"));
         return new DataList<>(likeCommentMapper.toLikeCommentDtoList(likes));
     }

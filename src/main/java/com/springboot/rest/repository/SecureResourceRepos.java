@@ -1,7 +1,6 @@
 package com.springboot.rest.repository;
 
 import com.springboot.rest.model.entities.SecureResource;
-import com.springboot.rest.model.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -20,6 +19,8 @@ public interface SecureResourceRepos extends JpaRepository<SecureResource, Long>
     Optional<SecureResource> findByLikePost_IdAndOwner_Id(Long id, Long ownerId) ;
     @Query("select resource from SecureResource resource where resource.likeComment.id=:id and resource.owner.id=:ownerId")
     Optional<SecureResource> findByLikeComment_IdAndOwner_Id(Long id, Long ownerId) ;
+    boolean existsSecureResourceByLikePost_Id(Long id);
+    boolean existsSecureResourceByLikeComment_Id(Long id);
 
 
     //delete

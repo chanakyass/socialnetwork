@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.springboot.rest.model.dto.ApiReactionMarker;
-import com.springboot.rest.model.dto.ApiResourceMarker;
 import com.springboot.rest.model.dto.comment.CommentProxyDto;
 import com.springboot.rest.model.dto.user.UserProxyDto;
 import io.swagger.annotations.ApiModel;

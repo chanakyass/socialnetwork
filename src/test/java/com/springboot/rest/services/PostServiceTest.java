@@ -1,7 +1,7 @@
 package com.springboot.rest.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.springboot.rest.DemoApplicationTests;
+import com.springboot.rest.SocialNetworkApplicationTests;
 import com.springboot.rest.data.PostTestDataFactory;
 import com.springboot.rest.model.dto.post.PostDto;
 import com.springboot.rest.model.dto.post.PostEditDto;
@@ -30,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @WithUserDetails(value = "test@rest.com", userDetailsServiceBeanName = "basicUsers")
 @Slf4j
-public class PostServiceTest extends DemoApplicationTests {
+public class PostServiceTest extends SocialNetworkApplicationTests {
 
     private final MockMvc mockMvc;
     private final ObjectMapper objectMapper;
@@ -94,7 +94,7 @@ public class PostServiceTest extends DemoApplicationTests {
                 .perform(post("/api/v1/resource/post")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(post)))
-                .andExpect(status().isInternalServerError())
+                .andExpect(status().isForbidden())
                 .andReturn();
 
     }
@@ -146,7 +146,7 @@ public class PostServiceTest extends DemoApplicationTests {
                 .perform(put("/api/v1/resource/post")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(postEdit)))
-                .andExpect(status().isInternalServerError())
+                .andExpect(status().isForbidden())
                 .andReturn();
 
     }

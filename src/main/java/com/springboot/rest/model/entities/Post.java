@@ -41,7 +41,9 @@ public class Post {
     private LocalDateTime postedAtTime;
 
     private LocalDateTime modifiedAtTime;
+
     private Long noOfLikes;
+
     private Long noOfComments;
 
     public Post() {

@@ -14,4 +14,6 @@ public interface LikeCommentRepos extends JpaRepository<LikeComment, Long> {
 
     Optional<LikeComment> findLikeByLikedComment_IdAndOwner_Id(long commentId, long userId);
 
+    Optional<List<LikeComment>> findByOwner_Id(Long userId);
+
 }

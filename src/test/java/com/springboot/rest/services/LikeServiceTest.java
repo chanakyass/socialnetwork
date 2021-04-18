@@ -1,7 +1,7 @@
 package com.springboot.rest.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.springboot.rest.DemoApplicationTests;
+import com.springboot.rest.SocialNetworkApplicationTests;
 import com.springboot.rest.data.LikeTestDataFactory;
 import com.springboot.rest.model.dto.likes.LikeCommentDto;
 import com.springboot.rest.model.dto.likes.LikePostDto;
@@ -30,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @WithUserDetails(value = "test@rest.com", userDetailsServiceBeanName = "basicUsers")
 @Slf4j
-public class LikeServiceTest extends DemoApplicationTests {
+public class LikeServiceTest extends SocialNetworkApplicationTests {
 
     private final MockMvc mockMvc;
     private final ObjectMapper objectMapper;

@@ -1,6 +1,6 @@
 package com.springboot.rest.services;
 
-import com.springboot.rest.DemoApplicationTests;
+import com.springboot.rest.SocialNetworkApplicationTests;
 import com.springboot.rest.data.CommentTestDataFactory;
 import com.springboot.rest.data.LikeTestDataFactory;
 import com.springboot.rest.data.PostTestDataFactory;
@@ -36,7 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Slf4j
-public class GetServicesTest extends DemoApplicationTests {
+public class GetServicesTest extends SocialNetworkApplicationTests {
 
     private final MockMvc mockMvc;
     private final CommentTestDataFactory commentTestDataFactory;
@@ -196,7 +196,7 @@ public class GetServicesTest extends DemoApplicationTests {
 
         this.mockMvc.perform(get(String.format("/api/v1/resource/profile/%d/posts/0",
                 userTestDataFactory.getThisUser("THIRD_USER").getId())).header("Authorization",token))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
 
 
 

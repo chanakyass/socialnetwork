@@ -171,16 +171,29 @@ public class PermissionEvaluatorImpl implements PermissionEvaluator {
                         secureResource = secureResourceRepos.findByComment_Id(resourceId).orElse(null);
                         break;
                     case ("LikePost"):
+                        if(!secureResourceRepos.existsSecureResourceByLikePost_Id(resourceId))
+                        {
+                            //Let api services deal with such errors
+                            return true;
+                        }
                         secureResource = secureResourceRepos.findByLikePost_IdAndOwner_Id(resourceId, loggedInUserId).orElse(null);
                         break;
                     case ("LikeComment"):
+                        if(!secureResourceRepos.existsSecureResourceByLikeComment_Id(resourceId))
+                        {
+                            //Let api services deal with such errors
+                            return true;
+                        }
                         secureResource = secureResourceRepos.findByLikeComment_IdAndOwner_Id(resourceId, loggedInUserId).orElse(null);
                         break;
                 }
 
-                if (secureResource == null)
+                if (secureResource == null && (targetType.equals("LikePost") || targetType.equals("LikeComment")))
                     //check if the resource belongs to the logged in user
                     throw new AccessDeniedException("Access is denied");
+                else if (secureResource != null && loggedInUserId.compareTo(secureResource.getOwner().getId()) != 0) {
+                    throw new AccessDeniedException("Access is denied");
+                }
                 return true;
             }
             else {

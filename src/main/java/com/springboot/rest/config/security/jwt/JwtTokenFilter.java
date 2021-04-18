@@ -1,6 +1,7 @@
 package com.springboot.rest.config.security.jwt;
 
 import com.springboot.rest.config.exceptions.ApiAccessException;
+import com.springboot.rest.config.exceptions.ApiSpecificException;
 import com.springboot.rest.model.entities.User;
 import com.springboot.rest.model.entities.UserAdapter;
 import com.springboot.rest.service.UserService;
@@ -73,8 +74,11 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             }
 
             // Get user identity and set it on the spring security context
+            String payload = jwtTokenUtil.getSubjectFromToken(token);
+            Long userId = Long.parseLong(payload.trim().split(":")[0]);
+            String email = payload.trim().split(":")[1];
 
-            User user = userService.getUserByEmail(jwtTokenUtil.getSubjectFromToken(token));
+            User user = userService.getUserByIdAndEmail(userId, email);
 
             UserDetails userDetails = new UserAdapter(user);
 
@@ -93,10 +97,12 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             chain.doFilter(request, response);
         }
+        catch(ApiSpecificException ex){
+            exceptionHandler.resolveException(request, response, null,
+                    new ApiAccessException(ex.getMessage()));
+        }
         catch (Exception e)
         {
-            e.printStackTrace();
-            System.out.println(e.toString());
             exceptionHandler.resolveException(request, response, null, e);
         }
     }
