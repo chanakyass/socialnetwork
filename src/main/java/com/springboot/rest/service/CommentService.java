@@ -54,7 +54,7 @@ public class CommentService {
             parentComment.setNoOfReplies(parentComment.getNoOfReplies()+1);
         }
 
-        parentPost.setNoOfComments(parentPost.getNoOfComments()+1);
+        //parentPost.setNoOfComments(parentPost.getNoOfComments()+1);
 
         Comment responseComment = commentRepos.save(comment);
         return responseComment.getId();
@@ -91,7 +91,7 @@ public class CommentService {
         }
 
         Post post = comment.getCommentedOn();
-        post.setNoOfComments(post.getNoOfComments() - 1);
+        //post.setNoOfComments(post.getNoOfComments() - 1);
 
         commentRepos.deleteById(commentId);
 

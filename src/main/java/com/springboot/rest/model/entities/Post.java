@@ -12,7 +12,6 @@ import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include;
 
@@ -42,23 +41,17 @@ public class Post {
 
     private LocalDateTime modifiedAtTime;
 
-    private Long noOfLikes;
-
-    private Long noOfComments;
-
     public Post() {
 
     }
 
-    public Post(Long id, User owner, String postHeading, String postBody, LocalDateTime postedAtTime, LocalDateTime modifiedAtTime, Long noOfLikes, Long noOfComments) {
+    public Post(Long id, User owner, String postHeading, String postBody, LocalDateTime postedAtTime, LocalDateTime modifiedAtTime) {
         this.id = id;
         this.owner = owner;
         this.postHeading = postHeading;
         this.postBody = postBody;
         this.postedAtTime = postedAtTime;
         this.modifiedAtTime = modifiedAtTime;
-        this.noOfLikes = noOfLikes;
-        this.noOfComments = noOfComments;
     }
 
     public Long getId() {
@@ -114,22 +107,6 @@ public class Post {
         this.modifiedAtTime = modifiedOnDate;
     }
 
-    public Long getNoOfLikes() {
-        return  Objects.requireNonNullElse(noOfLikes, 0L);
-    }
-
-    public void setNoOfLikes(Long noOfLikes) {
-        this.noOfLikes = Objects.requireNonNullElse(noOfLikes, 0L);
-    }
-
-    public Long getNoOfComments() {
-        return  Objects.requireNonNullElse(noOfComments, 0L);
-    }
-
-    public void setNoOfComments(Long noOfComments) {
-        this.noOfComments = Objects.requireNonNullElse(noOfComments, 0L);
-    }
-
     @Override
     public String toString() {
         return "Post{" +
@@ -139,7 +116,7 @@ public class Post {
                 ", postBody='" + postBody + '\'' +
                 ", postedOnDate=" + postedAtTime +
                 ", modifiedOnDate=" + modifiedAtTime +
-                ", noOfLikes=" + noOfLikes +
+                //", noOfLikes=" + noOfLikes +
                 '}';
     }
 }

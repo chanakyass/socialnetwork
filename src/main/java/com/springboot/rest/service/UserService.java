@@ -82,7 +82,7 @@ public class UserService {
         userRepos.findById(profileId).orElseThrow(() -> new ApiResourceNotFoundException("User doesn't exist"));
         commentRepos.findAllCommentsByOwner_Id(profileId).ifPresent(comments -> comments.forEach((comment) -> {
             Post parentPost = comment.getCommentedOn();
-            parentPost.setNoOfComments(parentPost.getNoOfComments() - 1);
+            //parentPost.setNoOfComments(parentPost.getNoOfComments() - 1);
             if(comment.getParentComment() != null){
                 Comment parentComment = comment.getParentComment();
                 parentComment.setNoOfReplies(parentComment.getNoOfReplies() - 1);
@@ -91,7 +91,7 @@ public class UserService {
 
         likePostRepos.findByOwner_Id(profileId).ifPresent(likes -> likes.forEach(like -> {
             Post post = like.getLikedPost();
-            post.setNoOfLikes(post.getNoOfLikes() - 1);
+            //post.setNoOfLikes(post.getNoOfLikes() - 1);
         }));
 
         likeCommentRepos.findByOwner_Id(profileId).ifPresent(likes -> likes.forEach(like -> {

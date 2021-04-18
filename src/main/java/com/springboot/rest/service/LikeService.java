@@ -66,7 +66,7 @@ public class LikeService {
             throw new ApiSpecificException("Post cannot be liked more than once");
         }
 
-        post.setNoOfLikes(post.getNoOfLikes() + 1);
+        //post.setNoOfLikes(post.getNoOfLikes() + 1);
         LikePost responseLikePost = likePostRepos.save(like);
         return responseLikePost.getLikedPost().getId();
     }
@@ -101,7 +101,7 @@ public class LikeService {
 
         Optional.ofNullable(like).orElseThrow(() -> new ApiSpecificException("Something is wrong"));
         Post post = postRepos.findById(like.getLikedPost().getId()).orElseThrow(() -> new ApiResourceNotFoundException("Post doesn't exist"));
-        post.setNoOfLikes(post.getNoOfLikes() - 1);
+        //post.setNoOfLikes(post.getNoOfLikes() - 1);
         LikePost likePost = likePostRepos.findLikeByLikedPost_IdAndOwner_Id(like.getLikedPost().getId(), like.getOwner().getId()).orElseThrow(() ->
                 new ApiSpecificException("Nothing to unlike"));
 

@@ -8,6 +8,7 @@ import com.springboot.rest.model.dto.response.DataList;
 import com.springboot.rest.model.entities.Post;
 import com.springboot.rest.model.mapper.PostEditMapper;
 import com.springboot.rest.model.mapper.PostMapper;
+import com.springboot.rest.model.projections.PostView;
 import com.springboot.rest.repository.PostRepos;
 import com.springboot.rest.repository.UserRepos;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,30 +55,30 @@ public class PostService {
 
     public DataList<PostDto> getPosts(int pageNo) {
 
-        Page<Post> page = postRepos.findPostsForUserFeedBy(
+        Page<PostView> page = postRepos.findPostsForUserFeedBy(
                 PageRequest.of(pageNo, 10, Sort.by("noOfLikes").descending()))
                 .orElseThrow(() -> new ApiSpecificException("There are no posts to show"));
 
 
-        List<Post> posts = page.getContent();
-        return new DataList<>(postMapper.toPostDtoList(posts), page.getTotalPages(), pageNo);
+        List<PostView> posts = page.getContent();
+        return new DataList<>(postMapper.toPostDtoListFromView(posts), page.getTotalPages(), pageNo);
 
     }
 
     public PostDto getSelectedPost(Long Id) {
-        Post post =  postRepos.findPostById(Id).orElseThrow(ApiResourceNotFoundException::new);
-        return postMapper.toPostDto(post);
+        PostView post =  postRepos.findPostById(Id).orElseThrow(ApiResourceNotFoundException::new);
+        return postMapper.toPostDtoFromView(post);
 
     }
 
 
     public DataList<PostDto> getPostsOfUser(Long userId, int pageNo) {
         userRepos.findById(userId).orElseThrow(ApiResourceNotFoundException::new);
-        Page<Post> page = postRepos.findPostsByOwner_Id(userId,
+        Page<PostView> page = postRepos.findPostsByOwner_Id(userId,
                 PageRequest.of(pageNo, 10, Sort.by("noOfLikes").descending()))
                 .orElseThrow(() -> new ApiSpecificException(("No posts by user")));
 
-        List<PostDto> listOfPosts =  postMapper.toPostDtoList(page.getContent());
+        List<PostDto> listOfPosts =  postMapper.toPostDtoListFromView(page.getContent());
         return new DataList<>(listOfPosts, page.getTotalPages(), pageNo);
 
 
