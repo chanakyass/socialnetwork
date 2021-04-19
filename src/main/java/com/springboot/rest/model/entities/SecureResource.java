@@ -6,6 +6,12 @@ import org.hibernate.annotations.OnDeleteAction;
 import javax.persistence.*;
 
 @Entity
+@Table(name = "secure_resource", indexes = {
+        @Index(name = "secure_post_index", columnList = "post_id"),
+        @Index(name = "secure_comment_index", columnList = "comment_id"),
+        @Index(name = "secure_like_post_index", columnList = "like_post_id"),
+        @Index(name = "secure_like_comment_index", columnList = "like_comment_id")
+})
 public class SecureResource {
 
     @Id

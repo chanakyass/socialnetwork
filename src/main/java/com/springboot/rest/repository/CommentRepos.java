@@ -21,6 +21,7 @@ public interface CommentRepos extends JpaRepository<Comment, Long> {
 
     Optional<List<Comment>> findAllCommentsByOwner_Id(Long userId);
 
+
 }
 
 

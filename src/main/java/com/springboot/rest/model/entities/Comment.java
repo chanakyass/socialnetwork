@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-@Table(name = "comments")
+@Table(name = "comments", indexes = @Index(name = "comment_index", columnList = "id"))
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@commentId")
 public class Comment {
 
@@ -37,6 +37,9 @@ public class Comment {
     private String commentContent;
     private LocalDateTime commentedAtTime;
     private LocalDateTime modifiedAtTime;
+
+    private String commentPath;
+
     private Long noOfLikes;
     private Long noOfReplies;
     @ManyToOne
@@ -49,13 +52,14 @@ public class Comment {
     public Comment() {
     }
 
-    public Comment(Long id, User owner, Comment parentComment, String commentContent, LocalDateTime commentedAtTime, LocalDateTime modifiedAtTime, Long noOfLikes, Long noOfReplies, Post commentedOn) {
+    public Comment(Long id, User owner, Comment parentComment, String commentContent, LocalDateTime commentedAtTime, LocalDateTime modifiedAtTime, String commentPath, Long noOfLikes, Long noOfReplies, Post commentedOn) {
         this.id = id;
         this.owner = owner;
         this.parentComment = parentComment;
         this.commentContent = commentContent;
         this.commentedAtTime = commentedAtTime;
         this.modifiedAtTime = modifiedAtTime;
+        this.commentPath = commentPath;
         this.noOfLikes = noOfLikes;
         this.noOfReplies = noOfReplies;
         this.commentedOn = commentedOn;
@@ -135,5 +139,13 @@ public class Comment {
 
     public void setCommentedOn(Post commentedOn) {
         this.commentedOn = commentedOn;
+    }
+
+    public String getCommentPath() {
+        return commentPath;
+    }
+
+    public void setCommentPath(String commentPath) {
+        this.commentPath = commentPath;
     }
 }

@@ -55,30 +55,36 @@ public class PostService {
 
     public DataList<PostDto> getPosts(int pageNo) {
 
-        Page<PostView> page = postRepos.findPostsForUserFeedBy(
-                PageRequest.of(pageNo, 10, Sort.by("noOfLikes").descending()))
+        Page<PostView> page = postRepos.findPostsForUserFeed(
+                PageRequest.of(pageNo, 10
+                        , Sort.by("noOfLikes").descending()
+                ))
                 .orElseThrow(() -> new ApiSpecificException("There are no posts to show"));
 
 
-        List<PostView> posts = page.getContent();
-        return new DataList<>(postMapper.toPostDtoListFromView(posts), page.getTotalPages(), pageNo);
+        //List<PostView> posts = page.getContent();
+//        posts.forEach(postView -> {
+//            System.out.println(postView.getPost().getPostHeading());
+//        });
+
+        return new DataList<>(postMapper.toPostDtoListFromView(page.getContent()), page.getTotalPages(), pageNo);
 
     }
 
     public PostDto getSelectedPost(Long Id) {
-        PostView post =  postRepos.findPostById(Id).orElseThrow(ApiResourceNotFoundException::new);
-        return postMapper.toPostDtoFromView(post);
+        Post post =  postRepos.findPostById(Id).orElseThrow(ApiResourceNotFoundException::new);
+        return postMapper.toPostDto(post);
 
     }
 
 
     public DataList<PostDto> getPostsOfUser(Long userId, int pageNo) {
         userRepos.findById(userId).orElseThrow(ApiResourceNotFoundException::new);
-        Page<PostView> page = postRepos.findPostsByOwner_Id(userId,
+        Page<Post> page = postRepos.findPostsByOwner_Id(userId,
                 PageRequest.of(pageNo, 10, Sort.by("noOfLikes").descending()))
                 .orElseThrow(() -> new ApiSpecificException(("No posts by user")));
 
-        List<PostDto> listOfPosts =  postMapper.toPostDtoListFromView(page.getContent());
+        List<PostDto> listOfPosts =  postMapper.toPostDtoList(page.getContent());
         return new DataList<>(listOfPosts, page.getTotalPages(), pageNo);
 
 

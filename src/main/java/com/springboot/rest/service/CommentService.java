@@ -20,6 +20,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -51,10 +52,11 @@ public class CommentService {
         if (commentDto.getParentComment() != null) {
             Comment parentComment = commentRepos.findById(commentDto.getParentComment().getId())
                     .orElseThrow(() -> new ApiResourceNotFoundException("Parent comment doesn't exist"));
-            parentComment.setNoOfReplies(parentComment.getNoOfReplies()+1);
+            comment.setCommentPath(parentComment.getCommentPath()+ parentComment.getId()+"/");
         }
-
-        //parentPost.setNoOfComments(parentPost.getNoOfComments()+1);
+        else{
+            comment.setCommentPath("");
+        }
 
         Comment responseComment = commentRepos.save(comment);
         return responseComment.getId();
@@ -64,6 +66,8 @@ public class CommentService {
         Page<Comment> page = commentRepos.findCommentsByCommentedOn_IdAndParentCommentIsNull(postId,
                  PageRequest.of(pageNo, 5, Sort.by("noOfLikes").descending()))
                 .orElseThrow(ApiResourceNotFoundException::new);
+
+
 
         return new DataList<>(commentMapper.toCommentDtoList(page.getContent()), page.getTotalPages(), pageNo);
 

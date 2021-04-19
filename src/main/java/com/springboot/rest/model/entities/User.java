@@ -13,7 +13,10 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Table(name = "users", uniqueConstraints = @UniqueConstraint(columnNames = {"email"}))
+@Table(name = "users", uniqueConstraints = @UniqueConstraint(columnNames = {"email"}),
+        indexes = {@Index(name = "user_id_index", columnList = "id"),
+                    @Index(name="email_password_index", columnList = "email, password"),
+                    @Index(name = "email_with_id_index", columnList = "id, email")})
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@userId")
 public class User implements Serializable {
     @Id

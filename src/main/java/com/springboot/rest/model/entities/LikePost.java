@@ -11,7 +11,8 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "likes_on_posts")
+@Table(name = "likes_on_posts", indexes = { @Index(name = "liked_post_index", columnList = "liked_post"),
+                                           @Index(name = "liked_post_user_index", columnList = "liked_post, owned_by_user")} )
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@likeId")
 public class LikePost {
 

@@ -17,7 +17,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @Entity
 @JsonInclude(value = Include.NON_EMPTY)
-@Table(name = "posts")
+@Table(name = "posts", indexes = @Index(name = "post_id_index", columnList = "id"))
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@postId")
 public class Post {
 
