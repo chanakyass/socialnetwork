@@ -65,18 +65,12 @@ public class PostService {
                 ))
                 .orElseThrow(() -> new ApiSpecificException("There are no posts to show"));
 
-
-        //List<PostView> posts = page.getContent();
-//        posts.forEach(postView -> {
-//            System.out.println(postView.getPost().getPostHeading());
-//        });
-
         return new DataList<>(postMapper.toPostDtoListFromView(page.getContent()), page.getTotalPages(), pageNo);
 
     }
 
     public PostDto getSelectedPost(Long Id) {
-        PostView post =  postRepos.findPostById(securityUtils.getSubjectId(), Id).orElseThrow(ApiResourceNotFoundException::new);
+        PostView post =  postRepos.findPostWithId(securityUtils.getSubjectId(), Id).orElseThrow(ApiResourceNotFoundException::new);
         return postMapper.toPostDtoFromView(post);
 
     }
@@ -84,7 +78,7 @@ public class PostService {
 
     public DataList<PostDto> getPostsOfUser(Long userId, int pageNo) {
         userRepos.findById(userId).orElseThrow(ApiResourceNotFoundException::new);
-        Page<PostView> page = postRepos.findPostsByOwner_Id(userId, securityUtils.getSubjectId(),
+        Page<PostView> page = postRepos.findPostsOfOwner(userId, securityUtils.getSubjectId(),
                 PageRequest.of(pageNo, 10, Sort.by("noOfLikes").descending()))
                 .orElseThrow(() -> new ApiSpecificException(("No posts by user")));
 

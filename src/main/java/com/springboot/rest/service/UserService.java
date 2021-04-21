@@ -4,8 +4,6 @@ import com.springboot.rest.config.exceptions.ApiResourceNotFoundException;
 import com.springboot.rest.config.exceptions.ApiSpecificException;
 import com.springboot.rest.model.dto.user.UserDto;
 import com.springboot.rest.model.dto.user.UserEditDto;
-import com.springboot.rest.model.entities.Comment;
-import com.springboot.rest.model.entities.Post;
 import com.springboot.rest.model.entities.User;
 import com.springboot.rest.model.mapper.UserEditMapper;
 import com.springboot.rest.model.mapper.UserMapper;

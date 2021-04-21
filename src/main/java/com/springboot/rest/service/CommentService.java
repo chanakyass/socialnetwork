@@ -1,6 +1,5 @@
 package com.springboot.rest.service;
 
-import com.springboot.rest.config.exceptions.ApiAccessException;
 import com.springboot.rest.config.exceptions.ApiResourceNotFoundException;
 import com.springboot.rest.config.exceptions.ApiSpecificException;
 import com.springboot.rest.config.security.SecurityUtils;
@@ -8,7 +7,6 @@ import com.springboot.rest.model.dto.comment.CommentDto;
 import com.springboot.rest.model.dto.comment.CommentEditDto;
 import com.springboot.rest.model.dto.response.DataList;
 import com.springboot.rest.model.entities.Comment;
-import com.springboot.rest.model.entities.Post;
 import com.springboot.rest.model.mapper.CommentEditMapper;
 import com.springboot.rest.model.mapper.CommentMapper;
 import com.springboot.rest.model.projections.CommentView;
@@ -71,11 +69,7 @@ public class CommentService {
                  PageRequest.of(pageNo, 5, Sort.by("noOfLikes").descending()))
                 .orElseThrow(ApiResourceNotFoundException::new);
 
-
-
         return new DataList<>(commentMapper.toCommentDtoListFromView(page.getContent()), page.getTotalPages(), pageNo);
-
-
     }
 
     public DataList<CommentDto> getRepliesOnComment(Long commentId, int pageNo) {

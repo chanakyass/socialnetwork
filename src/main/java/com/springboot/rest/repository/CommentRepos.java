@@ -20,7 +20,7 @@ public interface CommentRepos extends JpaRepository<Comment, Long> {
             "left outer join LikeComment loc on c.id=loc.likedComment.id " +
             "left outer join Comment c2 on c2.commentPath like CONCAT(c.commentPath, c.id, '/', '%') " +
             "left outer join LikeComment loc2 on loc2.likedComment.id = c.id and loc2.owner.id = :loggedInUserId " +
-            "where c.parentComment.id is null and c.commentedOn.id = :postId group by comment, loc2.owner.id ")
+            "where c.parentComment.id is null and c.commentedOn.id = :postId group by c, loc2.owner.id ")
     Optional<Page<CommentView>> findLevelOneCommentsOnPost(Long postId, Long loggedInUserId, Pageable pageable);
 
     @Query("select c as comment, count(distinct loc) as noOfLikes, count(distinct c2) as noOfReplies, " +
@@ -29,7 +29,7 @@ public interface CommentRepos extends JpaRepository<Comment, Long> {
             "left outer join LikeComment loc on c.id=loc.likedComment.id " +
             "left outer join Comment c2 on c2.commentPath like CONCAT(c.commentPath,c.id, '/', '%') " +
             "left outer join LikeComment loc2 on loc2.likedComment.id = c.id and loc2.owner.id = :loggedInUserId " +
-            "where c.parentComment.id = :parentCommentId group by comment, loc2.owner.id ")
+            "where c.parentComment.id = :parentCommentId group by c, loc2.owner.id ")
     Optional<Page<CommentView>> findCommentsWithParentCommentAs(Long parentCommentId, Long loggedInUserId, Pageable pageable);
 
     @Query("select c as comment, count(distinct loc) as noOfLikes, count(distinct c2) as noOfReplies, " +
@@ -38,7 +38,7 @@ public interface CommentRepos extends JpaRepository<Comment, Long> {
             "left outer join LikeComment loc on c.id=loc.likedComment.id " +
             "left outer join Comment c2 on c2.commentPath like CONCAT(c.commentPath, c.id, '/', '%') " +
             "left outer join LikeComment loc2 on loc2.likedComment.id = c.id and loc2.owner.id = :loggedInUserId " +
-            "where c.owner.id =:userId group by comment, loc2.owner.id ")
+            "where c.owner.id =:userId group by c, loc2.owner.id ")
     Optional<List<CommentView>> findAllCommentsOfOwner(Long userId, Long loggedInUserId);
 
 
