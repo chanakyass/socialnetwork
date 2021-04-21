@@ -103,10 +103,20 @@ public class PermissionEvaluatorImpl implements PermissionEvaluator {
 
                     if(permission!=null && !permission.toString().equals("CREATE")) {
 
-                        if (targetDomainObject instanceof LikePostDto)
+
+                        if (targetDomainObject instanceof LikePostDto) {
+                            // If the Post doesn't exist let services handle exception
+                            if(!secureResourceRepos.existsSecureResourceByLikePost_Id(resource.getResourceIdForReaction()))
+                                return true;
+
                             secureResource = secureResourceRepos.findByLikePost_IdAndOwner_Id(resource.getResourceIdForReaction(), loggedInUserId).orElse(null);
-                        else if (targetDomainObject instanceof LikeCommentDto)
+                        }
+                        else if (targetDomainObject instanceof LikeCommentDto) {
+                            // If the Comment doesn't exist let services handle exception
+                            if(!secureResourceRepos.existsSecureResourceByLikeComment_Id(resource.getResourceIdForReaction()))
+                                return true;
                             secureResource = secureResourceRepos.findByLikeComment_IdAndOwner_Id(resource.getResourceIdForReaction(), loggedInUserId).orElse(null);
+                        }
 
                         if (secureResource == null)
                             //check if the resource belongs to the logged in user
@@ -189,8 +199,10 @@ public class PermissionEvaluatorImpl implements PermissionEvaluator {
                 }
 
                 if (secureResource == null && (targetType.equals("LikePost") || targetType.equals("LikeComment")))
-                    //check if the resource belongs to the logged in user
+                {
                     throw new AccessDeniedException("Access is denied");
+                }
+
                 else if (secureResource != null && loggedInUserId.compareTo(secureResource.getOwner().getId()) != 0) {
                     throw new AccessDeniedException("Access is denied");
                 }

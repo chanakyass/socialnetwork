@@ -2,6 +2,7 @@ package com.springboot.rest.service;
 
 import com.springboot.rest.config.exceptions.ApiResourceNotFoundException;
 import com.springboot.rest.config.exceptions.ApiSpecificException;
+import com.springboot.rest.config.security.SecurityUtils;
 import com.springboot.rest.model.dto.post.PostDto;
 import com.springboot.rest.model.dto.post.PostEditDto;
 import com.springboot.rest.model.dto.response.DataList;
@@ -31,14 +32,16 @@ public class PostService {
     private final PostEditMapper postEditMapper;
     private final PostMapper postMapper;
     private final LikeService likeService;
+    private final SecurityUtils securityUtils;
 
     @Autowired
-    public PostService(PostRepos postRepos, UserRepos userRepos, PostEditMapper postEditMapper, PostMapper postMapper, LikeService likeService) {
+    public PostService(PostRepos postRepos, UserRepos userRepos, PostEditMapper postEditMapper, PostMapper postMapper, LikeService likeService, SecurityUtils securityUtils) {
         this.postRepos = postRepos;
         this.userRepos = userRepos;
         this.postEditMapper = postEditMapper;
         this.postMapper = postMapper;
         this.likeService = likeService;
+        this.securityUtils = securityUtils;
 
     }
 
@@ -56,6 +59,7 @@ public class PostService {
     public DataList<PostDto> getPosts(int pageNo) {
 
         Page<PostView> page = postRepos.findPostsForUserFeed(
+                securityUtils.getSubjectId(),
                 PageRequest.of(pageNo, 10
                         , Sort.by("noOfLikes").descending()
                 ))
@@ -72,19 +76,19 @@ public class PostService {
     }
 
     public PostDto getSelectedPost(Long Id) {
-        Post post =  postRepos.findPostById(Id).orElseThrow(ApiResourceNotFoundException::new);
-        return postMapper.toPostDto(post);
+        PostView post =  postRepos.findPostById(securityUtils.getSubjectId(), Id).orElseThrow(ApiResourceNotFoundException::new);
+        return postMapper.toPostDtoFromView(post);
 
     }
 
 
     public DataList<PostDto> getPostsOfUser(Long userId, int pageNo) {
         userRepos.findById(userId).orElseThrow(ApiResourceNotFoundException::new);
-        Page<Post> page = postRepos.findPostsByOwner_Id(userId,
+        Page<PostView> page = postRepos.findPostsByOwner_Id(userId, securityUtils.getSubjectId(),
                 PageRequest.of(pageNo, 10, Sort.by("noOfLikes").descending()))
                 .orElseThrow(() -> new ApiSpecificException(("No posts by user")));
 
-        List<PostDto> listOfPosts =  postMapper.toPostDtoList(page.getContent());
+        List<PostDto> listOfPosts =  postMapper.toPostDtoListFromView(page.getContent());
         return new DataList<>(listOfPosts, page.getTotalPages(), pageNo);
 
 

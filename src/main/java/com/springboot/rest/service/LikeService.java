@@ -87,7 +87,7 @@ public class LikeService {
             throw new ApiSpecificException("Comment cannot be liked more than once");
         }
 
-        comment.setNoOfLikes(comment.getNoOfLikes() + 1);
+        //comment.setNoOfLikes(comment.getNoOfLikes() + 1);
         LikeComment responseLikeComment = likeCommentRepos.save(like);
         return responseLikeComment.getLikedComment().getId();
     }
@@ -121,14 +121,14 @@ public class LikeService {
         LikeComment likeComment = likeCommentRepos.findLikeByLikedComment_IdAndOwner_Id(like.getLikedComment().getId(),
                 like.getOwner().getId()).orElseThrow(() -> new ApiSpecificException("Nothing to unlike"));
         Comment comment = commentRepos.findById(like.getLikedComment().getId()).orElseThrow(() -> new ApiResourceNotFoundException("Comment doesn't exist"));
-        comment.setNoOfLikes(comment.getNoOfLikes() - 1);
+        //comment.setNoOfLikes(comment.getNoOfLikes() - 1);
         likeCommentRepos.deleteById(likeComment.getId());
         return likeComment.getLikedComment().getId();
 
     }
 
     public DataList<LikePostDto> getLikesOnPost(long postId) {
-        postRepos.findPostById(postId).orElseThrow(() -> new ApiResourceNotFoundException("Post doesn't exist"));
+        postRepos.findById(postId).orElseThrow(() -> new ApiResourceNotFoundException("Post doesn't exist"));
         List<LikePost> likes =  likePostRepos.findLikesByLikedPost_Id(postId).orElseThrow(() -> new ApiSpecificException("No likes on post"));
         return new DataList<>(likePostMapper.toLikePostDtoList(likes));
     }

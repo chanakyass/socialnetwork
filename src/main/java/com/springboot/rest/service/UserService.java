@@ -80,25 +80,6 @@ public class UserService {
     @PreAuthorize(value = "hasPermission(#profileId, \"User\", null)")
     public Long delUser(Long profileId) {
         userRepos.findById(profileId).orElseThrow(() -> new ApiResourceNotFoundException("User doesn't exist"));
-        commentRepos.findAllCommentsByOwner_Id(profileId).ifPresent(comments -> comments.forEach((comment) -> {
-            Post parentPost = comment.getCommentedOn();
-            //parentPost.setNoOfComments(parentPost.getNoOfComments() - 1);
-            if(comment.getParentComment() != null){
-                Comment parentComment = comment.getParentComment();
-                parentComment.setNoOfReplies(parentComment.getNoOfReplies() - 1);
-            }
-        }));
-
-        likePostRepos.findByOwner_Id(profileId).ifPresent(likes -> likes.forEach(like -> {
-            Post post = like.getLikedPost();
-            //post.setNoOfLikes(post.getNoOfLikes() - 1);
-        }));
-
-        likeCommentRepos.findByOwner_Id(profileId).ifPresent(likes -> likes.forEach(like -> {
-            Comment comment = like.getLikedComment();
-            comment.setNoOfLikes(comment.getNoOfLikes() - 1);
-        }));
-
         userRepos.deleteById(profileId);
         return profileId;
 

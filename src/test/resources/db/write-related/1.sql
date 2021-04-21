@@ -2,8 +2,8 @@ insert into users(id, name, email, password) values (nextval('user_sequence'), '
 insert into users(id, name, email, password) values (nextval('user_sequence'), 'chan', 'chan@rest.com', 'pass');
 insert into users(id, name, email, password) values (nextval('user_sequence'), 'whataview', 'whataview@rest.com', 'pass');
 
-insert into posts(id, post_heading, post_body, no_of_likes, posted_at_time, owned_by_user)
-values(nextval('post_sequence'), 'post heading', 'post body', 0, TIMESTAMP '2020-02-05 10:35:00', 1) ;
+insert into posts(id, post_heading, post_body,  posted_at_time, owned_by_user)
+values(nextval('post_sequence'), 'post heading', 'post body', TIMESTAMP '2020-02-05 10:35:00', 1) ;
 
 insert into secure_resource(id, type, post_id, comment_id, like_post_id, like_comment_id, owner_id)
 values(nextval('secure_resource_seq'), 'P', 1, null, null, null, 1) ;

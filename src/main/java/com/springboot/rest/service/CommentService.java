@@ -1,7 +1,9 @@
 package com.springboot.rest.service;
 
+import com.springboot.rest.config.exceptions.ApiAccessException;
 import com.springboot.rest.config.exceptions.ApiResourceNotFoundException;
 import com.springboot.rest.config.exceptions.ApiSpecificException;
+import com.springboot.rest.config.security.SecurityUtils;
 import com.springboot.rest.model.dto.comment.CommentDto;
 import com.springboot.rest.model.dto.comment.CommentEditDto;
 import com.springboot.rest.model.dto.response.DataList;
@@ -9,6 +11,7 @@ import com.springboot.rest.model.entities.Comment;
 import com.springboot.rest.model.entities.Post;
 import com.springboot.rest.model.mapper.CommentEditMapper;
 import com.springboot.rest.model.mapper.CommentMapper;
+import com.springboot.rest.model.projections.CommentView;
 import com.springboot.rest.repository.CommentRepos;
 import com.springboot.rest.repository.PostRepos;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +23,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -30,13 +32,15 @@ public class CommentService {
     private final CommentRepos commentRepos;
     private final CommentEditMapper commentEditMapper;
     private final CommentMapper commentMapper;
+    private final SecurityUtils securityUtils;
 
     @Autowired
-    public CommentService(CommentRepos commentRepos, PostRepos postRepos, CommentEditMapper commentEditMapper,CommentMapper commentMapper) {
+    public CommentService(CommentRepos commentRepos, PostRepos postRepos, CommentEditMapper commentEditMapper,CommentMapper commentMapper, SecurityUtils securityUtils) {
         this.commentRepos = commentRepos;
         this.postRepos = postRepos;
         this.commentEditMapper = commentEditMapper;
         this.commentMapper = commentMapper;
+        this.securityUtils = securityUtils;
 
 
     }
@@ -47,7 +51,7 @@ public class CommentService {
         Optional.ofNullable(commentDto).orElseThrow(() -> new ApiSpecificException("Some issue with your comment. Please check again"));
 
         Comment comment = commentMapper.toComment(commentDto);
-        Post parentPost = postRepos.findById(commentDto.getCommentedOn().getId())
+        postRepos.findById(commentDto.getCommentedOn().getId())
                 .orElseThrow(() -> new ApiResourceNotFoundException("Parent post doesn't exist"));
         if (commentDto.getParentComment() != null) {
             Comment parentComment = commentRepos.findById(commentDto.getParentComment().getId())
@@ -55,7 +59,7 @@ public class CommentService {
             comment.setCommentPath(parentComment.getCommentPath()+ parentComment.getId()+"/");
         }
         else{
-            comment.setCommentPath("");
+            comment.setCommentPath("/");
         }
 
         Comment responseComment = commentRepos.save(comment);
@@ -63,24 +67,24 @@ public class CommentService {
     }
 
     public DataList<CommentDto> getCommentsOnPost(Long postId, int pageNo) {
-        Page<Comment> page = commentRepos.findCommentsByCommentedOn_IdAndParentCommentIsNull(postId,
+        Page<CommentView> page = commentRepos.findLevelOneCommentsOnPost(postId, securityUtils.getSubjectId(),
                  PageRequest.of(pageNo, 5, Sort.by("noOfLikes").descending()))
                 .orElseThrow(ApiResourceNotFoundException::new);
 
 
 
-        return new DataList<>(commentMapper.toCommentDtoList(page.getContent()), page.getTotalPages(), pageNo);
+        return new DataList<>(commentMapper.toCommentDtoListFromView(page.getContent()), page.getTotalPages(), pageNo);
 
 
     }
 
     public DataList<CommentDto> getRepliesOnComment(Long commentId, int pageNo) {
         commentRepos.findById(commentId).orElseThrow(ApiResourceNotFoundException::new);
-        Page<Comment> page = commentRepos.findCommentsByParentComment_Id(commentId,
+        Page<CommentView> page = commentRepos.findCommentsWithParentCommentAs(commentId, securityUtils.getSubjectId(),
                  PageRequest.of(pageNo, 5, Sort.by("noOfLikes")))
                 .orElseThrow(() -> new ApiSpecificException("No replies on comment"));
 
-        return new DataList<>(commentMapper.toCommentDtoList(page.getContent()), page.getTotalPages(), pageNo);
+        return new DataList<>(commentMapper.toCommentDtoListFromView(page.getContent()), page.getTotalPages(), pageNo);
 
     }
 
@@ -89,14 +93,6 @@ public class CommentService {
     @PostAuthorize(value = "@authorizationService.deleteSecureResource(returnObject, 'C')")
     public Long delCommentOnActivity(Long commentId) {
         Comment comment = commentRepos.findById(commentId).orElseThrow(ApiResourceNotFoundException::new);
-        Comment parentComment = comment.getParentComment();
-        if(parentComment != null) {
-            parentComment.setNoOfReplies(parentComment.getNoOfReplies() - 1);
-        }
-
-        Post post = comment.getCommentedOn();
-        //post.setNoOfComments(post.getNoOfComments() - 1);
-
         commentRepos.deleteById(commentId);
 
         return commentId;

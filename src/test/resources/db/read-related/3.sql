@@ -5,17 +5,17 @@ insert into users(id, name, email, password) values (nextval('user_sequence'), '
 insert into users(id, name, email, password) values (nextval('user_sequence'), 'whataview', 'whataview@rest.com', 'pass');
 
 
-insert into posts(id, post_heading, post_body, no_of_likes, posted_at_time, owned_by_user)
-values(nextval('post_sequence'), 'post heading', 'post body', 0, TIMESTAMP '2020-02-05 10:35:00', 3) ;
+insert into posts(id, post_heading, post_body, posted_at_time, owned_by_user)
+values(nextval('post_sequence'), 'post heading', 'post body', TIMESTAMP '2020-02-05 10:35:00', 3) ;
 
-insert into posts(id, post_heading, post_body, no_of_likes, posted_at_time, owned_by_user)
-values(nextval('post_sequence'), 'post heading 2', 'post body 2', 0, TIMESTAMP '2020-02-05 10:35:00', 3) ;
+insert into posts(id, post_heading, post_body, posted_at_time, owned_by_user)
+values(nextval('post_sequence'), 'post heading 2', 'post body 2', TIMESTAMP '2020-02-05 10:35:00', 3) ;
 
-insert into posts(id, post_heading, post_body, no_of_likes, posted_at_time, owned_by_user)
-values(nextval('post_sequence'), 'post heading 3', 'post body 3', 0, TIMESTAMP '2020-02-05 10:35:00', 3) ;
+insert into posts(id, post_heading, post_body, posted_at_time, owned_by_user)
+values(nextval('post_sequence'), 'post heading 3', 'post body 3', TIMESTAMP '2020-02-05 10:35:00', 3) ;
 
-insert into posts(id, post_heading, post_body, no_of_likes, posted_at_time, owned_by_user)
-values(nextval('post_sequence'), 'post heading 4', 'post body 4', 0, TIMESTAMP '2020-02-05 10:35:00', 3) ;
+insert into posts(id, post_heading, post_body, posted_at_time, owned_by_user)
+values(nextval('post_sequence'), 'post heading 4', 'post body 4',  TIMESTAMP '2020-02-05 10:35:00', 3) ;
 
 
 insert into comments(id, comment_content, commented_at_time, commented_on_post, owned_by_user, parent_comment)

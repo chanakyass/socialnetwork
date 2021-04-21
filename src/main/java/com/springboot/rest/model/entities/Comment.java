@@ -11,7 +11,6 @@ import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 @Entity
 @Table(name = "comments", indexes = @Index(name = "comment_index", columnList = "id"))
@@ -40,8 +39,6 @@ public class Comment {
 
     private String commentPath;
 
-    private Long noOfLikes;
-    private Long noOfReplies;
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "commented_on_post", foreignKey = @ForeignKey(name = "fk_parent_post_id"), nullable = false)
@@ -52,7 +49,7 @@ public class Comment {
     public Comment() {
     }
 
-    public Comment(Long id, User owner, Comment parentComment, String commentContent, LocalDateTime commentedAtTime, LocalDateTime modifiedAtTime, String commentPath, Long noOfLikes, Long noOfReplies, Post commentedOn) {
+    public Comment(Long id, User owner, Comment parentComment, String commentContent, LocalDateTime commentedAtTime, LocalDateTime modifiedAtTime, String commentPath, Post commentedOn) {
         this.id = id;
         this.owner = owner;
         this.parentComment = parentComment;
@@ -60,8 +57,6 @@ public class Comment {
         this.commentedAtTime = commentedAtTime;
         this.modifiedAtTime = modifiedAtTime;
         this.commentPath = commentPath;
-        this.noOfLikes = noOfLikes;
-        this.noOfReplies = noOfReplies;
         this.commentedOn = commentedOn;
     }
 
@@ -115,22 +110,6 @@ public class Comment {
     @JsonDeserialize(using = LocalDateDeserializer.class)
     public void setModifiedAtTime(LocalDateTime modifiedOnDate) {
         this.modifiedAtTime = modifiedOnDate;
-    }
-
-    public Long getNoOfLikes() {
-        return Objects.requireNonNullElse(noOfLikes, 0L);
-    }
-
-    public void setNoOfLikes(Long noOfLikes) {
-        this.noOfLikes = Objects.requireNonNullElse(noOfLikes, 0L);
-    }
-
-    public Long getNoOfReplies() {
-        return Objects.requireNonNullElse(noOfReplies, 0L);
-    }
-
-    public void setNoOfReplies(Long noOfReplies) {
-        this.noOfReplies = Objects.requireNonNullElse(noOfReplies, 0L);
     }
 
     public Post getCommentedOn() {
