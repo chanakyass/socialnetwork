@@ -118,9 +118,12 @@ public class PermissionEvaluatorImpl implements PermissionEvaluator {
                             secureResource = secureResourceRepos.findByLikeComment_IdAndOwner_Id(resource.getResourceIdForReaction(), loggedInUserId).orElse(null);
                         }
 
-                        if (secureResource == null)
-                            //check if the resource belongs to the logged in user
-                            throw new AccessDeniedException("Access is denied");
+                        if(secureResource != null){
+                            if( secureResource.getOwner().getId().compareTo(loggedInUserId) != 0)
+                                throw new AccessDeniedException("Access is denied");
+                            return true;
+                        }
+
                     }
 
 
