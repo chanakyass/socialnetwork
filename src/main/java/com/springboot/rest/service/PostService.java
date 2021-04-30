@@ -10,11 +10,12 @@ import com.springboot.rest.model.entities.Post;
 import com.springboot.rest.model.mapper.PostEditMapper;
 import com.springboot.rest.model.mapper.PostMapper;
 import com.springboot.rest.model.projections.PostView;
+import com.springboot.rest.repository.OffsetBasedPageRequest;
 import com.springboot.rest.repository.PostRepos;
 import com.springboot.rest.repository.UserRepos;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -56,13 +57,18 @@ public class PostService {
         return responsePost.getId();
     }
 
-    public DataList<PostDto> getPosts(int pageNo) {
+    public DataList<PostDto> getPosts(int pageNo, int noOfDeletions) {
+        long nextOffset = pageNo * 10L
+                - (long) noOfDeletions;
+        int limit = 10;
+
+
+        Pageable pageable =  new OffsetBasedPageRequest(nextOffset, limit,
+                Sort.by("noOfLikes"));
 
         Page<PostView> page = postRepos.findPostsForUserFeed(
                 securityUtils.getSubjectId(),
-                PageRequest.of(pageNo, 10
-                        , Sort.by("noOfLikes").descending()
-                ))
+                pageable)
                 .orElseThrow(() -> new ApiSpecificException("There are no posts to show"));
 
         return new DataList<>(postMapper.toPostDtoListFromView(page.getContent()), page.getTotalPages(), pageNo);
@@ -76,10 +82,17 @@ public class PostService {
     }
 
 
-    public DataList<PostDto> getPostsOfUser(Long userId, int pageNo) {
+    public DataList<PostDto> getPostsOfUser(Long userId, int pageNo, int noOfDeletions) {
+
+        long nextOffset = pageNo * 10L
+                - (long) noOfDeletions;
+        int limit = 10;
+        Pageable pageable =  new OffsetBasedPageRequest(nextOffset, limit,
+                Sort.by("noOfLikes"));
+
         userRepos.findById(userId).orElseThrow(ApiResourceNotFoundException::new);
         Page<PostView> page = postRepos.findPostsOfOwner(userId, securityUtils.getSubjectId(),
-                PageRequest.of(pageNo, 10, Sort.by("noOfLikes").descending()))
+                pageable)
                 .orElseThrow(() -> new ApiSpecificException(("No posts by user")));
 
         List<PostDto> listOfPosts =  postMapper.toPostDtoListFromView(page.getContent());

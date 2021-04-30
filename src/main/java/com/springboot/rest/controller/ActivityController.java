@@ -59,15 +59,16 @@ public class ActivityController {
         return ResponseEntity.ok().body(new Data<>(apiMessageResponse));
     }
 
-    @GetMapping("profile/{userId}/posts/{pageNo}")
+    @GetMapping("profile/{userId}/posts")
     @ApiOperation(value = "Get posts of specified user.",
             notes = "The path variables represent the id of user received on login and the page no for pagination", response = PostDto.class,
             responseContainer = "DataList")
 
     public ResponseEntity<DataList<PostDto>> getUserPosts(@PathVariable("userId") Long userId,
-                                                          @PathVariable("pageNo") int pageNo) {
+                                                          @RequestParam(name="pageNo") int pageNo,
+                                                          @RequestParam(name="adjustments") int noOfDeletions) {
 
-        DataList<PostDto> dataList = postService.getPostsOfUser(userId, pageNo);
+        DataList<PostDto> dataList = postService.getPostsOfUser(userId, pageNo, noOfDeletions);
 
         return ResponseEntity.ok().body(dataList);
     }
@@ -80,12 +81,12 @@ public class ActivityController {
         return ResponseEntity.ok().body(new Data<>(postDto));
     }
 
-    @GetMapping("posts/{pageNo}")
+    @GetMapping("posts")
     @ApiOperation(value = "Get all the posts",
-            notes = "Pagination provided for which path variable should contain page no", response = PostDto.class,
+            notes = "Pagination provided for which path variable should contain pageDetailsDto no", response = PostDto.class,
             responseContainer = "DataList")
-    public ResponseEntity<DataList<PostDto>> getPostsForFeed(@PathVariable int pageNo) {
-        return ResponseEntity.ok().body(postService.getPosts(pageNo));
+    public ResponseEntity<DataList<PostDto>> getPostsForFeed(@RequestParam(name="pageNo") int pageNo, @RequestParam(name="adjustments")int deletions) {
+        return ResponseEntity.ok().body(postService.getPosts(pageNo, deletions));
     }
 
     @DeleteMapping("post/{postId}")
@@ -96,15 +97,16 @@ public class ActivityController {
         return ResponseEntity.ok().body(new Data<>(apiMessageResponse));
     }
 
-    @GetMapping("post&comments/{postId}/comments/{pageNo}")
+    @GetMapping("post&comments/{postId}/comments")
     @ApiOperation(value = "Get the specified post along with comments",
             notes = "Post id should be provided as path variable along with page no for comments", response = ApiMessageResponse.class)
     public ResponseEntity<DataAndList<PostDto, CommentDto>> getSelectedPostAndComments(@PathVariable Long postId,
-                                                                                       @PathVariable int pageNo)
+                                                                                       @RequestParam(name="pageNo") int pageNo,
+                                                                                       @RequestParam(name="adjustments") int noOfDeletions)
     {
         PostDto selectedPost = postService.getSelectedPost(postId);
         Data<PostDto> data = new Data<>(selectedPost);
-        DataList<CommentDto> comments = commentService.getCommentsOnPost(postId, pageNo);
+        DataList<CommentDto> comments = commentService.getCommentsOnPost(postId, pageNo, noOfDeletions);
         return ResponseEntity.ok().body(new DataAndList<>(data, comments));
     }
 
@@ -142,22 +144,24 @@ public class ActivityController {
         return ResponseEntity.ok().body(new Data<>(apiMessageResponse));
     }
 
-    @GetMapping("post/{postId}/comments/{pageNo}")
+    @GetMapping("post/{postId}/comments")
     @ApiOperation(value = "Get comments on post",
             notes = "post id and page no for pagination to be provided as path variables", response = CommentDto.class,
             responseContainer = "DataList")
     public ResponseEntity<DataList<CommentDto>> getCommentsOnPost(@PathVariable("postId") Long postId,
-                                                                  @PathVariable("pageNo") int pageNo) {
-        return ResponseEntity.ok().body(commentService.getCommentsOnPost(postId, pageNo));
+                                                                  @RequestParam(name="pageNo") int pageNo,
+                                                                  @RequestParam(name="adjustments") int noOfDeletions) {
+        return ResponseEntity.ok().body(commentService.getCommentsOnPost(postId, pageNo, noOfDeletions));
     }
 
-    @GetMapping("comment/{commentId}/replies/{pageNo}")
+    @GetMapping("comment/{commentId}/replies")
     @ApiOperation(value = "Get replies on a comment",
             notes = "Comment id and page no for pagination to be provided as path variables", response = CommentDto.class,
             responseContainer = "DataList")
     public ResponseEntity<DataList<CommentDto>> getRepliesOnComment(@PathVariable("commentId") Long commentId,
-                                                 @PathVariable("pageNo") int pageNo) {
-        return ResponseEntity.ok().body(commentService.getRepliesOnComment(commentId, pageNo));
+                                                 @RequestParam(name="pageNo") int pageNo,
+                                                 @RequestParam(name="adjustments") int noOfDeletions) {
+        return ResponseEntity.ok().body(commentService.getRepliesOnComment(commentId, pageNo, noOfDeletions));
     }
 
 

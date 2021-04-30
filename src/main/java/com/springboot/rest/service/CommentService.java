@@ -11,10 +11,11 @@ import com.springboot.rest.model.mapper.CommentEditMapper;
 import com.springboot.rest.model.mapper.CommentMapper;
 import com.springboot.rest.model.projections.CommentView;
 import com.springboot.rest.repository.CommentRepos;
+import com.springboot.rest.repository.OffsetBasedPageRequest;
 import com.springboot.rest.repository.PostRepos;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -64,18 +65,32 @@ public class CommentService {
         return responseComment.getId();
     }
 
-    public DataList<CommentDto> getCommentsOnPost(Long postId, int pageNo) {
+    public DataList<CommentDto> getCommentsOnPost(Long postId, int pageNo, int noOfDeletions) {
+        long nextOffset = pageNo * 5L
+                - (long) noOfDeletions;
+        int limit = 5;
+
+
+        Pageable pageable =  new OffsetBasedPageRequest(nextOffset, limit,
+                Sort.by("noOfLikes"));
+
         Page<CommentView> page = commentRepos.findLevelOneCommentsOnPost(postId, securityUtils.getSubjectId(),
-                 PageRequest.of(pageNo, 5, Sort.by("noOfLikes").descending()))
+                 pageable)
                 .orElseThrow(ApiResourceNotFoundException::new);
 
         return new DataList<>(commentMapper.toCommentDtoListFromView(page.getContent()), page.getTotalPages(), pageNo);
     }
 
-    public DataList<CommentDto> getRepliesOnComment(Long commentId, int pageNo) {
+    public DataList<CommentDto> getRepliesOnComment(Long commentId, int pageNo, int noOfDeletions) {
+        long nextOffset = pageNo * 5L
+                - (long) noOfDeletions;
+        int limit = 5;
+        Pageable pageable =  new OffsetBasedPageRequest(nextOffset, limit,
+                Sort.by("noOfLikes"));
+
         commentRepos.findById(commentId).orElseThrow(ApiResourceNotFoundException::new);
         Page<CommentView> page = commentRepos.findCommentsWithParentCommentAs(commentId, securityUtils.getSubjectId(),
-                 PageRequest.of(pageNo, 5, Sort.by("noOfLikes")))
+                 pageable)
                 .orElseThrow(() -> new ApiSpecificException("No replies on comment"));
 
         return new DataList<>(commentMapper.toCommentDtoListFromView(page.getContent()), page.getTotalPages(), pageNo);

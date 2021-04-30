@@ -94,7 +94,7 @@ public class GetServicesTest extends SocialNetworkApplicationTests {
 
         Integer[] idsInInt = commentsOnPost.stream().map((CommentDto comment)->comment.getId().intValue()).toArray(Integer[]::new);
         MvcResult mvcResult = this.mockMvc
-                .perform(get(String.format("/api/v1/resource/post/%d/comments/0", post.getId())))
+                .perform(get(String.format("/api/v1/resource/post/%d/comments?pageNo=0&adjustments=0", post.getId())))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.dataList.[*].id", Matchers.containsInAnyOrder(idsInInt)))
                 .andReturn();
@@ -114,7 +114,7 @@ public class GetServicesTest extends SocialNetworkApplicationTests {
         Integer[] idsInInt = repliesOnComment.stream().map(CommentDto::getId).map(Long::intValue).toArray(Integer[]::new);
 
         MvcResult mvcResult = this.mockMvc
-                .perform(get(String.format("/api/v1/resource/comment/%d/replies/0", comment.getId())))
+                .perform(get(String.format("/api/v1/resource/comment/%d/replies?pageNo=0&adjustments=0", comment.getId())))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.dataList.[*].id", Matchers.containsInAnyOrder(idsInInt)))
                 .andReturn();
@@ -128,7 +128,7 @@ public class GetServicesTest extends SocialNetworkApplicationTests {
         List<PostDto> postsOfUser = postTestDataFactory.getPostsOfUser(userTestDataFactory.getThisUser("THIRD_USER"));
         Integer[] idsInInt = postsOfUser.stream().map(PostDto::getId).map(Long::intValue).toArray(Integer[]::new);
         MvcResult mvcResult = this.mockMvc
-                .perform(get(String.format("/api/v1/resource/profile/%d/posts/0", userTestDataFactory.getThisUser("THIRD_USER").getId())))
+                .perform(get(String.format("/api/v1/resource/profile/%d/posts?pageNo=0&adjustments=0", userTestDataFactory.getThisUser("THIRD_USER").getId())))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.dataList.[*].id", Matchers.containsInAnyOrder(idsInInt)))
                 .andReturn();
@@ -176,7 +176,7 @@ public class GetServicesTest extends SocialNetworkApplicationTests {
 
         String token = "Bearer "+userTestDataFactory.loginAndGetJwtToken(authRequest);
 
-        this.mockMvc.perform(get(String.format("/api/v1/resource/profile/%d/posts/0",
+        this.mockMvc.perform(get(String.format("/api/v1/resource/profile/%d/posts?pageNo=0&adjustments=0",
                 userTestDataFactory.getThisUser("THIRD_USER").getId())).header("Authorization",token))
                 .andExpect(status().isOk());
 
