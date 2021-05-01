@@ -4,7 +4,7 @@
 name: CI workflow for socialnetwork app
 on:
   push:
-    branches: [master]
+    branches: [main]
 jobs:
   compile:
     runs-on: ubuntu-latest
