@@ -4,46 +4,16 @@
 name: CI workflow
 
 on:
-
   push:
-
-    branches: [ master ]
+    branches: [master]
 
 jobs:
-
   compile:
-
     runs-on: ubuntu-latest
 
     name: Compile Social Network
 
     steps:
-
-    - uses: actions/checkout@v2
-
-    - name: Set up JDK 11
-
-      uses: actions/setup-java@v2
-
-      with:
-
-        java-version: '11'
-        distribution: 'adopt'
-
-    - name: Compile code
-
-      run: mvn compile
-	  
-  test:
-
-    runs-on: ubuntu-latest
-
-    name: Running tests
-
-    needs: compile
-
-    steps:
-
       - uses: actions/checkout@v2
 
       - name: Set up JDK 11
@@ -51,19 +21,38 @@ jobs:
         uses: actions/setup-java@v2
 
         with:
+          java-version: "11"
+          distribution: "adopt"
 
-          java-version: '11'
-          distribution: 'adopt'
+      - name: Compile code
+
+        run: mvn compile
+  test:
+    runs-on: ubuntu-latest
+
+    name: Running tests
+
+    needs: compile
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up JDK 11
+
+        uses: actions/setup-java@v2
+
+        with:
+          java-version: "11"
+          distribution: "adopt"
 
       - name: Run tests
 
         run: mvn test
         env:
-          SPRING_ACTIVE_PROFILE: 'test'
-          TEST_RELEASE_VERSION: 'v1'
+          SPRING_ACTIVE_PROFILE: "test"
+          TEST_RELEASE_VERSION: "v1"
 
   build:
-
     runs-on: ubuntu-latest
 
     name: Run mvn build and generate coverage report
@@ -71,7 +60,6 @@ jobs:
     needs: test
 
     steps:
-
       - uses: actions/checkout@v2
 
       - name: Set up JDK 11
@@ -79,16 +67,14 @@ jobs:
         uses: actions/setup-java@v1
 
         with:
-
-          java-version: '11'
-          distribution: 'adopt'
-          
+          java-version: "11"
+          distribution: "adopt"
 
       - name: Build with Maven
 
         run: mvn -B package --file pom.xml -Dmaven.test.skip=true
-
+        
         env:
-          SPRING_ACTIVE_PROFILE: 'prod'
-		  
+          SPRING_ACTIVE_PROFILE: "prod"
+
         shell: bash
