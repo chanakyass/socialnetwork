@@ -24,54 +24,18 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class AuthorizationService implements UserDetailsService {
 
-    private UserRepos userRepos;
-    private AuthenticationManager authenticationManager;
-    private JwtTokenUtil jwtTokenUtil;
-    private SecureResourceRepos secureResourceRepos;
-    private SecurityUtils securityUtils;
-
-    public UserRepos getUserRepos() {
-        return userRepos;
-    }
+    private final UserRepos userRepos;
+    private final AuthenticationManager authenticationManager;
+    private final JwtTokenUtil jwtTokenUtil;
+    private final SecureResourceRepos secureResourceRepos;
+    private final SecurityUtils securityUtils;
 
     @Autowired
-    public void setUserRepos(UserRepos userRepos) {
+    public AuthorizationService(UserRepos userRepos, AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, SecureResourceRepos secureResourceRepos, SecurityUtils securityUtils) {
         this.userRepos = userRepos;
-    }
-
-    public AuthenticationManager getAuthenticationManager() {
-        return authenticationManager;
-    }
-
-    @Autowired
-    public void setAuthenticationManager(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
-    }
-
-    public JwtTokenUtil getJwtTokenUtil() {
-        return jwtTokenUtil;
-    }
-
-    @Autowired
-    public void setJwtTokenUtil(JwtTokenUtil jwtTokenUtil) {
         this.jwtTokenUtil = jwtTokenUtil;
-    }
-
-    public SecureResourceRepos getSecureResourceRepos() {
-        return secureResourceRepos;
-    }
-
-    @Autowired
-    public void setSecureResourceRepos(SecureResourceRepos secureResourceRepos) {
         this.secureResourceRepos = secureResourceRepos;
-    }
-
-    public SecurityUtils getSecurityUtils() {
-        return securityUtils;
-    }
-
-    @Autowired
-    public void setSecurityUtils(SecurityUtils securityUtils) {
         this.securityUtils = securityUtils;
     }
 
@@ -169,8 +133,6 @@ public class AuthorizationService implements UserDetailsService {
 
         return true;
     }
-
-
 
     @Override
     public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {

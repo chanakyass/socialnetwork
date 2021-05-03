@@ -3,10 +3,11 @@ package com.springboot.rest.config.security;
 import com.springboot.rest.config.security.jwt.JwtTokenFilter;
 import com.springboot.rest.service.AuthorizationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -20,7 +21,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
-import org.springframework.web.servlet.HandlerExceptionResolver;
 
 // Here AuthenticationManagerBuilder builds a new AuthenticationManager for each user and user will be interacting with this authentication manager for the rest of the scenarios
 @Configuration
@@ -31,40 +31,21 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
         prePostEnabled = true
 )
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
-    private AuthorizationService appUserDetailsService;
-    private JwtTokenFilter jwtTokenFilter;
-    private HandlerExceptionResolver exceptionHandler;
-
-    public HandlerExceptionResolver getExceptionHandler() {
-        return exceptionHandler;
-    }
+    private final AuthorizationService appUserDetailsService;
+    private final JwtTokenFilter jwtTokenFilter;
+    private final String uriPrefix;
 
     @Autowired
-    public void setExceptionHandler(@Qualifier("handlerExceptionResolver") HandlerExceptionResolver exceptionHandler) {
-        this.exceptionHandler = exceptionHandler;
+    public SecurityConfiguration(@Lazy AuthorizationService appUserDetailsService, JwtTokenFilter jwtTokenFilter, @Value("${app.uri.prefix}") String uriPrefix){
+        this.appUserDetailsService = appUserDetailsService;
+        this.jwtTokenFilter = jwtTokenFilter;
+        this.uriPrefix = uriPrefix;
     }
+
 
     @Bean
     public static PasswordEncoder getPasswordEncoder() {
         return new BCryptPasswordEncoder();
-    }
-
-    public AuthorizationService getAppUserDetailsService() {
-        return appUserDetailsService;
-    }
-
-    @Autowired
-    public void setAppUserDetailsService(AuthorizationService appUserDetailsService) {
-        this.appUserDetailsService = appUserDetailsService;
-    }
-
-    public JwtTokenFilter getJwtTokenFilter() {
-        return jwtTokenFilter;
-    }
-
-    @Autowired
-    public void setJwtTokenFilter(JwtTokenFilter jwtTokenFilter) {
-        this.jwtTokenFilter = jwtTokenFilter;
     }
 
     @Override
@@ -75,9 +56,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-
-
-
                 .cors().and().csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .exceptionHandling()
@@ -86,22 +64,18 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 //.antMatchers("api/v1/resource/**", "api/v1/profile/**")
                 .antMatchers("/").permitAll()
                 .antMatchers("/h2-console/**").permitAll()
-                .antMatchers("/api/v1/public/**").permitAll()
+                .antMatchers(uriPrefix+"/public/**").permitAll()
                 .antMatchers("/v2/api-docs", "/configuration/ui", "/configuration/security").permitAll()
                 .antMatchers("/swagger-resources/**", "/webjars/**", "/swagger-ui.html", "/swagger-ui.html/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
-
-
-
     }
 
     @Bean
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
-        //config.setAllowCredentials(true);
         config.addAllowedOrigin("*");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
@@ -117,7 +91,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Bean
     public FilterRegistrationBean<JwtTokenFilter> jwtTokenFilterRegistration(JwtTokenFilter filter) {
-        FilterRegistrationBean<JwtTokenFilter> registration = new FilterRegistrationBean<JwtTokenFilter>(filter);
+        FilterRegistrationBean<JwtTokenFilter> registration = new FilterRegistrationBean<>(filter);
         registration.setEnabled(false);
         return registration;
     }
