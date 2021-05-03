@@ -72,7 +72,7 @@ public class CommentService {
 
 
         Pageable pageable =  new OffsetBasedPageRequest(nextOffset, limit,
-                Sort.by("noOfLikes"));
+                Sort.by("noOfLikes").descending());
 
         Page<CommentView> page = commentRepos.findLevelOneCommentsOnPost(postId, securityUtils.getSubjectId(),
                  pageable)
@@ -86,7 +86,7 @@ public class CommentService {
                 - (long) noOfDeletions;
         int limit = 5;
         Pageable pageable =  new OffsetBasedPageRequest(nextOffset, limit,
-                Sort.by("noOfLikes"));
+                Sort.by("noOfLikes").descending());
 
         commentRepos.findById(commentId).orElseThrow(ApiResourceNotFoundException::new);
         Page<CommentView> page = commentRepos.findCommentsWithParentCommentAs(commentId, securityUtils.getSubjectId(),

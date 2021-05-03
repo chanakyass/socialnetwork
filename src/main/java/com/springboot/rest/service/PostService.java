@@ -64,7 +64,7 @@ public class PostService {
 
 
         Pageable pageable =  new OffsetBasedPageRequest(nextOffset, limit,
-                Sort.by("noOfLikes"));
+                Sort.by("noOfLikes").descending());
 
         Page<PostView> page = postRepos.findPostsForUserFeed(
                 securityUtils.getSubjectId(),
@@ -88,7 +88,7 @@ public class PostService {
                 - (long) noOfDeletions;
         int limit = 10;
         Pageable pageable =  new OffsetBasedPageRequest(nextOffset, limit,
-                Sort.by("noOfLikes"));
+                Sort.by("noOfLikes").descending());
 
         userRepos.findById(userId).orElseThrow(ApiResourceNotFoundException::new);
         Page<PostView> page = postRepos.findPostsOfOwner(userId, securityUtils.getSubjectId(),
