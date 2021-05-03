@@ -23,7 +23,7 @@ import javax.annotation.security.RolesAllowed;
 
 @RestController
 @Slf4j
-@RequestMapping("api/v1/resource")
+@RequestMapping("${app.uri.prefix}/resource")
 @RolesAllowed("ROLE_USER")
 public class ActivityController {
 

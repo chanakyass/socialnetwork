@@ -22,7 +22,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping(path = "api/v1/public/register")
+    @PostMapping(path = "${app.uri.prefix}/public/register")
     @ApiOperation(value = "Register the user", notes = "User details to be provided in the payload",responseContainer = "ResponseEntity", response = ApiMessageResponse.class)
     public ResponseEntity<Data<ApiMessageResponse>> registerUser(@RequestBody UserDto user) {
 
@@ -31,7 +31,7 @@ public class UserController {
         return ResponseEntity.ok().body(new Data<>(apiMessageResponse));
     }
 
-    @PutMapping(path = "api/v1/profile/{profileId}")
+    @PutMapping(path = "${app.uri.prefix}/profile/{profileId}")
     @ApiOperation(value = "Update the user details",
             notes = "Details for update to be provided as part of payload. Currently doesnt support password modification",
             responseContainer = "ResponseEntity", response = ApiMessageResponse.class)
@@ -46,7 +46,7 @@ public class UserController {
             notes = "Users profile id to be provided as path variable"
             , response = UserDto.class)
 
-    @GetMapping(path = "api/v1/profile/{profileId}")
+    @GetMapping(path = "${app.uri.prefix}/profile/{profileId}")
     public ResponseEntity<Data<UserDto>> getUser(@PathVariable Long profileId) {
         return ResponseEntity.ok().body(new Data<>(userService.getUser(profileId)));
     }
@@ -54,7 +54,7 @@ public class UserController {
     @ApiOperation(value = "Deletes the user from application",
             notes = "Users profile id to be provided as path variable", responseContainer = "ResponseEntity",response = ApiMessageResponse.class)
 
-    @DeleteMapping(path = "api/v1/profile/{profileId}")
+    @DeleteMapping(path = "${app.uri.prefix}/profile/{profileId}")
     public ResponseEntity<ApiMessageResponse> deleteUser(@PathVariable Long profileId) {
         return ResponseEntity.ok().body(new ApiMessageResponse(userService.delUser(profileId)));
     }

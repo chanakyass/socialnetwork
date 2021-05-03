@@ -12,6 +12,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
@@ -36,14 +37,17 @@ public class PostServiceTest extends SocialNetworkApplicationTests {
     private final ObjectMapper objectMapper;
     private final PostEditMapper postEditMapper;
     private final PostTestDataFactory postTestDataFactory;
+    private final String uriPrefix;
 
 
     @Autowired
-    public PostServiceTest(MockMvc mockMvc, ObjectMapper objectMapper, PostEditMapper postEditMapper, PostTestDataFactory postTestDataFactory) {
+    public PostServiceTest(MockMvc mockMvc, ObjectMapper objectMapper, PostEditMapper postEditMapper, PostTestDataFactory postTestDataFactory,
+                            @Value("${app.uri.prefix}") String uriPrefix) {
         this.mockMvc = mockMvc;
         this.objectMapper = objectMapper;
         this.postEditMapper = postEditMapper;
         this.postTestDataFactory = postTestDataFactory;
+        this.uriPrefix = uriPrefix;
     }
 
     @BeforeAll
@@ -78,7 +82,7 @@ public class PostServiceTest extends SocialNetworkApplicationTests {
         PostDto post = postTestDataFactory.createPostForLoggedInUser();
 
         MvcResult createResult = this.mockMvc
-                .perform(post("/api/v1/resource/post")
+                .perform(post(uriPrefix+"/resource/post")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(post)))
                 .andExpect(status().isOk())
@@ -91,7 +95,7 @@ public class PostServiceTest extends SocialNetworkApplicationTests {
     {
         PostDto post = postTestDataFactory.createPostForOtherUser();
         MvcResult createResult = this.mockMvc
-                .perform(post("/api/v1/resource/post")
+                .perform(post(uriPrefix+"/resource/post")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(post)))
                 .andExpect(status().isForbidden())
@@ -106,7 +110,7 @@ public class PostServiceTest extends SocialNetworkApplicationTests {
         post.setPostHeading(null);
         post.setPostBody(null);
         MvcResult createResult = this.mockMvc
-                .perform(post("/api/v1/resource/post")
+                .perform(post(uriPrefix+"/resource/post")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(post)))
                 .andExpect(status().isInternalServerError())
@@ -125,7 +129,7 @@ public class PostServiceTest extends SocialNetworkApplicationTests {
         postEditMapper.toPostEditDto(post, postEdit);
 
         MvcResult createResult = this.mockMvc
-                .perform(put("/api/v1/resource/post")
+                .perform(put(uriPrefix+"/resource/post")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(postEdit)))
                 .andExpect(status().isOk())
@@ -143,7 +147,7 @@ public class PostServiceTest extends SocialNetworkApplicationTests {
         postEditMapper.toPostEditDto(post, postEdit);
 
         MvcResult createResult = this.mockMvc
-                .perform(put("/api/v1/resource/post")
+                .perform(put(uriPrefix+"/resource/post")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(postEdit)))
                 .andExpect(status().isForbidden())
@@ -156,7 +160,7 @@ public class PostServiceTest extends SocialNetworkApplicationTests {
     {
         Long postId = postTestDataFactory.createPostForLoggedInUserAndInsertInDB();
         MvcResult createResult = this.mockMvc
-                .perform(delete("/api/v1/resource/post/"+postId))
+                .perform(delete(uriPrefix+"/resource/post/"+postId))
                 .andExpect(status().isOk())
                 .andReturn();
     }

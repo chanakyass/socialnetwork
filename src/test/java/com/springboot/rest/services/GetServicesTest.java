@@ -18,6 +18,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.security.test.context.support.WithUserDetails;
@@ -43,17 +44,20 @@ public class GetServicesTest extends SocialNetworkApplicationTests {
     private final PostTestDataFactory postTestDataFactory;
     private final UserTestDataFactory userTestDataFactory;
     private final LikeTestDataFactory likeTestDataFactory;
+    private final String uriPrefix;
 
 
     @Autowired
     public GetServicesTest(MockMvc mockMvc, CommentTestDataFactory commentTestDataFactory,
                            PostTestDataFactory postTestDataFactory, UserTestDataFactory userTestDataFactory,
-                            LikeTestDataFactory likeTestDataFactory) {
+                           LikeTestDataFactory likeTestDataFactory,
+                           @Value("${app.uri.prefix}") String uriPrefix) {
         this.mockMvc = mockMvc;
         this.commentTestDataFactory = commentTestDataFactory;
         this.postTestDataFactory = postTestDataFactory;
         this.userTestDataFactory = userTestDataFactory;
         this.likeTestDataFactory = likeTestDataFactory;
+        this.uriPrefix = uriPrefix;
     }
 
     @BeforeAll
@@ -94,7 +98,7 @@ public class GetServicesTest extends SocialNetworkApplicationTests {
 
         Integer[] idsInInt = commentsOnPost.stream().map((CommentDto comment)->comment.getId().intValue()).toArray(Integer[]::new);
         MvcResult mvcResult = this.mockMvc
-                .perform(get(String.format("/api/v1/resource/post/%d/comments?pageNo=0&adjustments=0", post.getId())))
+                .perform(get(String.format(uriPrefix+"/resource/post/%d/comments?pageNo=0&adjustments=0", post.getId())))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.dataList.[*].id", Matchers.containsInAnyOrder(idsInInt)))
                 .andReturn();
@@ -114,7 +118,7 @@ public class GetServicesTest extends SocialNetworkApplicationTests {
         Integer[] idsInInt = repliesOnComment.stream().map(CommentDto::getId).map(Long::intValue).toArray(Integer[]::new);
 
         MvcResult mvcResult = this.mockMvc
-                .perform(get(String.format("/api/v1/resource/comment/%d/replies?pageNo=0&adjustments=0", comment.getId())))
+                .perform(get(String.format(uriPrefix+"/resource/comment/%d/replies?pageNo=0&adjustments=0", comment.getId())))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.dataList.[*].id", Matchers.containsInAnyOrder(idsInInt)))
                 .andReturn();
@@ -128,7 +132,7 @@ public class GetServicesTest extends SocialNetworkApplicationTests {
         List<PostDto> postsOfUser = postTestDataFactory.getPostsOfUser(userTestDataFactory.getThisUser("THIRD_USER"));
         Integer[] idsInInt = postsOfUser.stream().map(PostDto::getId).map(Long::intValue).toArray(Integer[]::new);
         MvcResult mvcResult = this.mockMvc
-                .perform(get(String.format("/api/v1/resource/profile/%d/posts?pageNo=0&adjustments=0", userTestDataFactory.getThisUser("THIRD_USER").getId())))
+                .perform(get(String.format(uriPrefix+"/resource/profile/%d/posts?pageNo=0&adjustments=0", userTestDataFactory.getThisUser("THIRD_USER").getId())))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.dataList.[*].id", Matchers.containsInAnyOrder(idsInInt)))
                 .andReturn();
@@ -143,7 +147,7 @@ public class GetServicesTest extends SocialNetworkApplicationTests {
         Integer[] idsInInt = likes.stream().map(LikePostDto::getId).map(Long::intValue).toArray(Integer[]::new);
 
         MvcResult mvcResult = this.mockMvc
-                .perform(get(String.format("/api/v1/resource/post/%d/likes", postDto.getId())))
+                .perform(get(String.format(uriPrefix+"/resource/post/%d/likes", postDto.getId())))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.dataList.[*].id", Matchers.containsInAnyOrder(idsInInt)))
                 .andReturn();
@@ -158,7 +162,7 @@ public class GetServicesTest extends SocialNetworkApplicationTests {
         Integer[] idsInInt = likes.stream().map(LikeCommentDto::getId).map(Long::intValue).toArray(Integer[]::new);
 
         MvcResult mvcResult = this.mockMvc
-                .perform(get(String.format("/api/v1/resource/comment/%d/likes", commentDto.getId())))
+                .perform(get(String.format(uriPrefix+"/resource/comment/%d/likes", commentDto.getId())))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.dataList.[*].id", Matchers.containsInAnyOrder(idsInInt)))
                 .andReturn();
@@ -176,7 +180,7 @@ public class GetServicesTest extends SocialNetworkApplicationTests {
 
         String token = "Bearer "+userTestDataFactory.loginAndGetJwtToken(authRequest);
 
-        this.mockMvc.perform(get(String.format("/api/v1/resource/profile/%d/posts?pageNo=0&adjustments=0",
+        this.mockMvc.perform(get(String.format(uriPrefix+"/resource/profile/%d/posts?pageNo=0&adjustments=0",
                 userTestDataFactory.getThisUser("THIRD_USER").getId())).header("Authorization",token))
                 .andExpect(status().isOk());
 
@@ -194,7 +198,7 @@ public class GetServicesTest extends SocialNetworkApplicationTests {
 
         String token = "Bearer "+userTestDataFactory.loginAndGetJwtToken(authRequest)+"12";
 
-        this.mockMvc.perform(get(String.format("/api/v1/resource/profile/%d/posts/0",
+        this.mockMvc.perform(get(String.format(uriPrefix+"/resource/profile/%d/posts/0",
                 userTestDataFactory.getThisUser("THIRD_USER").getId())).header("Authorization",token))
                 .andExpect(status().isUnauthorized());
 
