@@ -12,6 +12,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
@@ -36,6 +37,7 @@ public class UserServiceTest extends SocialNetworkApplicationTests {
     private final UserTestDataFactory userTestDataFactory;
     private final ObjectMapper objectMapper;
     private final UserEditMapper userEditMapper;
+    private final String uriPrefix;
 
     @BeforeAll
 
@@ -66,12 +68,13 @@ public class UserServiceTest extends SocialNetworkApplicationTests {
 
     @Autowired
     public UserServiceTest(MockMvc mockMvc, UserTestDataFactory userTestDataFactory, UserEditMapper userEditMapper,
-                           ObjectMapper objectMapper) {
+                           ObjectMapper objectMapper, @Value("${app.uri.prefix}") String uriPrefix) {
 
         this.mockMvc = mockMvc;
         this.userTestDataFactory = userTestDataFactory;
         this.objectMapper = objectMapper;
         this.userEditMapper = userEditMapper;
+        this.uriPrefix = uriPrefix;
     }
 
 
@@ -82,7 +85,7 @@ public class UserServiceTest extends SocialNetworkApplicationTests {
         UserDto user = userTestDataFactory.createUserForTest();
 
             MvcResult createResult = this.mockMvc
-                    .perform(post("/api/v1/public/register")
+                    .perform(post(uriPrefix+"/public/register")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(user).replaceAll("}$", ",\"password\": \"pass\"}")))
                     .andExpect(status().isOk())
@@ -94,7 +97,7 @@ public class UserServiceTest extends SocialNetworkApplicationTests {
 
         UserDto user = userTestDataFactory.createUserForTest();
         user.setEmail(null);
-            MvcResult createResult = this.mockMvc.perform(post("/api/v1/public/register").contentType(MediaType.APPLICATION_JSON)
+            MvcResult createResult = this.mockMvc.perform(post(uriPrefix+"/public/register").contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(user)))
                     .andExpect(status().isInternalServerError())
                     .andReturn();
@@ -111,7 +114,7 @@ public class UserServiceTest extends SocialNetworkApplicationTests {
             userEditMapper.toUserEdit(userTestDataFactory.getLoggedInUser(), userEdit);
             userEdit.setUserSummary("blah");
 
-            MvcResult createResult = this.mockMvc.perform(put("/api/v1/profile/my-profile").contentType(MediaType.APPLICATION_JSON)
+            MvcResult createResult = this.mockMvc.perform(put(uriPrefix+"/profile/my-profile").contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(userEdit)))
                     .andExpect(status().isOk())
                     .andReturn();
@@ -128,7 +131,7 @@ public class UserServiceTest extends SocialNetworkApplicationTests {
         userEditMapper.toUserEdit(user, userEdit);
         userEdit.setUserSummary("blah");
 
-        MvcResult createResult = this.mockMvc.perform(put("/api/v1/profile/my-profile").contentType(MediaType.APPLICATION_JSON)
+        MvcResult createResult = this.mockMvc.perform(put(uriPrefix+"/profile/my-profile").contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(userEdit)))
                 .andExpect(status().isForbidden())
                 .andReturn();
@@ -140,7 +143,7 @@ public class UserServiceTest extends SocialNetworkApplicationTests {
     public void testDeleteSuccess() throws Exception{
         UserDto user = userTestDataFactory.getLoggedInUser();
 
-        MvcResult createResult = this.mockMvc.perform(delete("/api/v1/profile/" + user.getId()))
+        MvcResult createResult = this.mockMvc.perform(delete(uriPrefix+"/profile/" + user.getId()))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -154,7 +157,7 @@ public class UserServiceTest extends SocialNetworkApplicationTests {
 
         AuthRequest authRequest = new AuthRequest(user.getEmail(), user.getPassword()+"12");
 
-        MvcResult createResult = this.mockMvc.perform(post("/api/v1/public/login").contentType(MediaType.APPLICATION_JSON)
+        MvcResult createResult = this.mockMvc.perform(post(uriPrefix+"/public/login").contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(authRequest)))
                 .andExpect(status().isUnauthorized())
                 .andReturn();

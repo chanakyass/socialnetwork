@@ -28,7 +28,7 @@ public class AuthController {
         this.authorizationService = authorizationService;
     }
 
-    @PostMapping("/api/v1/public/login")
+    @PostMapping("${app.uri.prefix}/public/login")
     @ApiOperation(value = "Login", notes = "Email ID and password required",responseContainer = "ResponseEntity", response = AuthResponse.class)
     public ResponseEntity<Data<UserProxyDto>> loginUser(@RequestBody AuthRequest authRequest) {
         AuthResponse authResponse = authorizationService.login(authRequest);
@@ -40,7 +40,7 @@ public class AuthController {
     }
 
     @RolesAllowed("ROLE_USER")
-    @PostMapping("/api/v1/logout")
+    @PostMapping("${app.uri.prefix}/logout")
     @ApiOperation(value = "Logout", notes = "Currently just sends a response message",responseContainer = "ResponseEntity", response = ApiMessageResponse.class)
     public ResponseEntity<ApiMessageResponse> logoutUser() {
         return authorizationService.logout();

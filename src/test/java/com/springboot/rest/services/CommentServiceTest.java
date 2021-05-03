@@ -12,6 +12,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
@@ -36,15 +37,17 @@ public class CommentServiceTest extends SocialNetworkApplicationTests {
     private final ObjectMapper objectMapper;
     private final CommentEditMapper commentEditMapper;
     private final CommentTestDataFactory commentTestDataFactory;
+    private final  String uriPrefix;
 
 
     @Autowired
     public CommentServiceTest(MockMvc mockMvc, ObjectMapper objectMapper, CommentEditMapper commentEditMapper,
-                            CommentTestDataFactory commentTestDataFactory) {
+                            CommentTestDataFactory commentTestDataFactory, @Value("${app.uri.prefix}") String uriPrefix) {
         this.mockMvc = mockMvc;
         this.objectMapper = objectMapper;
         this.commentEditMapper = commentEditMapper;
         this.commentTestDataFactory = commentTestDataFactory;
+        this.uriPrefix = uriPrefix;
     }
 
     @BeforeAll
@@ -78,7 +81,7 @@ public class CommentServiceTest extends SocialNetworkApplicationTests {
     {
         CommentDto comment = commentTestDataFactory.createCommentTemplateForLoggedInUser();
         MvcResult createResult = this.mockMvc
-                .perform(post("/api/v1/resource/comment")
+                .perform(post(uriPrefix+"/resource/comment")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(comment)))
                 .andExpect(status().isOk())
@@ -91,7 +94,7 @@ public class CommentServiceTest extends SocialNetworkApplicationTests {
     {
         CommentDto comment = commentTestDataFactory.createCommentTemplateForOtherUser();
         MvcResult createResult = this.mockMvc
-                .perform(post("/api/v1/resource/comment")
+                .perform(post(uriPrefix+"/resource/comment")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(comment)))
                 .andExpect(status().isForbidden())
@@ -105,7 +108,7 @@ public class CommentServiceTest extends SocialNetworkApplicationTests {
         CommentDto comment = commentTestDataFactory.createCommentTemplateForLoggedInUser();
         comment.setCommentContent(null);
         MvcResult createResult = this.mockMvc
-                .perform(post("/api/v1/resource/comment")
+                .perform(post(uriPrefix+"/resource/comment")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(comment)))
                 .andExpect(status().isInternalServerError())
@@ -124,7 +127,7 @@ public class CommentServiceTest extends SocialNetworkApplicationTests {
         commentEditMapper.toCommentEditDto(comment, commentEdit);
 
         MvcResult createResult = this.mockMvc
-                .perform(put("/api/v1/resource/comment")
+                .perform(put(uriPrefix+"/resource/comment")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(commentEdit)))
                 .andExpect(status().isOk())
@@ -143,7 +146,7 @@ public class CommentServiceTest extends SocialNetworkApplicationTests {
         commentEditMapper.toCommentEditDto(comment, commentEdit);
 
         MvcResult createResult = this.mockMvc
-                .perform(put("/api/v1/resource/comment")
+                .perform(put(uriPrefix+"/resource/comment")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(commentEdit)))
                 .andExpect(status().isForbidden())
@@ -156,7 +159,7 @@ public class CommentServiceTest extends SocialNetworkApplicationTests {
     {
         Long commentId = commentTestDataFactory.createCommentTemplateForLoggedInUserAndInsertInDb();
         MvcResult createResult = this.mockMvc
-                .perform(delete("/api/v1/resource/comment/"+commentId))
+                .perform(delete(uriPrefix+"/resource/comment/"+commentId))
                 .andExpect(status().isOk())
                 .andReturn();
     }

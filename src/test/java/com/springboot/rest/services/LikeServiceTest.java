@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
@@ -35,12 +36,15 @@ public class LikeServiceTest extends SocialNetworkApplicationTests {
     private final MockMvc mockMvc;
     private final ObjectMapper objectMapper;
     private final LikeTestDataFactory likeTestDataFactory;
+    private final String uriPrefix;
 
     @Autowired
-    public LikeServiceTest(MockMvc mockMvc, ObjectMapper objectMapper, LikeTestDataFactory likeTestDataFactory) {
+    public LikeServiceTest(MockMvc mockMvc, ObjectMapper objectMapper, LikeTestDataFactory likeTestDataFactory,
+                            @Value("${app.uri.prefix}") String uriPrefix) {
         this.mockMvc = mockMvc;
         this.objectMapper = objectMapper;
         this.likeTestDataFactory = likeTestDataFactory;
+        this.uriPrefix = uriPrefix;
     }
 
     @BeforeAll
@@ -75,7 +79,7 @@ public class LikeServiceTest extends SocialNetworkApplicationTests {
     {
         LikePostDto like = likeTestDataFactory.createLikeOnPostForLoggedInUser();
         MvcResult createResult = this.mockMvc
-                .perform(post("/api/v1/resource/post/1/like")
+                .perform(post(uriPrefix+"/resource/post/1/like")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(like)))
                 .andExpect(status().isOk())
@@ -87,7 +91,7 @@ public class LikeServiceTest extends SocialNetworkApplicationTests {
     {
         LikePostDto like = likeTestDataFactory.getPreExistingLikePost();
         MvcResult createResult = this.mockMvc
-                .perform(delete("/api/v1/resource/post/1/unlike")
+                .perform(delete(uriPrefix+"/resource/post/1/unlike")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(like)))
                 .andExpect(status().isOk())
@@ -100,7 +104,7 @@ public class LikeServiceTest extends SocialNetworkApplicationTests {
     {
         LikeCommentDto like = likeTestDataFactory.createLikeOnCommentForLoggedInUser();
         MvcResult createResult = this.mockMvc
-                .perform(post("/api/v1/resource/comment/1/like")
+                .perform(post(uriPrefix+"/resource/comment/1/like")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(like)))
                 .andExpect(status().isOk())
@@ -112,7 +116,7 @@ public class LikeServiceTest extends SocialNetworkApplicationTests {
     {
         LikeCommentDto like = likeTestDataFactory.getPreExistingLikeComment();
         MvcResult createResult = this.mockMvc
-                .perform(delete("/api/v1/resource/comment/1/unlike")
+                .perform(delete(uriPrefix+"/resource/comment/1/unlike")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(like)))
                 .andExpect(status().isOk())
