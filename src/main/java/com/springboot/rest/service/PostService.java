@@ -58,13 +58,7 @@ public class PostService {
     }
 
     public DataList<PostDto> getPosts(int pageNo, int noOfDeletions) {
-        long nextOffset = pageNo * 10L
-                - (long) noOfDeletions;
-        int limit = 10;
-
-
-        Pageable pageable =  new OffsetBasedPageRequest(nextOffset, limit,
-                Sort.by("noOfLikes").descending());
+        Pageable pageable = getPostsCommon(pageNo, noOfDeletions);
 
         Page<PostView> page = postRepos.findPostsForUserFeed(
                 securityUtils.getSubjectId(),
@@ -73,6 +67,18 @@ public class PostService {
 
         return new DataList<>(postMapper.toPostDtoListFromView(page.getContent()), page.getTotalPages(), pageNo);
 
+    }
+
+    private Pageable getPostsCommon(int pageNo, long noOfDeletions) {
+        long nextOffset = pageNo * 10L
+                - noOfDeletions;
+        int limit = 10;
+
+        return new OffsetBasedPageRequest(nextOffset, limit,
+                Sort.by(Sort.Order.by("noOfLikes").with(Sort.Direction.DESC),
+                        Sort.Order.by("modifiedAtTime").with(Sort.Direction.DESC),
+                        Sort.Order.by("postedAtTime").with(Sort.Direction.DESC),
+                        Sort.Order.by("id").with(Sort.Direction.DESC)));
     }
 
     public PostDto getSelectedPost(Long Id) {
@@ -84,11 +90,7 @@ public class PostService {
 
     public DataList<PostDto> getPostsOfUser(Long userId, int pageNo, int noOfDeletions) {
 
-        long nextOffset = pageNo * 10L
-                - (long) noOfDeletions;
-        int limit = 10;
-        Pageable pageable =  new OffsetBasedPageRequest(nextOffset, limit,
-                Sort.by("noOfLikes").descending());
+        Pageable pageable = getPostsCommon(pageNo, noOfDeletions);
 
         userRepos.findById(userId).orElseThrow(ApiResourceNotFoundException::new);
         Page<PostView> page = postRepos.findPostsOfOwner(userId, securityUtils.getSubjectId(),

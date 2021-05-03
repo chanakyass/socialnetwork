@@ -65,14 +65,21 @@ public class CommentService {
         return responseComment.getId();
     }
 
+    private Pageable getCommentsCommon(int pageNo, long noOfDeletions) {
+        long nextOffset = pageNo * 10L
+                - noOfDeletions;
+        int limit = 10;
+
+        return new OffsetBasedPageRequest(nextOffset, limit,
+                Sort.by(Sort.Order.by("noOfLikes").with(Sort.Direction.DESC),
+                        Sort.Order.by("modifiedAtTime").with(Sort.Direction.DESC),
+                        Sort.Order.by("commentedAtTime").with(Sort.Direction.DESC),
+                        Sort.Order.by("id").with(Sort.Direction.DESC)));
+    }
+
     public DataList<CommentDto> getCommentsOnPost(Long postId, int pageNo, int noOfDeletions) {
-        long nextOffset = pageNo * 5L
-                - (long) noOfDeletions;
-        int limit = 5;
 
-
-        Pageable pageable =  new OffsetBasedPageRequest(nextOffset, limit,
-                Sort.by("noOfLikes").descending());
+        Pageable pageable =  getCommentsCommon(pageNo, noOfDeletions);
 
         Page<CommentView> page = commentRepos.findLevelOneCommentsOnPost(postId, securityUtils.getSubjectId(),
                  pageable)
@@ -82,11 +89,7 @@ public class CommentService {
     }
 
     public DataList<CommentDto> getRepliesOnComment(Long commentId, int pageNo, int noOfDeletions) {
-        long nextOffset = pageNo * 5L
-                - (long) noOfDeletions;
-        int limit = 5;
-        Pageable pageable =  new OffsetBasedPageRequest(nextOffset, limit,
-                Sort.by("noOfLikes").descending());
+        Pageable pageable = getCommentsCommon(pageNo, noOfDeletions);
 
         commentRepos.findById(commentId).orElseThrow(ApiResourceNotFoundException::new);
         Page<CommentView> page = commentRepos.findCommentsWithParentCommentAs(commentId, securityUtils.getSubjectId(),
