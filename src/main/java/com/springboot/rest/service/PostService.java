@@ -32,16 +32,14 @@ public class PostService {
     private final UserRepos userRepos;
     private final PostEditMapper postEditMapper;
     private final PostMapper postMapper;
-    private final LikeService likeService;
     private final SecurityUtils securityUtils;
 
     @Autowired
-    public PostService(PostRepos postRepos, UserRepos userRepos, PostEditMapper postEditMapper, PostMapper postMapper, LikeService likeService, SecurityUtils securityUtils) {
+    public PostService(PostRepos postRepos, UserRepos userRepos, PostEditMapper postEditMapper, PostMapper postMapper, SecurityUtils securityUtils) {
         this.postRepos = postRepos;
         this.userRepos = userRepos;
         this.postEditMapper = postEditMapper;
         this.postMapper = postMapper;
-        this.likeService = likeService;
         this.securityUtils = securityUtils;
 
     }
@@ -108,7 +106,7 @@ public class PostService {
     public Long updatePost(PostEditDto postEditDto) {
         Post postToUpdate = postRepos.findById(postEditDto.getId()).orElseThrow(ApiResourceNotFoundException::new);
         postEditMapper.toPost(postEditDto, postToUpdate);
-        return postEditDto.getId();
+        return postToUpdate.getId();
 
     }
 

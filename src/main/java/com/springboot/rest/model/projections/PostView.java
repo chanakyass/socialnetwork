@@ -11,4 +11,13 @@ public interface PostView {
     Long getNoOfComments();
 
     Boolean getPostLikedByCurrentUser();
+
+    void setPost(Post post);
+
+     void setNoOfLikes(Long noOfLikes);
+
+     void setNoOfComments(Long noOfComments);
+
+     void setPostLikedByCurrentUser(Boolean postLikedByCurrentUser);
+
 }

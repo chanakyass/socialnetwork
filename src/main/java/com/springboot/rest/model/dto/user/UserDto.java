@@ -1,5 +1,6 @@
 package com.springboot.rest.model.dto.user;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -68,11 +69,13 @@ public class UserDto extends UserProxyDto implements UserPersonalMarker {
     }
 
     @JsonSerialize(using = LocalDateSerializer.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     public LocalDate getDOB() {
         return DOB;
     }
 
     @JsonDeserialize(using = LocalDateDeserializer.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     public void setDOB(LocalDate DOB) {
         this.DOB = DOB;
     }

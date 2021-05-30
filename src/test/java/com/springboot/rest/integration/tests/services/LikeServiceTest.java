@@ -1,8 +1,8 @@
-package com.springboot.rest.services;
+package com.springboot.rest.integration.tests.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.springboot.rest.SocialNetworkApplicationTests;
-import com.springboot.rest.data.LikeTestDataFactory;
+import com.springboot.rest.integration.tests.SocialNetworkApplicationTests;
+import com.springboot.rest.integration.tests.data.LikeTestDataFactory;
 import com.springboot.rest.model.dto.likes.LikeCommentDto;
 import com.springboot.rest.model.dto.likes.LikePostDto;
 import lombok.extern.slf4j.Slf4j;

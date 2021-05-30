@@ -8,12 +8,20 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.springboot.rest.model.dto.ApiResourceMarker;
 import com.springboot.rest.model.dto.user.UserProxyDto;
 import io.swagger.annotations.ApiModel;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 @ApiModel(value = "Post",description = "Post structure. Contains the actual details of the post",  parent = PostProxyDto.class)
+@Setter
+@Getter
+@EqualsAndHashCode(callSuper = false)
+@ToString
 public class PostDto extends PostProxyDto implements ApiResourceMarker {
 
     String postHeading;
@@ -47,22 +55,6 @@ public class PostDto extends PostProxyDto implements ApiResourceMarker {
         super();
     }
 
-    public String getPostHeading() {
-        return postHeading;
-    }
-
-    public void setPostHeading(String postHeading) {
-        this.postHeading = postHeading;
-    }
-
-    public String getPostBody() {
-        return postBody;
-    }
-
-    public void setPostBody(String postBody) {
-        this.postBody = postBody;
-    }
-
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     public LocalDateTime getPostedAtTime() {
@@ -87,10 +79,6 @@ public class PostDto extends PostProxyDto implements ApiResourceMarker {
         this.modifiedAtTime = modifiedAtTime;
     }
 
-    public Long getNoOfLikes() {
-        return noOfLikes;
-    }
-
     public void setNoOfLikes(Long noOfLikes) {
         this.noOfLikes = Objects.requireNonNullElse(noOfLikes, 0L);
     }
@@ -101,19 +89,6 @@ public class PostDto extends PostProxyDto implements ApiResourceMarker {
 
     public void setNoOfComments(Long noOfComments) {
         this.noOfComments = Objects.requireNonNullElse(noOfComments, 0L);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof PostDto)) return false;
-        PostDto postDto = (PostDto) o;
-        return getId().equals(postDto.getId()) && getOwner().equals(postDto.getOwner()) && Objects.equals(getPostHeading(), postDto.getPostHeading()) && Objects.equals(getPostBody(), postDto.getPostBody()) && Objects.equals(getPostedAtTime(), postDto.getPostedAtTime());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId(), getOwner(), getPostHeading(), getPostBody(), getPostedAtTime());
     }
 
     @Override

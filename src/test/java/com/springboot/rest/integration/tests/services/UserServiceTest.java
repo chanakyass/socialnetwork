@@ -1,8 +1,8 @@
-package com.springboot.rest.services;
+package com.springboot.rest.integration.tests.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.springboot.rest.SocialNetworkApplicationTests;
-import com.springboot.rest.data.UserTestDataFactory;
+import com.springboot.rest.integration.tests.SocialNetworkApplicationTests;
+import com.springboot.rest.integration.tests.data.UserTestDataFactory;
 import com.springboot.rest.model.dto.auth.AuthRequest;
 import com.springboot.rest.model.dto.user.UserDto;
 import com.springboot.rest.model.dto.user.UserEditDto;

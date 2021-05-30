@@ -88,8 +88,6 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                     userDetails.getAuthorities()
             );
 
-            System.out.println("From security Username: " + userDetails.getUsername() + " Password: " + userDetails.getPassword());
-
             authentication.setDetails(
                     new WebAuthenticationDetailsSource().buildDetails(request)
             );

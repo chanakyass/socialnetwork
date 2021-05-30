@@ -4,6 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.sun.istack.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -11,6 +15,10 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 @Table(name = "likes_on_comments", indexes = { @Index(name = "liked_comment_index", columnList = "liked_comment"),
         @Index(name = "liked_comment_user_index", columnList = "liked_comment, owned_by_user")})
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@likeCommentId")
@@ -34,46 +42,4 @@ public class LikeComment {
     @JoinColumn(name = "liked_comment", foreignKey = @ForeignKey(name = "fk_liked_comment"))
     @JsonProperty("likedComment")
     private Comment likedComment;
-
-    public LikeComment(Long id, User owner, LocalDateTime likedAtTime, Comment likedComment) {
-        this.id = id;
-        this.owner = owner;
-        this.likedAtTime = likedAtTime;
-        this.likedComment = likedComment;
-    }
-
-    public LikeComment() {
-    }
-
-    public User getOwner() {
-        return owner;
-    }
-
-    public LocalDateTime getLikedAtTime() {
-        return likedAtTime;
-    }
-
-    public void setLikedAtTime(LocalDateTime likedOnDate) {
-        this.likedAtTime = likedOnDate;
-    }
-
-    public Comment getLikedComment() {
-        return likedComment;
-    }
-
-    public void setLikedComment(Comment likedComment) {
-        this.likedComment = likedComment;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setOwner(User owner) {
-        this.owner = owner;
-    }
 }

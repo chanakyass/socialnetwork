@@ -9,12 +9,20 @@ import com.springboot.rest.model.dto.ApiResourceMarker;
 import com.springboot.rest.model.dto.post.PostProxyDto;
 import com.springboot.rest.model.dto.user.UserProxyDto;
 import io.swagger.annotations.ApiModel;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 @ApiModel(value = "Comment", description = "Contains a proxy for the post, parent comment", parent = CommentProxyDto.class)
+@Setter
+@Getter
+@EqualsAndHashCode(callSuper = false)
+@ToString
 public class CommentDto extends CommentProxyDto implements ApiResourceMarker {
 
     LocalDateTime commentedAtTime;
@@ -58,30 +66,6 @@ public class CommentDto extends CommentProxyDto implements ApiResourceMarker {
         this.commentedAtTime = commentedAtTime;
     }
 
-    public PostProxyDto getCommentedOn() {
-        return commentedOn;
-    }
-
-    public void setCommentedOn(PostProxyDto commentedOn) {
-        this.commentedOn = commentedOn;
-    }
-
-    public CommentProxyDto getParentComment() {
-        return parentComment;
-    }
-
-    public void setParentComment(CommentProxyDto parentComment) {
-        this.parentComment = parentComment;
-    }
-
-    public String getCommentContent() {
-        return commentContent;
-    }
-
-    public void setCommentContent(String commentContent) {
-        this.commentContent = commentContent;
-    }
-
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     public LocalDateTime getModifiedAtTime() {
@@ -92,10 +76,6 @@ public class CommentDto extends CommentProxyDto implements ApiResourceMarker {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     public void setModifiedAtTime(LocalDateTime modifiedAtTime) {
         this.modifiedAtTime = modifiedAtTime;
-    }
-
-    public Long getNoOfLikes() {
-        return noOfLikes;
     }
 
     public void setNoOfLikes(Long noOfLikes) {
@@ -116,19 +96,6 @@ public class CommentDto extends CommentProxyDto implements ApiResourceMarker {
 
     public void setCommentLikedByCurrentUser(Boolean commentLikedByCurrentUser) {
         isCommentLikedByCurrentUser = commentLikedByCurrentUser;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof CommentDto)) return false;
-        CommentDto that = (CommentDto) o;
-        return getId().equals(that.getId()) && getOwner().equals(that.getOwner()) && Objects.equals(getCommentedAtTime(), that.getCommentedAtTime()) && getCommentedOn().equals(that.getCommentedOn()) && Objects.equals(getParentComment(), that.getParentComment()) && Objects.equals(getCommentContent(), that.getCommentContent());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId(), getOwner(), getCommentedAtTime(), getCommentedOn(), getParentComment(), getCommentContent());
     }
 
     @Override

@@ -7,11 +7,19 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.springboot.rest.model.dto.ApiResourceMarker;
 import com.springboot.rest.model.dto.user.UserProxyDto;
 import io.swagger.annotations.ApiModel;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 
 @ApiModel(value = "Post Edit",  description = "Contains the actual details of the post. Only used for editing a post",  parent = PostProxyDto.class)
+@Setter
+@Getter
+@EqualsAndHashCode(callSuper = false)
+@ToString
 public class PostEditDto extends PostProxyDto implements ApiResourceMarker {
 
     String postHeading;
@@ -29,22 +37,6 @@ public class PostEditDto extends PostProxyDto implements ApiResourceMarker {
 
     public PostEditDto() {
         super();
-    }
-
-    public String getPostHeading() {
-        return postHeading;
-    }
-
-    public void setPostHeading(String postHeading) {
-        this.postHeading = postHeading;
-    }
-
-    public String getPostBody() {
-        return postBody;
-    }
-
-    public void setPostBody(String postBody) {
-        this.postBody = postBody;
     }
 
     @JsonSerialize(using = LocalDateTimeSerializer.class)

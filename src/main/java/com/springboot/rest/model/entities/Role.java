@@ -26,7 +26,7 @@ public class Role implements GrantedAuthority {
     public Role() {
     }
 
-    public static RoleBuilder roleBuilder() {
+    public static RoleBuilder builder() {
         return new RoleBuilder();
     }
 

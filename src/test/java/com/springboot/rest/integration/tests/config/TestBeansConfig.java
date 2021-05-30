@@ -1,4 +1,4 @@
-package com.springboot.rest.config;
+package com.springboot.rest.integration.tests.config;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;

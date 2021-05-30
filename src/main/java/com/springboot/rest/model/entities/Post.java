@@ -7,6 +7,10 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -16,6 +20,10 @@ import java.time.LocalDateTime;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @Entity
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 @JsonInclude(value = Include.NON_EMPTY)
 @Table(name = "posts", indexes = @Index(name = "post_id_index", columnList = "id"))
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@postId")
@@ -41,52 +49,6 @@ public class Post {
 
     private LocalDateTime modifiedAtTime;
 
-    public Post() {
-
-    }
-
-    public Post(Long id, User owner, String postHeading, String postBody, LocalDateTime postedAtTime, LocalDateTime modifiedAtTime) {
-        this.id = id;
-        this.owner = owner;
-        this.postHeading = postHeading;
-        this.postBody = postBody;
-        this.postedAtTime = postedAtTime;
-        this.modifiedAtTime = modifiedAtTime;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public User getOwner() {
-        return owner;
-    }
-
-    public void setOwner(User owner) {
-        this.owner = owner;
-    }
-
-
-    public String getPostHeading() {
-        return postHeading;
-    }
-
-    public void setPostHeading(String postHeading) {
-        this.postHeading = postHeading;
-    }
-
-    public String getPostBody() {
-        return postBody;
-    }
-
-    public void setPostBody(String postBody) {
-        this.postBody = postBody;
-    }
-
     @JsonSerialize(using = LocalDateSerializer.class)
     public LocalDateTime getPostedAtTime() {
         return postedAtTime;
@@ -105,18 +67,5 @@ public class Post {
     @JsonDeserialize(using = LocalDateDeserializer.class)
     public void setModifiedAtTime(LocalDateTime modifiedOnDate) {
         this.modifiedAtTime = modifiedOnDate;
-    }
-
-    @Override
-    public String toString() {
-        return "Post{" +
-                "id=" + id +
-                ", owner=" + owner +
-                ", postHeading='" + postHeading + '\'' +
-                ", postBody='" + postBody + '\'' +
-                ", postedOnDate=" + postedAtTime +
-                ", modifiedOnDate=" + modifiedAtTime +
-                //", noOfLikes=" + noOfLikes +
-                '}';
     }
 }

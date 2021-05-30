@@ -107,7 +107,7 @@ public class CommentService {
         Comment comment = commentRepos.findById(commentId).orElseThrow(ApiResourceNotFoundException::new);
         commentRepos.deleteById(commentId);
 
-        return commentId;
+        return comment.getId();
     }
 
 
@@ -121,6 +121,6 @@ public class CommentService {
 
         Comment comment = commentRepos.findById(commentEditDto.getId()).orElseThrow(ApiResourceNotFoundException::new);
         commentEditMapper.update(commentEditDto, comment);
-        return commentEditDto.getId();
+        return comment.getId();
     }
 }

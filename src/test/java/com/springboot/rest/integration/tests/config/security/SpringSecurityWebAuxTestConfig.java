@@ -1,4 +1,4 @@
-package com.springboot.rest.config.security;
+package com.springboot.rest.integration.tests.config.security;
 
 import com.springboot.rest.model.entities.User;
 import com.springboot.rest.model.entities.UserAdapter;

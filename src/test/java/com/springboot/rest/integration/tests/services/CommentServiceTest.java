@@ -1,11 +1,11 @@
-package com.springboot.rest.services;
+package com.springboot.rest.integration.tests.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.springboot.rest.SocialNetworkApplicationTests;
-import com.springboot.rest.data.PostTestDataFactory;
-import com.springboot.rest.model.dto.post.PostDto;
-import com.springboot.rest.model.dto.post.PostEditDto;
-import com.springboot.rest.model.mapper.PostEditMapper;
+import com.springboot.rest.integration.tests.SocialNetworkApplicationTests;
+import com.springboot.rest.integration.tests.data.CommentTestDataFactory;
+import com.springboot.rest.model.dto.comment.CommentDto;
+import com.springboot.rest.model.dto.comment.CommentEditDto;
+import com.springboot.rest.model.mapper.CommentEditMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -31,22 +31,22 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @WithUserDetails(value = "test@rest.com", userDetailsServiceBeanName = "basicUsers")
 @Slf4j
-public class PostServiceTest extends SocialNetworkApplicationTests {
+public class CommentServiceTest extends SocialNetworkApplicationTests {
 
     private final MockMvc mockMvc;
     private final ObjectMapper objectMapper;
-    private final PostEditMapper postEditMapper;
-    private final PostTestDataFactory postTestDataFactory;
-    private final String uriPrefix;
+    private final CommentEditMapper commentEditMapper;
+    private final CommentTestDataFactory commentTestDataFactory;
+    private final  String uriPrefix;
 
 
     @Autowired
-    public PostServiceTest(MockMvc mockMvc, ObjectMapper objectMapper, PostEditMapper postEditMapper, PostTestDataFactory postTestDataFactory,
-                            @Value("${app.uri.prefix}") String uriPrefix) {
+    public CommentServiceTest(MockMvc mockMvc, ObjectMapper objectMapper, CommentEditMapper commentEditMapper,
+                            CommentTestDataFactory commentTestDataFactory, @Value("${app.uri.prefix}") String uriPrefix) {
         this.mockMvc = mockMvc;
         this.objectMapper = objectMapper;
-        this.postEditMapper = postEditMapper;
-        this.postTestDataFactory = postTestDataFactory;
+        this.commentEditMapper = commentEditMapper;
+        this.commentTestDataFactory = commentTestDataFactory;
         this.uriPrefix = uriPrefix;
     }
 
@@ -77,61 +77,59 @@ public class PostServiceTest extends SocialNetworkApplicationTests {
     }
 
     @Test
-    public void testPostCreateSuccess() throws Exception
+    public void testCommentCreateSuccess() throws Exception
     {
-        PostDto post = postTestDataFactory.createPostForLoggedInUser();
-
+        CommentDto comment = commentTestDataFactory.createCommentTemplateForLoggedInUser();
         MvcResult createResult = this.mockMvc
-                .perform(post(uriPrefix+"/resource/post")
+                .perform(post(uriPrefix+"/resource/comment")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(post)))
+                        .content(objectMapper.writeValueAsString(comment)))
                 .andExpect(status().isOk())
                 .andReturn();
 
     }
 
     @Test
-    public void testPostCreateFailureAuth() throws Exception
+    public void testCommentCreateFailureAuth() throws Exception
     {
-        PostDto post = postTestDataFactory.createPostForOtherUser();
+        CommentDto comment = commentTestDataFactory.createCommentTemplateForOtherUser();
         MvcResult createResult = this.mockMvc
-                .perform(post(uriPrefix+"/resource/post")
+                .perform(post(uriPrefix+"/resource/comment")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(post)))
+                        .content(objectMapper.writeValueAsString(comment)))
                 .andExpect(status().isForbidden())
                 .andReturn();
 
     }
 
     @Test
-    public void testPostCreateFailureOther() throws Exception
+    public void testCommentCreateFailureOther() throws Exception
     {
-        PostDto post = postTestDataFactory.createPostForLoggedInUser();
-        post.setPostHeading(null);
-        post.setPostBody(null);
+        CommentDto comment = commentTestDataFactory.createCommentTemplateForLoggedInUser();
+        comment.setCommentContent(null);
         MvcResult createResult = this.mockMvc
-                .perform(post(uriPrefix+"/resource/post")
+                .perform(post(uriPrefix+"/resource/comment")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(post)))
+                        .content(objectMapper.writeValueAsString(comment)))
                 .andExpect(status().isInternalServerError())
                 .andReturn();
 
     }
 
     @Test
-    public void testPostUpdateSuccess() throws Exception
+    public void testCommentUpdateSuccess() throws Exception
     {
-        // Create Post
-        PostDto post = postTestDataFactory.getPreExistingPost();
-        post.setPostBody("This is changed");
+        // Create Comment
+        CommentDto comment = commentTestDataFactory.getPreExistingComment();
+        comment.setCommentContent("This is changed");
 
-        PostEditDto postEdit = new PostEditDto();
-        postEditMapper.toPostEditDto(post, postEdit);
+        CommentEditDto commentEdit = new CommentEditDto();
+        commentEditMapper.toCommentEditDto(comment, commentEdit);
 
         MvcResult createResult = this.mockMvc
-                .perform(put(uriPrefix+"/resource/post")
+                .perform(put(uriPrefix+"/resource/comment")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(postEdit)))
+                        .content(objectMapper.writeValueAsString(commentEdit)))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -139,28 +137,29 @@ public class PostServiceTest extends SocialNetworkApplicationTests {
 
     @Test
     @WithUserDetails(value = "chan@rest.com", userDetailsServiceBeanName = "basicUsers")
-    public void testPostUpdateFailureAuth() throws Exception
+    public void testCommentUpdateFailureAuth() throws Exception
     {
-        PostEditDto postEdit = new PostEditDto();
-        PostDto post = postTestDataFactory.getPreExistingPost();
-        post.setPostBody("This is changed");
-        postEditMapper.toPostEditDto(post, postEdit);
+        CommentEditDto commentEdit = new CommentEditDto();
+        CommentDto comment = commentTestDataFactory.getPreExistingComment();
+        comment.setCommentContent("This is changed");
+
+        commentEditMapper.toCommentEditDto(comment, commentEdit);
 
         MvcResult createResult = this.mockMvc
-                .perform(put(uriPrefix+"/resource/post")
+                .perform(put(uriPrefix+"/resource/comment")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(postEdit)))
+                        .content(objectMapper.writeValueAsString(commentEdit)))
                 .andExpect(status().isForbidden())
                 .andReturn();
 
     }
 
     @Test
-    public void testPostDeleteSuccess() throws Exception
+    public void testCommentDeleteSuccess() throws Exception
     {
-        Long postId = postTestDataFactory.createPostForLoggedInUserAndInsertInDB();
+        Long commentId = commentTestDataFactory.createCommentTemplateForLoggedInUserAndInsertInDb();
         MvcResult createResult = this.mockMvc
-                .perform(delete(uriPrefix+"/resource/post/"+postId))
+                .perform(delete(uriPrefix+"/resource/comment/"+commentId))
                 .andExpect(status().isOk())
                 .andReturn();
     }

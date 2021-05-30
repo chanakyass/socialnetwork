@@ -1,6 +1,7 @@
 package com.springboot.rest.model.mapper;
 
 import com.springboot.rest.model.dto.post.PostDto;
+import com.springboot.rest.model.dto.post.PostProxyDto;
 import com.springboot.rest.model.entities.Post;
 import com.springboot.rest.model.projections.PostView;
 import org.mapstruct.Mapper;
@@ -35,6 +36,8 @@ public abstract class PostMapper {
         }
         return null;
     }
+
+    public abstract PostProxyDto toPostProxyDto(PostDto postDto);
 
     public abstract List<PostDto> toPostDtoListFromView(List<PostView> posts);
 

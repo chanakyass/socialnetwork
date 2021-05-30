@@ -1,4 +1,4 @@
-package com.springboot.rest.data;
+package com.springboot.rest.integration.tests.data;
 
 import com.springboot.rest.model.dto.post.PostDto;
 import com.springboot.rest.model.dto.response.Data;

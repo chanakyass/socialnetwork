@@ -7,9 +7,6 @@ import com.springboot.rest.model.dto.user.UserEditDto;
 import com.springboot.rest.model.entities.User;
 import com.springboot.rest.model.mapper.UserEditMapper;
 import com.springboot.rest.model.mapper.UserMapper;
-import com.springboot.rest.repository.CommentRepos;
-import com.springboot.rest.repository.LikeCommentRepos;
-import com.springboot.rest.repository.LikePostRepos;
 import com.springboot.rest.repository.UserRepos;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,39 +15,36 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.security.RolesAllowed;
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 @Service
 public class UserService {
 
     private final UserRepos userRepos;
-    private final CommentRepos commentRepos;
     private final PasswordEncoder passwordEncoder;
     private final UserEditMapper userEditMapper;
     private final UserMapper userMapper;
-    private final LikePostRepos likePostRepos;
-    private final LikeCommentRepos likeCommentRepos;
 
     @Autowired
-    public UserService(UserRepos userRepos, CommentRepos commentRepos, LikePostRepos likePostRepos, LikeCommentRepos likeCommentRepos, PasswordEncoder passwordEncoder, UserEditMapper userEditMapper, UserMapper userMapper) {
+    public UserService(UserRepos userRepos, PasswordEncoder passwordEncoder, UserEditMapper userEditMapper, UserMapper userMapper) {
         this.userRepos = userRepos;
         this.passwordEncoder = passwordEncoder;
         this.userEditMapper = userEditMapper;
         this.userMapper = userMapper;
-        this.commentRepos = commentRepos;
-        this.likePostRepos = likePostRepos;
-        this.likeCommentRepos = likeCommentRepos;
     }
 
     @RolesAllowed("ROLE_USER")
     public UserDto getUser(Long userId) {
         User user = userRepos.findUserById(userId).orElseThrow(() -> new ApiSpecificException("User is not present"));
-        UserDto userDto = new UserDto();
-        userMapper.toUserDto(user, userDto);
-        return userDto;
+        return userMapper.toUserDto(user);
     }
 
     public User getUserByEmail(String email) {
-        return userRepos.findUserByEmail(email).orElseThrow(() -> new ApiSpecificException("User doesn't exist"));
+        Optional<User> optionalUser = userRepos.findUserByEmail(email);
+                //.orElseThrow(() -> new ApiSpecificException("User doesn't exist"));
+        System.out.println(optionalUser.isEmpty());
+        System.out.println(optionalUser.orElseThrow());
+        return optionalUser.orElseThrow();
     }
 
     public User getUserByIdAndEmail(Long userId, String email){
@@ -58,8 +52,7 @@ public class UserService {
     }
 
     public Long createUser(UserDto userDto) {
-        User user = new User();
-        userMapper.toUser(userDto, user);
+        User user = userMapper.toUser(userDto);
 
         if (userRepos.findUserByEmail(user.getEmail()).isPresent()) {
             throw new ApiSpecificException("Email is taken");

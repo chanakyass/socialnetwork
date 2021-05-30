@@ -7,17 +7,24 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.springboot.rest.model.dto.ApiResourceMarker;
 import com.springboot.rest.model.dto.user.UserProxyDto;
 import io.swagger.annotations.ApiModel;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 
+@EqualsAndHashCode(callSuper = true)
 @ApiModel(value = "Comment Edit", description = "This object is used only for edit operation.", parent = CommentProxyDto.class)
+@Getter
+@Setter
+@ToString
 public class CommentEditDto extends CommentProxyDto implements ApiResourceMarker {
 
     String commentContent;
 
     LocalDateTime modifiedAtTime;
-
     public CommentEditDto(Long id, UserProxyDto owner, String commentContent, LocalDateTime modifiedAtTime) {
         super(id, owner);
         this.commentContent = commentContent;
@@ -26,14 +33,6 @@ public class CommentEditDto extends CommentProxyDto implements ApiResourceMarker
 
     public CommentEditDto() {
         super();
-    }
-
-    public String getCommentContent() {
-        return commentContent;
-    }
-
-    public void setCommentContent(String commentContent) {
-        this.commentContent = commentContent;
     }
 
     @JsonSerialize(using = LocalDateTimeSerializer.class)

@@ -4,6 +4,7 @@
     "name": "test",
     "email": "test@rest.com",
     "password": "pass",
+    "dob": "1995-06-10",
     "grantedAuthoritiesList": [{
       "authority":"ROLE_USER"}]
   },
@@ -12,6 +13,7 @@
     "name": "chan",
     "email": "chan@rest.com",
     "password": "pass",
+    "dob": "1995-06-10",
     "grantedAuthoritiesList": [{
       "authority":"ROLE_USER"}]
   },
@@ -20,6 +22,7 @@
     "name": "whataview",
     "email": "whataview@rest.com",
     "password": "pass",
+    "dob": "1995-06-10",
     "grantedAuthoritiesList": [{
       "authority":"ROLE_USER"}]
   }

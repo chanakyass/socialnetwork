@@ -1,9 +1,9 @@
-package com.springboot.rest;
+package com.springboot.rest.integration.tests;
 
 
-import com.springboot.rest.config.TestBeansConfig;
-import com.springboot.rest.config.TestConfig;
-import com.springboot.rest.config.security.SpringSecurityWebAuxTestConfig;
+import com.springboot.rest.integration.tests.config.TestBeansConfig;
+import com.springboot.rest.integration.tests.config.TestConfig;
+import com.springboot.rest.integration.tests.config.security.SpringSecurityWebAuxTestConfig;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;

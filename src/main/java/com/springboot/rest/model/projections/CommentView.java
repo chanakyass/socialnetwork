@@ -7,4 +7,8 @@ public interface CommentView {
     Long getNoOfLikes();
     Long getNoOfReplies();
     Boolean getCommentLikedByCurrentUser();
+    void setComment(Comment comment);
+    void setNoOfLikes(Long noOfLikes);
+    void setNoOfReplies(Long noOfReplies);
+    void setCommentLikedByCurrentUser(Boolean commentLikedByCurrentUser);
 }

@@ -1,7 +1,7 @@
-package com.springboot.rest.data;
+package com.springboot.rest.integration.tests.data;
 
-import com.springboot.rest.config.TestConfig;
 import com.springboot.rest.config.security.SecurityUtils;
+import com.springboot.rest.integration.tests.config.TestConfig;
 import com.springboot.rest.model.dto.auth.AuthRequest;
 import com.springboot.rest.model.dto.auth.AuthResponse;
 import com.springboot.rest.model.dto.user.UserDto;
@@ -44,17 +44,13 @@ public class UserTestDataFactory {
     public UserDto getLoggedInUser()
     {
         User user  = securityUtils.getUserFromSubject();
-        UserDto userDto = new UserDto();
-        userMapper.toUserDto(user, userDto);
-        return userDto;
+        return userMapper.toUserDto(user);
     }
 
     public UserDto getOtherThanLoggedInUser()
     {
         User user = userService.getUserByEmail(userHashMap.get("ANOTHER_USER").getEmail());
-        UserDto userDto = new UserDto();
-        userMapper.toUserDto(user, userDto);
-        return userDto;
+        return userMapper.toUserDto(user);
 
 
     }
@@ -62,16 +58,14 @@ public class UserTestDataFactory {
     public UserDto getThisUser(String userKey)
     {
         User user = userHashMap.get(userKey);
-        UserDto userDto = new UserDto();
-        userMapper.toUserDto(user, userDto);
-        return userDto;
+        return userMapper.toUserDto(user);
     }
 
     public UserDto createUserForTest()
     {
         Random random = TestConfig.getRandom();
         int num = random.nextInt(1000);
-        List<Role> roles = List.of(Role.roleBuilder().authority("ROLE_USER").build());
+        List<Role> roles = List.of(Role.builder().authority("ROLE_USER").build());
         UserDto userDto = new UserDto();
         userDto.setName("swathy"+num);
         userDto.setEmail("swathy"+num+"@kothi.com");
@@ -97,7 +91,7 @@ public class UserTestDataFactory {
         userDto.setEmail(email);
         userDto.setPassword(password);
         userDto.setName("random");
-        userDto.setGrantedAuthoritiesList(List.of(Role.roleBuilder().authority("ROLE_USER").build()));
+        userDto.setGrantedAuthoritiesList(List.of(Role.builder().authority("ROLE_USER").build()));
 
 
         assertNotNull(userService.createUser(userDto));

@@ -1,10 +1,10 @@
-package com.springboot.rest.services;
+package com.springboot.rest.integration.tests.services;
 
-import com.springboot.rest.SocialNetworkApplicationTests;
-import com.springboot.rest.data.CommentTestDataFactory;
-import com.springboot.rest.data.LikeTestDataFactory;
-import com.springboot.rest.data.PostTestDataFactory;
-import com.springboot.rest.data.UserTestDataFactory;
+import com.springboot.rest.integration.tests.SocialNetworkApplicationTests;
+import com.springboot.rest.integration.tests.data.CommentTestDataFactory;
+import com.springboot.rest.integration.tests.data.LikeTestDataFactory;
+import com.springboot.rest.integration.tests.data.PostTestDataFactory;
+import com.springboot.rest.integration.tests.data.UserTestDataFactory;
 import com.springboot.rest.model.dto.auth.AuthRequest;
 import com.springboot.rest.model.dto.comment.CommentDto;
 import com.springboot.rest.model.dto.likes.LikeCommentDto;

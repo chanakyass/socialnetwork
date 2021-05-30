@@ -7,7 +7,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
 @ConfigurationProperties("security-properties")
-@PropertySource("classpath:${spring.movie.rest.security.config}")
+@PropertySource("classpath:security.configuration.properties")
 public class SecurityProperties {
 
     String issuer;
