@@ -31,6 +31,6 @@ jobs:
           java-version: '11'
           distribution: 'adopt'   
       - name: Run tests
-        run: mvn test
+        run: mvn verify
         env: 
           SPRING_ACTIVE_PROFILE: "test"
