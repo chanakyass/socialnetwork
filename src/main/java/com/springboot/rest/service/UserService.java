@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.security.RolesAllowed;
 import javax.transaction.Transactional;
-import java.util.Optional;
 
 @Service
 public class UserService {
@@ -40,11 +39,8 @@ public class UserService {
     }
 
     public User getUserByEmail(String email) {
-        Optional<User> optionalUser = userRepos.findUserByEmail(email);
-                //.orElseThrow(() -> new ApiSpecificException("User doesn't exist"));
-        System.out.println(optionalUser.isEmpty());
-        System.out.println(optionalUser.orElseThrow());
-        return optionalUser.orElseThrow();
+        return userRepos.findUserByEmail(email).orElseThrow(
+                () -> new ApiSpecificException("User doesn't exist"));
     }
 
     public User getUserByIdAndEmail(Long userId, String email){
